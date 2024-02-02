@@ -1,0 +1,4 @@
+npm run prettier
+npm run build
+npm run lint
+git add -A
