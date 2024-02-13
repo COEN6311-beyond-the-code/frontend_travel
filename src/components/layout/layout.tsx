@@ -4,6 +4,7 @@ import { clsx } from 'clsx';
 import { Inter } from 'next/font/google';
 import Footer from '@/components/footer/footer';
 import NavBar from '@/components/nav/nav';
+import { inter } from '@/utils/fonts';
 
 interface IProps {
 	title: string;
@@ -12,8 +13,6 @@ interface IProps {
 	hideFooter?: boolean;
 	footerSpacer?: boolean;
 }
-
-const inter = Inter({ subsets: ['latin'] });
 
 const Layout: FC<IProps> = ({
 	title,

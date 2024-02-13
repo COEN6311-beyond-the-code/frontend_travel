@@ -28,7 +28,7 @@ const config: Config = {
 				smallest: '0.64rem',
 			},
 			colors: {
-				edanra: {
+				ct: {
 					deepPink: '#DB0C63',
 					yellow: '#c7a159',
 					red: '#ff0000',
