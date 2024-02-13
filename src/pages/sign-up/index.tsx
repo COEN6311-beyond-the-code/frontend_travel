@@ -1,8 +1,30 @@
 import Layout from '@/components/layout/layout';
 import { inter } from '@/utils/fonts';
 import Link from 'next/link';
+import Input from '@/components/input/input';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { SignUpProps } from '@/types/auth/auth.types';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { SignUpSchema } from '@/schema/sign-up-schema';
+import Button from '@/components/button/button';
+import Spinner from '@/components/loaders/spinner';
+import { useState } from 'react';
 
 const SignUp = () => {
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+	} = useForm<SignUpProps>({
+		resolver: yupResolver(SignUpSchema),
+	});
+
+	const [authLoading, setAuthLoading] = useState(false);
+
+	const submitForm: SubmitHandler<SignUpProps> = data => {
+		console.log(data);
+	};
+
 	return (
 		<Layout title='Sign Up'>
 			<div className={inter.className}>
@@ -24,108 +46,55 @@ const SignUp = () => {
 
 					<div className='mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]'>
 						<div className='bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12'>
-							<form className='space-y-6'>
-								<div>
-									<label
-										htmlFor='name'
-										className='block text-sm font-medium leading-6 text-gray-900'
-									>
-										Name
-									</label>
-									<div className='mt-2'>
-										<input
-											id='name'
-											name='name'
-											type='text'
-											required
-											className='block w-full rounded-md border-0 py-1.5
-											text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300
-											placeholder:text-gray-400 focus:ring-2 focus:ring-inset
-											focus:ring-black sm:text-sm sm:leading-6'
-										/>
-									</div>
-								</div>
+							<form
+								className='space-y-1'
+								onSubmit={handleSubmit(submitForm)}
+							>
+								<Input
+									type='text'
+									label='Name'
+									placeholder='John'
+									id='name'
+									register={register}
+									errors={errors}
+								/>
 
-								<div>
-									<label
-										htmlFor='user-type'
-										className='block text-sm font-medium leading-6 text-gray-900'
-									>
-										User Type
-									</label>
-									<select
-										id='user-type'
-										name='user-type'
-										className='mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10
-										text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2
-										focus:ring-black sm:text-sm sm:leading-6'
-										defaultValue='User'
-									>
-										<option>User</option>
-										<option>Agent</option>
-									</select>
-								</div>
+								<Input
+									type='select'
+									label='User Type'
+									placeholder='User Type'
+									id='userType'
+									selectOptions={['User', 'Agent']}
+									register={register}
+									errors={errors}
+								/>
 
-								<div>
-									<label
-										htmlFor='email'
-										className='block text-sm font-medium leading-6 text-gray-900'
-									>
-										Email address
-									</label>
-									<div className='mt-2'>
-										<input
-											id='email'
-											name='email'
-											type='email'
-											autoComplete='email'
-											required
-											className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm
-											ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2
-											focus:ring-inset focus:ring-black sm:text-sm sm:leading-6'
-										/>
-									</div>
-								</div>
+								<Input
+									type='email'
+									label='Email'
+									placeholder='johndoe@example.com'
+									id='email'
+									register={register}
+									errors={errors}
+								/>
 
-								<div>
-									<label
-										htmlFor='password'
-										className='block text-sm font-medium leading-6 text-gray-900'
-									>
-										Password
-									</label>
-									<div className='mt-2'>
-										<input
-											id='password'
-											name='password'
-											type='password'
-											required
-											className='block w-full rounded-md border-0 py-1.5 text-gray-900
-											shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400
-											focus:ring-2 focus:ring-inset focus:ring-black sm:text-sm sm:leading-6'
-										/>
-									</div>
-								</div>
+								<Input
+									type='password'
+									label='Password'
+									placeholder=''
+									id='password'
+									register={register}
+									errors={errors}
+								/>
 
-								<div>
-									<label
-										htmlFor='confirm-password'
-										className='block text-sm font-medium leading-6 text-gray-900'
-									>
-										Confirm Password
-									</label>
-									<div className='mt-2'>
-										<input
-											id='confirm-password'
-											name='confirm-password'
-											type='password'
-											required
-											className='block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm
-											ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2
-											focus:ring-inset focus:ring-black sm:text-sm sm:leading-6'
-										/>
-									</div>
-								</div>
+								<Input
+									type='password'
+									label='Confirm Password'
+									placeholder=''
+									id='confirmPassword'
+									register={register}
+									errors={errors}
+								/>
 
 								<div className='flex items-center justify-between'>
 									<div className='text-sm leading-6'>
@@ -140,29 +109,14 @@ const SignUp = () => {
 								</div>
 
 								<div>
-									<button
-										type='submit'
-										className='flex w-full justify-center rounded-md bg-ct-deepPink px-3 py-1.5
-                                        text-sm font-semibold leading-6 text-white shadow-sm hover:opacity-80
-                                        focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2
-                                        focus-visible:outline-ct-deepPink'
-									>
+									<Button extraClasses='w-full max-w-sm flex justify-center mt-2'>
+										{authLoading && <Spinner />}
 										Sign up
-									</button>
+									</Button>
 								</div>
 							</form>
 						</div>
 					</div>
-
-					{/*<p className='mt-10 text-center text-sm text-gray-500'>*/}
-					{/*	Not a member?{' '}*/}
-					{/*	<a*/}
-					{/*		href='#'*/}
-					{/*		className='font-semibold leading-6 text-indigo-600 hover:text-indigo-500'*/}
-					{/*	>*/}
-					{/*		Start a 14 day free trial*/}
-					{/*	</a>*/}
-					{/*</p>*/}
 				</div>
 			</div>
 		</Layout>
