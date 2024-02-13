@@ -2,6 +2,8 @@ import Seo from '@/components/seo/seo';
 import { ReactNode, FC } from 'react';
 import { clsx } from 'clsx';
 import { Inter } from 'next/font/google';
+import Footer from '@/components/footer/footer';
+import NavBar from '@/components/nav/nav';
 
 interface IProps {
 	title: string;
@@ -28,9 +30,9 @@ const Layout: FC<IProps> = ({
 			)}
 		>
 			<Seo title={title} />
-			{!hideNav && <nav />}
+			{!hideNav && <NavBar />}
 			<div>{children}</div>
-			{!hideFooter && <footer />}
+			{!hideFooter && <Footer />}
 		</main>
 	);
 };
