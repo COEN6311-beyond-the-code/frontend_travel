@@ -12,10 +12,10 @@ import Link from 'next/link';
 
 const navigation = {
 	pages: [
-		{ name: 'Packages', href: '/packages' },
-		{ name: 'Flights', href: '/flights' },
-		{ name: 'Hotels', href: '/hotels' },
-		{ name: 'Activities', href: '/activities' },
+		{ name: 'Packages', href: '/search' },
+		{ name: 'Flights', href: '/search?itemType=flights' },
+		{ name: 'Hotels', href: '/search?itemType=hotels' },
+		{ name: 'Activities', href: '/search?itemType=activities' },
 	],
 };
 
@@ -182,8 +182,8 @@ export default function NavBar() {
 
 								{/* Search */}
 								<div className='flex lg:ml-6'>
-									<a
-										href='#'
+									<Link
+										href='/search'
 										className='p-2 text-gray-400 hover:text-gray-500'
 									>
 										<span className='sr-only'>Search</span>
@@ -191,7 +191,7 @@ export default function NavBar() {
 											className='h-6 w-6'
 											aria-hidden='true'
 										/>
-									</a>
+									</Link>
 								</div>
 
 								{/* Cart */}
