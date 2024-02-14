@@ -77,32 +77,32 @@ export default function NavBar() {
 											key={page.name}
 											className='flow-root'
 										>
-											<a
+											<Link
 												href={page.href}
 												className='-m-2 block p-2 font-medium text-gray-900'
 											>
 												{page.name}
-											</a>
+											</Link>
 										</div>
 									))}
 								</div>
 
 								<div className='space-y-6 border-t border-gray-200 px-4 py-6'>
 									<div className='flow-root'>
-										<a
-											href='#'
+										<Link
+											href='/sign-in'
 											className='-m-2 block p-2 font-medium text-gray-900'
 										>
 											Sign in
-										</a>
+										</Link>
 									</div>
 									<div className='flow-root'>
-										<a
-											href='#'
+										<Link
+											href='/sign-up'
 											className='-m-2 block p-2 font-medium text-gray-900'
 										>
 											Create account
-										</a>
+										</Link>
 									</div>
 								</div>
 							</Dialog.Panel>
@@ -133,7 +133,7 @@ export default function NavBar() {
 
 							{/* Logo */}
 							<div className='ml-4 flex lg:ml-0'>
-								<a href='#'>
+								<Link href='/'>
 									<span className='sr-only'>
 										Your Company
 									</span>
@@ -142,7 +142,7 @@ export default function NavBar() {
 										src='https://tailwindui.com/img/logos/mark.svg?color=pink&shade=600'
 										alt=''
 									/>
-								</a>
+								</Link>
 							</div>
 
 							{/* Flyout menus */}

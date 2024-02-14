@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 const CTA = () => {
 	return (
 		<section aria-labelledby='sale-heading'>
@@ -10,18 +12,18 @@ const CTA = () => {
 									id='sale-heading'
 									className='text-4xl font-bold tracking-tight text-white md:text-5xl'
 								>
-									Final Stock.
+									New here?
 									<br />
-									Up to 50% off.
+									Get started.
 								</h2>
 								<div className='mt-6 text-base'>
-									<a
-										href='#'
-										className='font-semibold text-white'
+									<Link
+										href='/sign-up'
+										className='font-semibold text-ct-deepPink hover:text-white'
 									>
-										Shop the sale
+										Sign up now
 										<span aria-hidden='true'> &rarr;</span>
-									</a>
+									</Link>
 								</div>
 							</div>
 
@@ -45,18 +47,17 @@ const CTA = () => {
 										</div>
 									</div>
 									<div className='flex space-x-6 sm:-mt-20 sm:flex-col sm:space-x-0 sm:space-y-6 lg:space-y-8'>
-										<div className='flex-shrink-0'>
-											<img
-												className='h-64 w-64 rounded-lg object-cover md:h-72 md:w-72'
-												src='https://tailwindui.com/img/ecommerce-images/home-page-03-favorite-01.jpg'
-												alt=''
-											/>
-										</div>
-
 										<div className='mt-6 flex-shrink-0 sm:mt-0'>
 											<img
 												className='h-64 w-64 rounded-lg object-cover md:h-72 md:w-72'
-												src='https://tailwindui.com/img/ecommerce-images/home-page-03-favorite-02.jpg'
+												src='/images/explore.jpg'
+												alt=''
+											/>
+										</div>
+										<div className='flex-shrink-0'>
+											<img
+												className='h-64 w-64 rounded-lg object-cover md:h-72 md:w-72'
+												src='/images/friends.jpg'
 												alt=''
 											/>
 										</div>

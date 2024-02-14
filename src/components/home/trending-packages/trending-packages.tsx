@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 const TrendingPackages = () => {
 	const favorites = [
 		{
@@ -5,8 +7,7 @@ const TrendingPackages = () => {
 			name: 'Black Basic Tee',
 			price: '$32',
 			href: '#',
-			imageSrc:
-				'https://tailwindui.com/img/ecommerce-images/home-page-03-favorite-01.jpg',
+			imageSrc: '/images/activity package 1.jpg',
 			imageAlt: "Model wearing women's black cotton crewneck tee.",
 		},
 		{
@@ -14,8 +15,7 @@ const TrendingPackages = () => {
 			name: 'Off-White Basic Tee',
 			price: '$32',
 			href: '#',
-			imageSrc:
-				'https://tailwindui.com/img/ecommerce-images/home-page-03-favorite-02.jpg',
+			imageSrc: '/images/hotel package 1.jpg',
 			imageAlt: "Model wearing women's off-white cotton crewneck tee.",
 		},
 		{
@@ -23,8 +23,7 @@ const TrendingPackages = () => {
 			name: 'Mountains Artwork Tee',
 			price: '$36',
 			href: '#',
-			imageSrc:
-				'https://tailwindui.com/img/ecommerce-images/home-page-03-favorite-03.jpg',
+			imageSrc: '/images/travel package 1.jpg',
 			imageAlt:
 				"Model wearing women's burgundy red crewneck artwork tee with small white triangle overlapping larger black triangle.",
 		},
@@ -60,10 +59,10 @@ const TrendingPackages = () => {
 								/>
 							</div>
 							<h3 className='mt-4 text-base font-semibold text-gray-900'>
-								<a href={favorite.href}>
+								<Link href={favorite.href}>
 									<span className='absolute inset-0' />
 									{favorite.name}
-								</a>
+								</Link>
 							</h3>
 							<p className='mt-1 text-sm text-gray-500'>
 								{favorite.price}
@@ -73,13 +72,13 @@ const TrendingPackages = () => {
 				</div>
 
 				<div className='mt-6 sm:hidden'>
-					<a
-						href='#'
-						className='block text-sm font-semibold text-indigo-600 hover:text-indigo-500'
+					<Link
+						href='/search'
+						className='block text-sm font-semibold text-ct-deepPink hover:opacity-80'
 					>
-						Browse all favorites
+						Browse all packages
 						<span aria-hidden='true'> &rarr;</span>
-					</a>
+					</Link>
 				</div>
 			</div>
 		</section>
