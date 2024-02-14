@@ -9,11 +9,13 @@ import { products } from '@/data/packages';
 import ProductCard from '@/components/search/product-card/product-card';
 import { useRouter } from 'next/router';
 import { Product } from '@/types/product/product';
+import PriceRange from '@/components/search/price-range/price-range';
 
 const filters = [
 	{
 		id: 'productType',
 		name: 'Product',
+		type: 'checkbox',
 		options: [
 			{ value: 'packages', label: 'Packages' },
 			{ value: 'flights', label: 'Flights' },
@@ -24,11 +26,21 @@ const filters = [
 ];
 
 const Search = () => {
+	const rangeMin = 100;
+	const rangeMax = 5000;
 	const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 	const [activeProductTypeFilters, setActiveProductTypeFilters] = useState<
 		string[]
 	>([]);
 	const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
+
+	const [priceValues, setPriceValues] = useState<{
+		price_min: number;
+		price_max: number;
+	}>({
+		price_min: rangeMin,
+		price_max: rangeMax,
+	});
 
 	const handleProductTypeFilterChange = (value: string) => {
 		let updatedFilters;
@@ -70,6 +82,17 @@ const Search = () => {
 			);
 		}
 	}, [router, activeProductTypeFilters]);
+
+	useEffect(() => {
+		// Filter products based on price range and current active product type filters
+		const filtered = products.filter(
+			product =>
+				activeProductTypeFilters.includes(product.type) &&
+				product.price >= priceValues.price_min &&
+				product.price <= priceValues.price_max,
+		);
+		setFilteredProducts(filtered);
+	}, [activeProductTypeFilters, priceValues]);
 
 	return (
 		<div className={inter.className}>
@@ -208,6 +231,17 @@ const Search = () => {
 											</Disclosure>
 										))}
 									</form>
+									<div className='px-4'>
+										<PriceRange
+											defaultMin={100}
+											defaultMax={5000}
+											barMax={5000}
+											barMin={100}
+											minInterval={300}
+											rangeValues={priceValues}
+											setRangeValues={setPriceValues}
+										/>
+									</div>
 								</Dialog.Panel>
 							</Transition.Child>
 						</div>
@@ -300,6 +334,20 @@ const Search = () => {
 										</div>
 									))}
 								</form>
+								<div>
+									<span className='mt-10 block text-sm font-medium text-gray-900'>
+										Price range
+									</span>
+									<PriceRange
+										defaultMin={100}
+										defaultMax={5000}
+										barMax={5000}
+										barMin={100}
+										minInterval={300}
+										rangeValues={priceValues}
+										setRangeValues={setPriceValues}
+									/>
+								</div>
 							</div>
 						</aside>
 
