@@ -1,31 +1,30 @@
 import Link from 'next/link';
 
 const TrendingPackages = () => {
-	const favorites = [
+	const packages = [
 		{
 			id: 1,
-			name: 'Black Basic Tee',
-			price: '$32',
+			name: 'Rock Climbing',
+			price: '$60',
 			href: '#',
 			imageSrc: '/images/activity package 1.jpg',
-			imageAlt: "Model wearing women's black cotton crewneck tee.",
+			imageAlt: 'Woman climbing rock face in the desert.',
 		},
 		{
 			id: 2,
-			name: 'Off-White Basic Tee',
-			price: '$32',
+			name: 'Hotel Transylvania',
+			price: '$290',
 			href: '#',
 			imageSrc: '/images/hotel package 1.jpg',
-			imageAlt: "Model wearing women's off-white cotton crewneck tee.",
+			imageAlt: 'Best hotel in the world.',
 		},
 		{
 			id: 3,
-			name: 'Mountains Artwork Tee',
-			price: '$36',
+			name: 'France Flight Package',
+			price: '$900',
 			href: '#',
 			imageSrc: '/images/travel package 1.jpg',
-			imageAlt:
-				"Model wearing women's burgundy red crewneck artwork tee with small white triangle overlapping larger black triangle.",
+			imageAlt: 'Best flight package to France in January.',
 		},
 	];
 
@@ -37,35 +36,35 @@ const TrendingPackages = () => {
 						id='favorites-heading'
 						className='text-2xl font-bold tracking-tight text-gray-900'
 					>
-						Our Favorites
+						Trending packages
 					</h2>
-					<a
-						href='#'
-						className='hidden text-sm font-semibold text-indigo-600 hover:text-indigo-500 sm:block'
+					<Link
+						href='/search'
+						className='hidden text-sm font-semibold text-ct-deepPink hover:opacity-80 sm:block'
 					>
-						Browse all favorites
+						Browse all packages
 						<span aria-hidden='true'> &rarr;</span>
-					</a>
+					</Link>
 				</div>
 
 				<div className='mt-6 grid grid-cols-1 gap-y-10 sm:grid-cols-3 sm:gap-x-6 sm:gap-y-0 lg:gap-x-8'>
-					{favorites.map(favorite => (
-						<div key={favorite.id} className='group relative'>
+					{packages.map(item => (
+						<div key={item.id} className='group relative'>
 							<div className='h-96 w-full overflow-hidden rounded-lg sm:aspect-h-3 sm:aspect-w-2 group-hover:opacity-75 sm:h-auto'>
 								<img
-									src={favorite.imageSrc}
-									alt={favorite.imageAlt}
+									src={item.imageSrc}
+									alt={item.imageAlt}
 									className='h-full w-full object-cover object-center'
 								/>
 							</div>
 							<h3 className='mt-4 text-base font-semibold text-gray-900'>
-								<Link href={favorite.href}>
+								<Link href={item.href}>
 									<span className='absolute inset-0' />
-									{favorite.name}
+									{item.name}
 								</Link>
 							</h3>
 							<p className='mt-1 text-sm text-gray-500'>
-								{favorite.price}
+								{item.price}
 							</p>
 						</div>
 					))}
