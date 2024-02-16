@@ -12,10 +12,10 @@ import Link from 'next/link';
 
 const navigation = {
 	pages: [
-		{ name: 'Packages', href: '/search' },
-		{ name: 'Flights', href: '/search?itemType=flights' },
-		{ name: 'Hotels', href: '/search?itemType=hotels' },
-		{ name: 'Activities', href: '/search?itemType=activities' },
+		{ name: 'Packages', href: '/search?type=packages' },
+		{ name: 'Flights', href: '/search?type=flights' },
+		{ name: 'Hotels', href: '/search?type=hotels' },
+		{ name: 'Activities', href: '/search?type=activities' },
 	],
 };
 

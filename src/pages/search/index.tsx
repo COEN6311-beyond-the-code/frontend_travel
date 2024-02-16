@@ -85,14 +85,19 @@ const Search = () => {
 
 	useEffect(() => {
 		// Filter products based on price range and current active product type filters
-		const filtered = products.filter(
-			product =>
-				activeProductTypeFilters.includes(product.type) &&
-				product.price >= priceValues.price_min &&
-				product.price <= priceValues.price_max,
-		);
-		setFilteredProducts(filtered);
+
+		if (activeProductTypeFilters.length > 0) {
+			const filtered = products.filter(
+				product =>
+					activeProductTypeFilters.includes(product.type) &&
+					product.price >= priceValues.price_min &&
+					product.price <= priceValues.price_max,
+			);
+			setFilteredProducts(filtered);
+		}
 	}, [activeProductTypeFilters, priceValues]);
+
+	console.log(filteredProducts);
 
 	return (
 		<div className={inter.className}>

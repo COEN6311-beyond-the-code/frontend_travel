@@ -78,7 +78,7 @@ export const products: Product[] = [
 		price: 450,
 		description:
 			'Enjoy one week in the beautiful Villa Marie hotel with free breakfast and lunch.',
-		options: 'Included: Hotel',
+		options: 'Included: Activities',
 		imageSrc: '/images/hotels/hotel 5.jpg',
 		imageAlt: 'Villa Marie Hotel.',
 		type: 'activities',
