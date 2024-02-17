@@ -27,3 +27,8 @@ export interface InputTypes {
 	defaultChecked?: boolean;
 	hideError?: boolean;
 }
+
+export interface CheckoutFormTypes {
+	email: string;
+	phone: string;
+}

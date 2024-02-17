@@ -14,7 +14,7 @@ interface IProps {
 const PackageCart: FC<IProps> = ({ open, setOpen }) => {
 	return (
 		<Transition.Root show={open} as={Fragment}>
-			<Dialog as='div' className='relative z-10' onClose={setOpen}>
+			<Dialog as='div' className='relative z-50' onClose={setOpen}>
 				<Transition.Child
 					as={Fragment}
 					enter='ease-in-out duration-500'
@@ -49,12 +49,12 @@ const PackageCart: FC<IProps> = ({ open, setOpen }) => {
 										<div className='flex-1 overflow-y-auto px-4 py-6 sm:px-6'>
 											<div className='flex items-start justify-between'>
 												<Dialog.Title className='text-lg font-medium text-gray-900'>
-													Shopping cart
+													Package cart
 												</Dialog.Title>
 												<div className='ml-3 flex h-7 items-center'>
 													<button
 														type='button'
-														className='relative -m-2 p-2 text-gray-400 hover:text-gray-500'
+														className='relative -m-2 p-2 text-gray-400 hover:text-gray-500 focus-visible:outline-ct-deepPink'
 														onClick={() =>
 															setOpen(false)
 														}
@@ -102,15 +102,18 @@ const PackageCart: FC<IProps> = ({ open, setOpen }) => {
 																		<div>
 																			<div className='flex justify-between text-base font-medium text-gray-900'>
 																				<h3>
-																					<a
-																						href={
-																							product.href
+																					<Link
+																						href={`/item/${product.id}`}
+																						onClick={() =>
+																							setOpen(
+																								false,
+																							)
 																						}
 																					>
 																						{
 																							product.name
 																						}
-																					</a>
+																					</Link>
 																				</h3>
 																				<p className='ml-4'>
 																					${' '}
@@ -155,8 +158,7 @@ const PackageCart: FC<IProps> = ({ open, setOpen }) => {
 												<p>$262.00</p>
 											</div>
 											<p className='mt-0.5 text-sm text-gray-500'>
-												Shipping and taxes calculated at
-												checkout.
+												Taxes calculated at checkout.
 											</p>
 											<div className='mt-6'>
 												<Link

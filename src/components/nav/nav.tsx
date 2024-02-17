@@ -25,7 +25,7 @@ export default function NavBar() {
 	const [openCart, setOpenCart] = useState(false);
 
 	return (
-		<div className={clsx('bg-white', inter.className)}>
+		<div className={clsx('bg-white relative z-10', inter.className)}>
 			{/* Mobile menu */}
 			<Transition.Root show={open} as={Fragment}>
 				<Dialog
@@ -93,7 +93,7 @@ export default function NavBar() {
 									<div className='flow-root'>
 										<Link
 											href='/sign-in'
-											className='-m-2 block p-2 font-medium text-gray-900'
+											className='-m-2 block p-2 font-medium text-gray-900 hover:text-ct-deepPink'
 										>
 											Sign in
 										</Link>
@@ -166,7 +166,7 @@ export default function NavBar() {
 								<div className='hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6'>
 									<Link
 										href='/sign-in'
-										className='text-sm font-medium text-gray-700 hover:text-gray-800'
+										className='text-sm font-medium text-gray-700 transition ease-in-out duration-200 hover:text-ct-deepPink'
 									>
 										Sign in
 									</Link>
@@ -176,7 +176,7 @@ export default function NavBar() {
 									/>
 									<Link
 										href='/sign-up'
-										className='text-sm font-medium text-gray-700 hover:text-gray-800'
+										className='text-sm font-medium text-gray-700 transition ease-in-out duration-200 hover:text-ct-deepPink'
 									>
 										Create account
 									</Link>
