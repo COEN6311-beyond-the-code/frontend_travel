@@ -19,7 +19,7 @@ const SignUp = () => {
 		resolver: yupResolver(SignUpSchema),
 	});
 
-	const [authLoading, setAuthLoading] = useState(false);
+	const [authLoading, _setAuthLoading] = useState(false);
 
 	const submitForm: SubmitHandler<SignUpProps> = data => {
 		console.log(data);
@@ -55,16 +55,6 @@ const SignUp = () => {
 									label='Name'
 									placeholder='John'
 									id='name'
-									register={register}
-									errors={errors}
-								/>
-
-								<Input
-									type='select'
-									label='User Type'
-									placeholder='User Type'
-									id='userType'
-									selectOptions={['User', 'Agent']}
 									register={register}
 									errors={errors}
 								/>
