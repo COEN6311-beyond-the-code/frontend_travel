@@ -10,6 +10,11 @@ import ProductCard from '@/components/search/product-card/product-card';
 import { useRouter } from 'next/router';
 import { Product } from '@/types/product/product';
 import PriceRange from '@/components/search/price-range/price-range';
+import Input from '@/components/input/input';
+import { SubmitHandler, useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { SearchSchema } from '@/schema/search-schema';
+import Button from '@/components/button/button';
 
 const filters = [
 	{
@@ -103,6 +108,38 @@ const Search = () => {
 			setFilteredProducts(filtered);
 		}
 	}, [activeProductTypeFilters, priceValues]);
+
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+	} = useForm<{ query?: string }>({
+		resolver: yupResolver(SearchSchema),
+	});
+
+	const submitForm: SubmitHandler<{ query?: string }> = data => {
+		if (data.query) {
+			let filtered = [];
+
+			if (filteredProducts.length > 0) {
+				filtered = filteredProducts.filter(product =>
+					product.name
+						.toLowerCase()
+						.includes(data.query!.toLowerCase()),
+				);
+			} else {
+				filtered = products.filter(product =>
+					product.name
+						.toLowerCase()
+						.includes(data.query!.toLowerCase()),
+				);
+			}
+
+			setFilteredProducts(filtered);
+		} else {
+			setFilteredProducts(products);
+		}
+	};
 
 	return (
 		<div className={inter.className}>
@@ -368,6 +405,27 @@ const Search = () => {
 							<h2 id='product-heading' className='sr-only'>
 								Products
 							</h2>
+
+							<div className='mb-8'>
+								<form
+									className='flex items-center'
+									onSubmit={handleSubmit(submitForm)}
+								>
+									<Input
+										type='search'
+										placeholder='What are you looking for?'
+										id='query'
+										register={register}
+										errors={errors}
+										hideError={true}
+										extraClasses='mt-0 pt-0'
+									/>
+
+									<Button extraClasses='h-full mt-0 mb-1 md:ml-4'>
+										Search
+									</Button>
+								</form>
+							</div>
 
 							<div className='grid grid-cols-1 gap-y-4 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-10 lg:gap-x-8 xl:grid-cols-3'>
 								{!router.query ? (

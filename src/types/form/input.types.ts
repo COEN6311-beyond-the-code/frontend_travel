@@ -3,7 +3,7 @@ import React, { ChangeEventHandler, ReactNode } from 'react';
 
 export interface InputTypes {
 	type: string;
-	label: any;
+	label?: any;
 	placeholder: string;
 	id: string;
 	selectOptions?: string[];
@@ -25,4 +25,5 @@ export interface InputTypes {
 	noCheckBoxError?: boolean;
 	inputKey?: any;
 	defaultChecked?: boolean;
+	hideError?: boolean;
 }

@@ -25,6 +25,7 @@ const Input: FC<InputTypes> = ({
 	noCheckBoxError,
 	inputKey,
 	defaultChecked,
+	hideError,
 }) => {
 	return type === 'checkbox' ? (
 		<label
@@ -49,7 +50,7 @@ const Input: FC<InputTypes> = ({
 							'text-ct-deepPink focus:ring-edanra-lightGreen mr-3',
 					)}
 				/>
-				{label}
+				{label ?? ''}
 			</div>
 			{!noCheckBoxError && (
 				<p className='text-red-500 mt-1 text-small h-[16px]'>
@@ -64,7 +65,7 @@ const Input: FC<InputTypes> = ({
 				'w-full max-w-sm mb-2 block px-1 py-0.5',
 			)}
 		>
-			{label}
+			{label ?? ''}
 			<p className='text-sm'>{subLabel}</p>
 			<select
 				className='block disabled:cursor-not-allowed appearance-none w-full
@@ -154,9 +155,11 @@ const Input: FC<InputTypes> = ({
                 !placeholder-gray-400 focus:border-black focus:ring-black focus:outline-0'
 			/>
 
-			<p className='text-red-500 mt-1 text-small h-[16px]'>
-				{errors && errors[id]?.message}
-			</p>
+			{hideError ? null : (
+				<p className='text-red-500 mt-1 text-small h-[16px]'>
+					{errors && errors[id]?.message}
+				</p>
+			)}
 		</label>
 	);
 };
