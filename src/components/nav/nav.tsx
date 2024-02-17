@@ -9,6 +9,7 @@ import {
 import { clsx } from 'clsx';
 import { inter } from '@/utils/fonts';
 import Link from 'next/link';
+import PackageCart from '@/components/package-cart/package-cart';
 
 const navigation = {
 	pages: [
@@ -21,6 +22,7 @@ const navigation = {
 
 export default function NavBar() {
 	const [open, setOpen] = useState(false);
+	const [openCart, setOpenCart] = useState(false);
 
 	return (
 		<div className={clsx('bg-white', inter.className)}>
@@ -195,28 +197,30 @@ export default function NavBar() {
 								</div>
 
 								{/* Cart */}
-								<div className='ml-4 flow-root lg:ml-6'>
-									<a
-										href='#'
-										className='group -m-2 flex items-center p-2'
-									>
-										<ArchiveBoxIcon
-											className='h-6 w-6 flex-shrink-0 text-gray-400 group-hover:text-gray-500'
-											aria-hidden='true'
-										/>
-										<span className='ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-800'>
-											0
-										</span>
-										<span className='sr-only'>
-											items in cart, view bag
-										</span>
-									</a>
+								<div
+									className='ml-4 lg:ml-6 flex items-center justify-center cursor-pointer'
+									onClick={() => {
+										setOpenCart(!openCart);
+									}}
+								>
+									<ArchiveBoxIcon
+										className='h-6 w-6 flex-shrink-0 text-gray-400 group-hover:text-gray-500'
+										aria-hidden='true'
+									/>
+									<span className='ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-800'>
+										0
+									</span>
+									<span className='sr-only'>
+										items in cart, view bag
+									</span>
 								</div>
 							</div>
 						</div>
 					</div>
 				</nav>
 			</header>
+
+			<PackageCart open={openCart} setOpen={setOpenCart} />
 		</div>
 	);
 }

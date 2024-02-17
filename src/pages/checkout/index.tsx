@@ -6,24 +6,12 @@ import { products } from '@/data/packages';
 import PageLoader from '@/components/loaders/page-loader';
 
 const Checkout = () => {
-	const [item, setItem] = useState<Product | null>(null);
-	const router = useRouter();
-	const { itemId } = router.query;
+	const [cart, setCart] = useState<Product[]>([]);
 
-	useEffect(() => {
-		if (itemId) {
-			const product = products.find(
-				product => product.id === parseInt(itemId as string),
-			);
-			if (product) {
-				setItem(product);
-			}
-		}
-	}, [itemId]);
-
-	if (!item) {
+	if (cart.length === 1) {
 		return <PageLoader />;
 	}
+
 	return (
 		<Layout title='Checkout Page'>
 			<h1>Checkout</h1>

@@ -33,13 +33,10 @@ const RelatedItemCard = ({ product }: { product: Product }) => {
 				</div>
 			</Link>
 			<div className='mt-6'>
-				<Link
-					href={`/checkout/${product.id}`}
-					className='relative flex items-center justify-center rounded-md border border-transparent bg-gray-100 px-8 py-2 text-sm font-medium text-gray-900 hover:bg-gray-200'
-				>
-					Purchase package
+				<div className='cursor-pointer relative flex items-center justify-center rounded-md border border-transparent bg-gray-100 px-8 py-2 text-sm font-medium text-gray-900 hover:bg-gray-200'>
+					Add to package
 					<span className='sr-only'>, {product.name}</span>
-				</Link>
+				</div>
 			</div>
 		</div>
 	);

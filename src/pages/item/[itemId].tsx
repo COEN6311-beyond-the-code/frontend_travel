@@ -155,7 +155,7 @@ const ItemDetails = () => {
                                         hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-ct-deepPink
                                         focus:ring-offset-2 focus:ring-offset-gray-50 sm:w-full'
 									>
-										Purchase package
+										Add to package
 									</button>
 								</div>
 							</form>
