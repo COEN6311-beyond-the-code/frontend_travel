@@ -15,6 +15,7 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { SearchSchema } from '@/schema/search-schema';
 import Button from '@/components/button/button';
+import _ from 'lodash';
 
 const filters = [
 	{
@@ -90,7 +91,6 @@ const Search = () => {
 
 	useEffect(() => {
 		// Filter products based on price range and current active product type filters
-
 		if (activeProductTypeFilters.length > 0) {
 			const filtered = products.filter(
 				product =>
@@ -119,23 +119,36 @@ const Search = () => {
 
 	const submitForm: SubmitHandler<{ query?: string }> = data => {
 		if (data.query) {
-			let filtered = [];
+			const filterProducts = (product: Product) => {
+				return (
+					product.name
+						.toLowerCase()
+						.includes(data.query!.toLowerCase()) ||
+					product.description
+						.toLowerCase()
+						.includes(data.query!.toLowerCase()) ||
+					product.options
+						.toLowerCase()
+						.includes(data.query!.toLowerCase()) ||
+					product.type
+						.toLowerCase()
+						.includes(data.query!.toLowerCase()) ||
+					_.some(product.details, detail =>
+						_.some(detail, value =>
+							value
+								.toString()
+								.toLowerCase()
+								.includes(data.query!.toLowerCase()),
+						),
+					)
+				);
+			};
 
 			if (filteredProducts.length > 0) {
-				filtered = filteredProducts.filter(product =>
-					product.name
-						.toLowerCase()
-						.includes(data.query!.toLowerCase()),
-				);
+				setFilteredProducts(filteredProducts.filter(filterProducts));
 			} else {
-				filtered = products.filter(product =>
-					product.name
-						.toLowerCase()
-						.includes(data.query!.toLowerCase()),
-				);
+				setFilteredProducts(products.filter(filterProducts));
 			}
-
-			setFilteredProducts(filtered);
 		} else {
 			setFilteredProducts(products);
 		}
