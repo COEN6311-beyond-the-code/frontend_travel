@@ -17,10 +17,10 @@ const filters = [
 		name: 'Product',
 		type: 'checkbox',
 		options: [
-			{ value: 'packages', label: 'Packages' },
-			{ value: 'flights', label: 'Flights' },
-			{ value: 'hotels', label: 'Hotels' },
-			{ value: 'activities', label: 'Activities' },
+			{ value: 'package', label: 'Packages' },
+			{ value: 'flight', label: 'Flights' },
+			{ value: 'hotel', label: 'Hotels' },
+			{ value: 'activity', label: 'Activities' },
 		],
 	},
 ];
@@ -94,10 +94,15 @@ const Search = () => {
 					product.price <= priceValues.price_max,
 			);
 			setFilteredProducts(filtered);
+		} else {
+			const filtered = products.filter(
+				product =>
+					product.price >= priceValues.price_min &&
+					product.price <= priceValues.price_max,
+			);
+			setFilteredProducts(filtered);
 		}
 	}, [activeProductTypeFilters, priceValues]);
-
-	console.log(filteredProducts);
 
 	return (
 		<div className={inter.className}>

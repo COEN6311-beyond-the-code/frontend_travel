@@ -7,5 +7,12 @@ export interface Product {
 	options: string;
 	imageSrc: string;
 	imageAlt: string;
-	type: 'packages' | 'flights' | 'hotels' | 'activities';
+	type: 'package' | 'flight' | 'hotel' | 'activity';
+	details: ProductDetails[];
+}
+
+export interface ProductDetails {
+	name: string;
+	items: string[];
+	type: 'package' | 'flight' | 'hotel' | 'activity';
 }

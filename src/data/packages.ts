@@ -6,12 +6,55 @@ export const products: Product[] = [
 		name: '7 day France trip',
 		href: '/',
 		price: 1200,
-		description:
-			'Explore the beautiful country of France with our 7 day package deal.',
+		description: `Explore the beautiful country of France with our 7 day package deal. Enjoy a relaxing flight, a comfy hotel and some fun activities. Come with friends and family to enjoy the experience of a lifetime`,
+		details: [
+			{
+				name: 'Features',
+				items: [
+					'Enjoy one of the best flight',
+					'The hotel is located in the heart of the city',
+					'Enjoy the best meals',
+					'Meet great people at the rock climbing event',
+				],
+				type: 'package',
+			},
+			{
+				name: 'Flight Details',
+				items: [
+					'Flight number: SKW138',
+					'Seat: 17A',
+					'Class: Economy',
+					'Departure: 19:55',
+					'Arrival: 22:15',
+				],
+				type: 'flight',
+			},
+			{
+				name: 'Hotel Details',
+				items: [
+					'Hotel name: Grand Hotel Europa',
+					'Room: Standard',
+					'Check-in: 15:00',
+					'Check-out: 10:00',
+				],
+				type: 'hotel',
+			},
+			{
+				name: 'Activity Details',
+				items: [
+					'Event: Rock climbing',
+					'Location: Summit Climbing Gym',
+					'Address: 123 Johnson Ave.',
+					'Date: Friday, July 28, 2023',
+					'Time: 16:00',
+				],
+				type: 'activity',
+			},
+		],
 		options: 'Included: Flights, Hotel, Activities',
 		imageSrc: '/images/flights/trip 1.jpg',
 		imageAlt: '7 day France trip package.',
-		type: 'packages',
+		type: 'package',
 	},
 	{
 		id: 2,
@@ -23,7 +66,51 @@ export const products: Product[] = [
 		options: 'Included: Flights, Hotel, Activities',
 		imageSrc: '/images/flights/trip 3.jpg',
 		imageAlt: '1 month in Switzerland.',
-		type: 'packages',
+		type: 'package',
+		details: [
+			{
+				name: 'Features',
+				items: [
+					'Enjoy one of the best flight',
+					'The hotel is located in the heart of the city',
+					'Enjoy the best meals',
+					'Meet great people at the rock climbing event',
+				],
+				type: 'package',
+			},
+			{
+				name: 'Flight Details',
+				items: [
+					'Flight number: SKW138',
+					'Seat: 17A',
+					'Class: Economy',
+					'Departure: 19:55',
+					'Arrival: 22:15',
+				],
+				type: 'flight',
+			},
+			{
+				name: 'Hotel Details',
+				items: [
+					'Hotel name: Grand Hotel Europa',
+					'Room: Standard',
+					'Check-in: 15:00',
+					'Check-out: 10:00',
+				],
+				type: 'hotel',
+			},
+			{
+				name: 'Activity Details',
+				items: [
+					'Event: Rock climbing',
+					'Location: Summit Climbing Gym',
+					'Address: 123 Johnson Ave.',
+					'Date: Friday, July 28, 2023',
+					'Time: 16:00',
+				],
+				type: 'activity',
+			},
+		],
 	},
 	{
 		id: 3,
@@ -34,7 +121,20 @@ export const products: Product[] = [
 		options: 'Included: Activities',
 		imageSrc: '/images/activities/cooking.jpg',
 		imageAlt: '3 days cooking class.',
-		type: 'activities',
+		type: 'activity',
+		details: [
+			{
+				name: 'Activity Details',
+				items: [
+					'Event: Cooking class',
+					'Location: Summit Climbing Gym',
+					'Address: 123 Johnson Ave.',
+					'Date: Friday, July 28, 2023',
+					'Time: 12:00',
+				],
+				type: 'activity',
+			},
+		],
 	},
 	{
 		id: 4,
@@ -46,7 +146,20 @@ export const products: Product[] = [
 		options: 'Included: Activities',
 		imageSrc: '/images/activities/kayaking.jpg',
 		imageAlt: 'Kayaking challenge.',
-		type: 'activities',
+		type: 'activity',
+		details: [
+			{
+				name: 'Activity Details',
+				items: [
+					'Event: Kayaking challenge',
+					'Location: Atlantic Ocean',
+					'Address: 123 Johnson Ave.',
+					'Date: Friday, July 28, 2023',
+					'Time: 16:00',
+				],
+				type: 'activity',
+			},
+		],
 	},
 	{
 		id: 5,
@@ -58,7 +171,20 @@ export const products: Product[] = [
 		options: 'Included: Activities',
 		imageSrc: '/images/activities/surfing 2.jpg',
 		imageAlt: 'Surfing tutorials.',
-		type: 'activities',
+		type: 'activity',
+		details: [
+			{
+				name: 'Activity Details',
+				items: [
+					'Event: Surfing lessons',
+					'Location: Pacific Ocean',
+					'Address: 123 Johnson Ave.',
+					'Date: Friday, July 28, 2023',
+					'Time: 16:00',
+				],
+				type: 'activity',
+			},
+		],
 	},
 	{
 		id: 6,
@@ -69,7 +195,19 @@ export const products: Product[] = [
 		options: 'Included: Hotel',
 		imageSrc: '/images/hotels/hotel 3.jpg',
 		imageAlt: 'San Jose Hotel.',
-		type: 'hotels',
+		type: 'hotel',
+		details: [
+			{
+				name: 'Hotel Details',
+				items: [
+					'Hotel name: San Jose Hotel',
+					'Room: Standard',
+					'Check-in: 15:00',
+					'Check-out: 10:00',
+				],
+				type: 'hotel',
+			},
+		],
 	},
 	{
 		id: 7,
@@ -81,7 +219,19 @@ export const products: Product[] = [
 		options: 'Included: Activities',
 		imageSrc: '/images/hotels/hotel 5.jpg',
 		imageAlt: 'Villa Marie Hotel.',
-		type: 'activities',
+		type: 'activity',
+		details: [
+			{
+				name: 'Hotel Details',
+				items: [
+					'Hotel name: Villa Marie Hotel',
+					'Room: Standard',
+					'Check-in: 15:00',
+					'Check-out: 10:00',
+				],
+				type: 'hotel',
+			},
+		],
 	},
 	{
 		id: 8,
@@ -93,6 +243,19 @@ export const products: Product[] = [
 		options: 'Included: Flight',
 		imageSrc: '/images/airplane.jpg',
 		imageAlt: 'Air Quebec Flight.',
-		type: 'flights',
+		type: 'flight',
+		details: [
+			{
+				name: 'Flight Details',
+				items: [
+					'Flight number: SKW138',
+					'Seat: 17A',
+					'Class: Economy',
+					'Departure: 19:55',
+					'Arrival: 22:15',
+				],
+				type: 'flight',
+			},
+		],
 	},
 ];
