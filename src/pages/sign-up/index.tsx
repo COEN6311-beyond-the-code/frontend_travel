@@ -9,8 +9,12 @@ import { SignUpSchema } from '@/schema/sign-up-schema';
 import Button from '@/components/button/button';
 import Spinner from '@/components/loaders/spinner';
 import { useState } from 'react';
+// import Message from '@/components/message/message';
+// import {ExclamationCircleIcon} from "@heroicons/react/16/solid";
 
 const SignUp = () => {
+	// const [show, setShow] = useState(false);
+
 	const {
 		register,
 		handleSubmit,
@@ -109,6 +113,20 @@ const SignUp = () => {
 					</div>
 				</div>
 			</div>
+			{/*<Message*/}
+			{/*	title='Request sent successfully'*/}
+			{/*	subtitle='Your payment request has been sent.'*/}
+			{/*	show={show}*/}
+			{/*	setShow={setShow}*/}
+			{/*/>*/}
+			{/*<Message*/}
+			{/*	title='Payment Request Error'*/}
+			{/*	subtitle="An error occurred while processing your payment request. Please try again."*/}
+			{/*	Icon={ExclamationCircleIcon}*/}
+			{/*	iconColor='text-red-500'*/}
+			{/*	show={true}*/}
+			{/*	setShow={setShow}*/}
+			{/*/>*/}
 		</Layout>
 	);
 };
