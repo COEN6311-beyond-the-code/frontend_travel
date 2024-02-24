@@ -1,6 +1,8 @@
 import Dashboard from '@/components/dashboard/shared/dashboard';
 import { userNavigation } from '@/data/dashboard';
 import Layout from '@/components/layout/layout';
+import OrdersTable from '@/components/dashboard/user/ordersTable';
+import { orders } from '@/data/orders';
 
 const PastPurchases = () => {
 	const user = {
@@ -13,7 +15,11 @@ const PastPurchases = () => {
 	return (
 		<Layout title='Past Purchases' hideFooter={true} hideNav={true}>
 			<Dashboard navigationItems={userNavigation} user={user}>
-				<h1>Past Purchases</h1>
+				<h1 className='text-xl font-bold'>All Orders</h1>
+				<p>Find below all completed purchases.</p>
+				<OrdersTable
+					orders={orders.filter(order => order.status === 'complete')}
+				/>
 			</Dashboard>
 		</Layout>
 	);

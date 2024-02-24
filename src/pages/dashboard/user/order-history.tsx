@@ -1,6 +1,8 @@
 import Layout from '@/components/layout/layout';
 import Dashboard from '@/components/dashboard/shared/dashboard';
 import { userNavigation } from '@/data/dashboard';
+import OrdersTable from '@/components/dashboard/user/ordersTable';
+import { orders } from '@/data/orders';
 
 const OrderHistory = () => {
 	const user = {
@@ -13,7 +15,9 @@ const OrderHistory = () => {
 	return (
 		<Layout title='Order History' hideFooter={true} hideNav={true}>
 			<Dashboard navigationItems={userNavigation} user={user}>
-				<h1>Order History</h1>
+				<h1 className='text-xl font-bold'>All Orders</h1>
+				<p>Find below all orders you've placed.</p>
+				<OrdersTable orders={orders} />
 			</Dashboard>
 		</Layout>
 	);
