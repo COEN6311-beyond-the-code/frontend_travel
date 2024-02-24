@@ -1,12 +1,23 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { Order } from '@/types/dashboard/orders';
 import { classNames } from '@/utils/classNames';
+import ConfirmCancel from '@/components/message/confirm-cancel';
 
 interface IProps {
 	orders: Order[];
 }
 
 const OrdersTable: FC<IProps> = ({ orders }) => {
+	const [itemToCancel, setItemToCancel] = useState<Order | null>(null);
+	const [open, setOpen] = useState(false);
+
+	const handleCancel = () => {
+		if (itemToCancel) {
+			console.log('Cancel', itemToCancel);
+			setItemToCancel(null);
+		}
+	};
+
 	return (
 		<div className='mt-8 flow-root'>
 			<div className='-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8'>
@@ -80,7 +91,13 @@ const OrdersTable: FC<IProps> = ({ orders }) => {
 										</td>
 										{order.status === 'pending' && (
 											<td className='relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6'>
-												<div className='text-red-600 hover:opacity-80 cursor-pointer'>
+												<div
+													className='text-red-600 hover:opacity-80 cursor-pointer'
+													onClick={() => {
+														setItemToCancel(order);
+														setOpen(true);
+													}}
+												>
 													Cancel
 													<span className='sr-only'>
 														, {order.name}
@@ -95,6 +112,13 @@ const OrdersTable: FC<IProps> = ({ orders }) => {
 					</div>
 				</div>
 			</div>
+			<ConfirmCancel
+				message='Are you sure you want to cancel your order? This action cannot be undone.'
+				open={open}
+				setOpen={setOpen}
+				handleConfirm={handleCancel}
+				setItemToCancel={setItemToCancel}
+			/>
 		</div>
 	);
 };
