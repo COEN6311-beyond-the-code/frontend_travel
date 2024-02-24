@@ -14,9 +14,6 @@ interface IProps {
 
 const PackageForm: FC<IProps> = ({ mode }) => {
 	const [selectedFile, setSelectedFile] = useState<any>(null);
-	const [selectedFlight, setSelectedFlight] = useState<any>(null);
-	const [selectedHotel, setSelectedHotel] = useState<any>(null);
-	const [selectedActivity, setSelectedActivity] = useState<any>(null);
 	const [isLoading, setIsLoading] = useState(false);
 
 	const {
