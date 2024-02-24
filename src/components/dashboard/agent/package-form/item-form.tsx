@@ -39,7 +39,7 @@ const ItemForm: FC<IProps> = ({ mode }) => {
 	return (
 		<div>
 			<form onSubmit={handleSubmit(submitForm)} noValidate>
-				<div className='w-8/12 space-y-1 grid grid-cols-1 gap-6 lg:grid-cols-2 items-center'>
+				<div className='w-8/12 space-y-1 grid grid-cols-1 gap-6 lg:grid-cols-2 items-start'>
 					<Input
 						type='text'
 						label='Package name'
@@ -56,6 +56,7 @@ const ItemForm: FC<IProps> = ({ mode }) => {
 						id='description'
 						register={register}
 						errors={errors}
+						rows={3}
 					/>
 
 					<Input
@@ -67,8 +68,7 @@ const ItemForm: FC<IProps> = ({ mode }) => {
 						errors={errors}
 					/>
 
-					{/*TODO: Image upload*/}
-					<div>
+					<div className='self-center'>
 						<div className='flex flex-row items-center'>
 							<input
 								type='file'
@@ -119,19 +119,22 @@ const ItemForm: FC<IProps> = ({ mode }) => {
 						register={register}
 						errors={errors}
 					/>
+
+					<Input
+						type='text-area'
+						label='Features'
+						placeholder='Please input the features of the item separated by semi-colons'
+						id='features'
+						register={register}
+						errors={errors}
+						rows={3}
+					/>
 				</div>
 
-				{mode === 'create' ? (
-					<Button extraClasses='px-12 mt-4 max-w-sm flex justify-center'>
-						{isLoading && <Spinner />}
-						Create Item
-					</Button>
-				) : (
-					<Button extraClasses='px-12 mt-4 max-w-sm flex justify-center'>
-						{isLoading && <Spinner />}
-						Edit Item
-					</Button>
-				)}
+				<Button extraClasses='px-12 mt-4 max-w-sm flex justify-center'>
+					{isLoading && <Spinner />}
+					{mode === 'create' ? 'Create Item' : 'Edit Item'}
+				</Button>
 			</form>
 		</div>
 	);

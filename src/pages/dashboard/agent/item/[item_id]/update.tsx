@@ -2,6 +2,9 @@ import ItemForm from '@/components/dashboard/agent/package-form/item-form';
 import Layout from '@/components/layout/layout';
 import { agentNavigation } from '@/data/dashboard';
 import Dashboard from '@/components/dashboard/shared/dashboard';
+import { useRouter } from 'next/router';
+import { useEffect } from 'react';
+import PackageForm from '@/components/dashboard/agent/package-form/package-form';
 
 const UpdateItem = () => {
 	const user = {
@@ -10,6 +13,15 @@ const UpdateItem = () => {
 		mobile: '0245556677',
 		userType: 'agent',
 	};
+	const router = useRouter();
+
+	useEffect(() => {
+		console.log(router.query.type);
+	}, [router]);
+
+	if (!router.query.type) {
+		return null;
+	}
 
 	return (
 		<Layout title='Update Item' hideFooter={true} hideNav={true}>
@@ -20,7 +32,11 @@ const UpdateItem = () => {
 
 				<div className='mt-10' />
 
-				<ItemForm mode='edit' />
+				{router.query.type === 'package' ? (
+					<PackageForm mode='edit' />
+				) : (
+					<ItemForm mode='edit' />
+				)}
 			</Dashboard>
 		</Layout>
 	);

@@ -23,5 +23,12 @@ export interface ItemFormType {
 	price: number;
 	imageSrc: any;
 	imageAlt: string;
-	type: 'flight' | 'hotel' | 'activity';
+	type: 'package' | 'flight' | 'hotel' | 'activity';
+	features: string;
+}
+
+export interface PackageFormType extends ItemFormType {
+	flight: any;
+	hotel: any;
+	activity: any;
 }

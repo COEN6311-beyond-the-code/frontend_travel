@@ -32,7 +32,7 @@ const CreateItem = () => {
 				<div className='mt-10' />
 
 				<div>
-					{currentTab === 'Package' && <PackageForm />}
+					{currentTab === 'Package' && <PackageForm mode='create' />}
 					{currentTab === 'Item' && <ItemForm mode='create' />}
 				</div>
 			</Dashboard>

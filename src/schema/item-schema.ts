@@ -1,6 +1,6 @@
 import * as yup from 'yup';
 
-export const ItemSchema = yup.object({
+const shared = {
 	name: yup.string().required('Please the item name'),
 	description: yup.string().required('Please enter a description'),
 	price: yup.number().required('Please enter a price'),
@@ -8,6 +8,18 @@ export const ItemSchema = yup.object({
 	imageAlt: yup.string().required('Please enter an image alt'),
 	type: yup
 		.string()
-		.oneOf(['flight', 'hotel', 'activity'])
+		.oneOf(['package', 'flight', 'hotel', 'activity'])
 		.required('Please select an item type'),
+	features: yup
+		.string()
+		.required('Please enter the item features seperated by semicolons'),
+};
+
+export const ItemSchema = yup.object(shared);
+
+export const PackageSchema = yup.object({
+	...shared,
+	flight: yup.string().required('Please select a flight'),
+	hotel: yup.string().required('Please select a hotel'),
+	activity: yup.string().required('Please select an activity'),
 });
