@@ -18,7 +18,7 @@ const RelatedItemCard = ({ product }: { product: Product }) => {
 							{product.name}
 						</h3>
 						<p className='mt-1 text-sm text-gray-500'>
-							{product.options}
+							Included: {product.options}
 						</p>
 					</div>
 					<div className='absolute inset-x-0 top-0 flex h-72 items-end justify-end overflow-hidden rounded-lg p-4'>

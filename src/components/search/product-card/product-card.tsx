@@ -27,7 +27,7 @@ const ProductCard: FC<IProps> = ({ product }) => {
 					</p>
 					<div className='flex flex-1 flex-col justify-end'>
 						<p className='text-sm italic text-gray-500'>
-							{product.options}
+							Included: {product.options}
 						</p>
 						<p className='text-base font-medium text-gray-900'>
 							$ {product.price}

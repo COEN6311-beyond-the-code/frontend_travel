@@ -35,7 +35,7 @@ const ManagePackagesList = () => {
 
 			<section aria-labelledby='recent-heading' className='mt-16'>
 				<h2 id='recent-heading' className='sr-only'>
-					Recent orders
+					Manage packages
 				</h2>
 				<div className='mx-auto max-w-7xl sm:px-2 lg:px-8'>
 					<div className='mx-auto max-w-2xl space-y-8 sm:px-4 lg:max-w-4xl lg:px-0'>
@@ -53,12 +53,12 @@ const ManagePackagesList = () => {
 								</dl>
 
 								<div className='hidden lg:col-span-2 lg:flex lg:items-center lg:justify-end lg:space-x-4'>
-									<a
-										href='#'
+									<Link
+										href='/dashboard/agent/create-item'
 										className='flex items-center justify-center rounded-md border border-gray-300 bg-white px-2.5 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2'
 									>
 										<span>Create Item</span>
-									</a>
+									</Link>
 								</div>
 							</div>
 
@@ -114,12 +114,12 @@ const ManagePackagesList = () => {
 
 											<div className='mt-6 flex items-center space-x-4 divide-x divide-gray-200 border-t border-gray-200 pt-4 text-sm font-medium sm:ml-4 sm:mt-0 sm:border-none sm:pt-0'>
 												<div className='flex flex-1 justify-center'>
-													<a
-														href={product.href}
+													<Link
+														href={`/dashboard/agent/item/${product.id}/update`}
 														className='whitespace-nowrap text-black hover:opacity-80'
 													>
 														Update item
-													</a>
+													</Link>
 												</div>
 												<div className='flex flex-1 justify-center pl-4'>
 													<div

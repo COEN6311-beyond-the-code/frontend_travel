@@ -4,8 +4,6 @@ import { agentNavigation } from '@/data/dashboard';
 import ReportStats from '@/components/dashboard/agent/reports/report-stats';
 import AgentOrdersTable from '@/components/dashboard/agent/agent-orders-table';
 import { orders } from '@/data/orders';
-import { products } from '@/data/packages';
-import ProductCard from '@/components/search/product-card/product-card';
 import TopPackages from '@/components/dashboard/agent/reports/top-packages';
 
 const Reports = () => {
