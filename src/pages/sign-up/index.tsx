@@ -58,7 +58,16 @@ const SignUp = () => {
 									type='text'
 									label='Name'
 									placeholder='John'
-									id='name'
+									id='firstName'
+									register={register}
+									errors={errors}
+								/>
+
+								<Input
+									type='text'
+									label='Name'
+									placeholder='Doe'
+									id='lastName'
 									register={register}
 									errors={errors}
 								/>

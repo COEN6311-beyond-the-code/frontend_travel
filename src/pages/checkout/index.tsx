@@ -206,8 +206,17 @@ const Checkout = () => {
 								<Input
 									type='text'
 									label='Phone number'
-									placeholder='johndoe@example.com'
+									placeholder='+1336662739'
 									id='phone'
+									register={register}
+									errors={errors}
+								/>
+
+								<Input
+									type='date'
+									label='Departure date'
+									placeholder='dd/mm/yyyy'
+									id='date'
 									register={register}
 									errors={errors}
 								/>
