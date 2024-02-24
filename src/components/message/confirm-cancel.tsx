@@ -11,16 +11,19 @@ import { ExclamationTriangleIcon } from '@heroicons/react/24/outline';
 import { Order } from '@/types/dashboard/orders';
 import { classNames } from '@/utils/classNames';
 import { inter } from '@/utils/fonts';
+import { Product } from '@/types/product/product';
 
 interface IProps {
+	title: string;
 	message: string;
 	open: boolean;
 	setOpen: Dispatch<SetStateAction<boolean>>;
 	handleConfirm: () => void;
-	setItemToCancel?: Dispatch<SetStateAction<Order | null>>;
+	setItemToCancel?: Dispatch<SetStateAction<Order | Product | null>>;
 }
 
 const ConfirmCancel: FC<IProps> = ({
+	title,
 	message,
 	open,
 	setOpen,
@@ -74,7 +77,7 @@ const ConfirmCancel: FC<IProps> = ({
 												as='h3'
 												className='text-base font-semibold leading-6 text-gray-900'
 											>
-												Deactivate account
+												{title}
 											</Dialog.Title>
 											<div className='mt-2'>
 												<p className='text-sm text-gray-500'>
@@ -94,13 +97,13 @@ const ConfirmCancel: FC<IProps> = ({
 											setOpen(false);
 										}}
 									>
-										Deactivate
+										Confirm
 									</button>
 									<button
 										type='button'
 										className='mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2
 										text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300
-										hover:bg-gray-50 sm:mt-0 sm:w-auto'
+										hover:bg-gray-50 sm:mt-0 sm:w-auto outline-none'
 										onClick={() => {
 											setItemToCancel &&
 												setItemToCancel(null);

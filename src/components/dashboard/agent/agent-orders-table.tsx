@@ -3,13 +3,16 @@ import { Order } from '@/types/dashboard/orders';
 import { classNames } from '@/utils/classNames';
 import ConfirmCancel from '@/components/message/confirm-cancel';
 import Link from 'next/link';
+import { Product } from '@/types/product/product';
 
 interface IProps {
 	orders: Order[];
 }
 
 const AgentOrdersTable: FC<IProps> = ({ orders }) => {
-	const [itemToCancel, setItemToCancel] = useState<Order | null>(null);
+	const [itemToCancel, setItemToCancel] = useState<Order | Product | null>(
+		null,
+	);
 	const [open, setOpen] = useState(false);
 
 	const handleCancel = () => {
@@ -145,6 +148,7 @@ const AgentOrdersTable: FC<IProps> = ({ orders }) => {
 				</div>
 			</div>
 			<ConfirmCancel
+				title='Cancel order'
 				message='Are you sure you want to cancel this order? This action cannot be undone.'
 				open={open}
 				setOpen={setOpen}
