@@ -22,7 +22,7 @@ const ProductCard: FC<IProps> = ({ product }) => {
 						<span aria-hidden='true' className='absolute inset-0' />
 						{product.name}
 					</h3>
-					<p className='text-sm text-gray-500 line-clamp-4'>
+					<p className='text-sm text-gray-500 line-clamp-2'>
 						{product.description}
 					</p>
 					<div className='flex flex-1 flex-col justify-end'>
