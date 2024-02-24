@@ -2,12 +2,13 @@ import { FC, useState } from 'react';
 import { Order } from '@/types/dashboard/orders';
 import { classNames } from '@/utils/classNames';
 import ConfirmCancel from '@/components/message/confirm-cancel';
+import Link from 'next/link';
 
 interface IProps {
 	orders: Order[];
 }
 
-const OrdersTable: FC<IProps> = ({ orders }) => {
+const AgentOrdersTable: FC<IProps> = ({ orders }) => {
 	const [itemToCancel, setItemToCancel] = useState<Order | null>(null);
 	const [open, setOpen] = useState(false);
 
@@ -30,19 +31,19 @@ const OrdersTable: FC<IProps> = ({ orders }) => {
 										scope='col'
 										className='py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6'
 									>
-										Package name
+										Ordered by
 									</th>
 									<th
 										scope='col'
 										className='px-3 py-3.5 text-left text-sm font-semibold text-gray-900'
 									>
-										Description
+										Email
 									</th>
 									<th
 										scope='col'
 										className='px-3 py-3.5 text-left text-sm font-semibold text-gray-900'
 									>
-										Price
+										Package Name
 									</th>
 									<th
 										scope='col'
@@ -54,7 +55,19 @@ const OrdersTable: FC<IProps> = ({ orders }) => {
 										scope='col'
 										className='px-3 py-3.5 text-left text-sm font-semibold text-gray-900'
 									>
+										Price
+									</th>
+									<th
+										scope='col'
+										className='px-3 py-3.5 text-left text-sm font-semibold text-gray-900'
+									>
 										Status
+									</th>
+									<th
+										scope='col'
+										className='relative py-3.5 pl-3 pr-4 sm:pr-6'
+									>
+										<span className='sr-only'>Modify</span>
 									</th>
 									<th
 										scope='col'
@@ -68,17 +81,21 @@ const OrdersTable: FC<IProps> = ({ orders }) => {
 								{orders.map(order => (
 									<tr key={order.id}>
 										<td className='whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6'>
+											{order.user?.name}
+										</td>
+										<td className='whitespace-nowrap px-3 py-4 text-sm text-gray-500'>
+											{order.user?.email}
+										</td>
+										<td className='whitespace-nowrap px-3 py-4 text-sm text-gray-500'>
 											{order.name}
-										</td>
-										<td className='whitespace-nowrap px-3 py-4 text-sm text-gray-500'>
-											{order.description}
-										</td>
-										<td className='whitespace-nowrap px-3 py-4 text-sm text-gray-500'>
-											$ {order.price}
 										</td>
 										<td className='whitespace-nowrap px-3 py-4 text-sm text-gray-500'>
 											{order.createdAt}
 										</td>
+										<td className='whitespace-nowrap px-3 py-4 text-sm text-gray-500'>
+											$ {order.price}
+										</td>
+
 										<td
 											className={classNames(
 												order.status === 'complete'
@@ -90,20 +107,35 @@ const OrdersTable: FC<IProps> = ({ orders }) => {
 											{order.status}
 										</td>
 										{order.status === 'pending' && (
-											<td className='relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6'>
-												<div
-													className='text-red-600 hover:opacity-80 cursor-pointer'
-													onClick={() => {
-														setItemToCancel(order);
-														setOpen(true);
-													}}
-												>
-													Cancel
-													<span className='sr-only'>
-														, {order.name}
-													</span>
-												</div>
-											</td>
+											<>
+												<td className='relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6'>
+													<Link
+														href='/'
+														className='text-ct-darkBackground hover:opacity-80 cursor-pointer'
+													>
+														Modify
+														<span className='sr-only'>
+															, {order.name}
+														</span>
+													</Link>
+												</td>
+												<td className='relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6'>
+													<div
+														className='text-red-600 hover:opacity-80 cursor-pointer'
+														onClick={() => {
+															setItemToCancel(
+																order,
+															);
+															setOpen(true);
+														}}
+													>
+														Cancel
+														<span className='sr-only'>
+															, {order.name}
+														</span>
+													</div>
+												</td>
+											</>
 										)}
 									</tr>
 								))}
@@ -113,7 +145,7 @@ const OrdersTable: FC<IProps> = ({ orders }) => {
 				</div>
 			</div>
 			<ConfirmCancel
-				message='Are you sure you want to cancel your order? This action cannot be undone.'
+				message='Are you sure you want to cancel this order? This action cannot be undone.'
 				open={open}
 				setOpen={setOpen}
 				handleConfirm={handleCancel}
@@ -123,4 +155,4 @@ const OrdersTable: FC<IProps> = ({ orders }) => {
 	);
 };
 
-export default OrdersTable;
+export default AgentOrdersTable;

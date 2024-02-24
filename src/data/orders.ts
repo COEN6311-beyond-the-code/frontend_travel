@@ -8,6 +8,11 @@ export const orders: Order[] = [
 		price: 1000,
 		status: 'pending',
 		createdAt: '2021-07-01',
+		user: {
+			id: 1,
+			name: 'John Doe',
+			email: 'johndoe@gmail.com',
+		},
 	},
 	{
 		id: 2,
@@ -16,6 +21,11 @@ export const orders: Order[] = [
 		price: 2000,
 		status: 'pending',
 		createdAt: '2021-07-02',
+		user: {
+			id: 1,
+			name: 'John Doe',
+			email: 'johndoe@gmail.com',
+		},
 	},
 	{
 		id: 3,
@@ -24,6 +34,11 @@ export const orders: Order[] = [
 		price: 3000,
 		status: 'pending',
 		createdAt: '2021-07-03',
+		user: {
+			id: 2,
+			name: 'Jane Doe',
+			email: 'janedoe@gmail.com',
+		},
 	},
 	{
 		id: 4,
@@ -32,6 +47,11 @@ export const orders: Order[] = [
 		price: 4000,
 		status: 'complete',
 		createdAt: '2021-07-04',
+		user: {
+			id: 3,
+			name: 'Candace Parker',
+			email: 'candace@gmail.com',
+		},
 	},
 	{
 		id: 5,
@@ -40,5 +60,10 @@ export const orders: Order[] = [
 		price: 5000,
 		status: 'complete',
 		createdAt: '2021-07-05',
+		user: {
+			id: 3,
+			name: 'Candace Parker',
+			email: 'candace@gmail.com',
+		},
 	},
 ];
