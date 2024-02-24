@@ -15,22 +15,31 @@ const ItemForm: FC<IProps> = ({ mode }) => {
 	const {
 		register,
 		handleSubmit,
+		setError,
 		formState: { errors },
 	} = useForm<ItemFormType>({
 		resolver: yupResolver(ItemSchema),
 	});
 
 	const submitForm: SubmitHandler<ItemFormType> = data => {
+		if (!selectedFile) {
+			setError('imageSrc', {
+				type: 'manual',
+				message: 'Image is required',
+			});
+			return;
+		}
 		console.log(data);
+		console.log(errors);
 	};
 
-	const [selectedFile, setSelectedFile] = useState('No file chosen');
+	const [selectedFile, setSelectedFile] = useState<any>(null);
 	const [isLoading, setIsLoading] = useState(false);
 
 	return (
 		<div>
 			<form onSubmit={handleSubmit(submitForm)} noValidate>
-				<div className='w-8/12 space-y-1 grid grid-cols-1 gap-6 lg:grid-cols-2'>
+				<div className='w-8/12 space-y-1 grid grid-cols-1 gap-6 lg:grid-cols-2 items-center'>
 					<Input
 						type='text'
 						label='Package name'
@@ -59,32 +68,44 @@ const ItemForm: FC<IProps> = ({ mode }) => {
 					/>
 
 					{/*TODO: Image upload*/}
-					<div className='flex flex-row items-center'>
-						<input
-							type='file'
-							id='custom-input'
-							onChange={e =>
-								setSelectedFile(e.target.files![0].name)
-							}
-							hidden
-						/>
-						<label
-							htmlFor='custom-input'
-							className='block mr-4 py-2 px-4 rounded-md border-0 text-sm font-semibold bg-black
+					<div>
+						<div className='flex flex-row items-center'>
+							<input
+								type='file'
+								id='imageSrc'
+								{...register?.('imageSrc', {
+									onChange: e => {
+										setSelectedFile(e.target.files[0]);
+									},
+								})}
+								hidden
+								accept='image/*'
+							/>
+							<label
+								htmlFor='imageSrc'
+								className='block mr-4 py-2 px-4 rounded-md border-0 text-sm font-semibold bg-black
 						text-white hover:opacity-80 cursor-pointer'
-						>
-							Choose file
-						</label>
-						<label className='text-sm text-slate-500'>
-							{selectedFile}
-						</label>
+							>
+								Choose file
+							</label>
+							<label className='text-sm text-slate-500'>
+								{selectedFile
+									? selectedFile.name
+									: 'No file chosen'}
+							</label>
+						</div>
+						{errors.imageSrc && (
+							<p className='text-red-500'>
+								{errors.imageSrc.message as string}
+							</p>
+						)}
 					</div>
 
 					<Input
 						type='text'
 						label='Image Alt'
 						placeholder='Image alt text'
-						id='alt'
+						id='imageAlt'
 						register={register}
 						errors={errors}
 					/>
@@ -93,7 +114,7 @@ const ItemForm: FC<IProps> = ({ mode }) => {
 						type='select'
 						label='Item Type'
 						placeholder='Item Type'
-						id='userType'
+						id='type'
 						selectOptions={['Flight', 'Hotel', 'Activity']}
 						register={register}
 						errors={errors}
@@ -101,12 +122,12 @@ const ItemForm: FC<IProps> = ({ mode }) => {
 				</div>
 
 				{mode === 'create' ? (
-					<Button extraClasses='px-12 max-w-sm flex justify-center'>
+					<Button extraClasses='px-12 mt-4 max-w-sm flex justify-center'>
 						{isLoading && <Spinner />}
 						Create Item
 					</Button>
 				) : (
-					<Button extraClasses='px-12 max-w-sm flex justify-center'>
+					<Button extraClasses='px-12 mt-4 max-w-sm flex justify-center'>
 						{isLoading && <Spinner />}
 						Edit Item
 					</Button>
