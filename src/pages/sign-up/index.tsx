@@ -25,8 +25,36 @@ const SignUp = () => {
 
 	const [authLoading, _setAuthLoading] = useState(false);
 
-	const submitForm: SubmitHandler<SignUpProps> = data => {
-		console.log(data);
+	const submitForm: SubmitHandler<SignUpProps> = async data => {
+		try {
+			_setAuthLoading(true);
+			const formData = new URLSearchParams();
+			for (const [key, value] of Object.entries(data)) {
+				formData.append(key, value);
+			}
+			const response = await fetch(
+				'http://127.0.0.1:8000/user/register/',
+				{
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/x-www-form-urlencoded',
+					},
+					body: formData.toString(),
+				},
+			);
+			if (response.ok) {
+				console.log('User registered successfully');
+				// 处理成功注册的逻辑
+			} else {
+				console.error('Failed to register user');
+				// 处理注册失败的逻辑
+			}
+		} catch (error) {
+			console.error('Error occurred while registering user:', error);
+			// 处理注册过程中的错误
+		} finally {
+			_setAuthLoading(false);
+		}
 	};
 
 	return (
