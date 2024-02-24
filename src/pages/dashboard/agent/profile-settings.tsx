@@ -1,8 +1,8 @@
 import Dashboard from '@/components/dashboard/shared/dashboard';
 import { agentNavigation } from '@/data/dashboard';
 import Layout from '@/components/layout/layout';
-import Account from '@/components/settings/account';
-import Profile from '@/components/settings/profile';
+import Account from '@/components/dashboard/shared/settings/account';
+import Profile from '@/components/dashboard/shared/settings/profile';
 
 const ProfileSettings = () => {
 	const user = {

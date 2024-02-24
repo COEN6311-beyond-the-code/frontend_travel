@@ -52,7 +52,7 @@ const Account = () => {
 
 				<div className='mt-5' />
 
-				<Button extraClasses='w-full max-w-sm flex justify-center mt-2'>
+				<Button extraClasses='px-10 max-w-sm flex justify-center mt-2 !bg-black'>
 					{/*{authLoading && <Spinner />}*/}
 					Update
 				</Button>
