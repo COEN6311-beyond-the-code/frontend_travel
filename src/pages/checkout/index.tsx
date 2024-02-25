@@ -13,10 +13,12 @@ import { CheckoutFormTypes } from '@/types/form/input.types';
 import { CheckoutSchema } from '@/schema/checkout-schema';
 import Spinner from '@/components/loaders/spinner';
 import Button from '@/components/button/button';
+import { useRouter } from 'next/router';
 
 const Checkout = () => {
 	const [cart, setCart] = useState<Product[]>([]);
 	const [isCheckingOut, setIsCheckingOut] = useState(false);
+	const router = useRouter();
 
 	const {
 		register,
@@ -26,8 +28,9 @@ const Checkout = () => {
 		resolver: yupResolver(CheckoutSchema),
 	});
 
-	const submitForm: SubmitHandler<CheckoutFormTypes> = data => {
+	const submitForm: SubmitHandler<CheckoutFormTypes> = async data => {
 		console.log(data);
+		await router.push('/checkout/1/pay');
 	};
 
 	if (cart.length === 1) {
