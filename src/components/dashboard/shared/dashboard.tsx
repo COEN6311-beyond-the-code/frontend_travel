@@ -19,13 +19,15 @@ const userNavigation = [{ name: 'Sign out', href: '#' }];
 export default function Dashboard({
 	children,
 	navigationItems,
+	user,
 }: {
 	children: ReactNode;
 	navigationItems: DashboardNavItem[];
+	user: any;
 }) {
 	const [sidebarOpen, setSidebarOpen] = useState(false);
 	const router = useRouter();
-	const userType = 'agent';
+	const userType = user.userType;
 
 	return (
 		<>

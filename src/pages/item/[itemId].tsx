@@ -86,34 +86,6 @@ const ItemDetails = () => {
 					<div className='lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-8'>
 						{/* Image gallery */}
 						<Tab.Group as='div' className='flex flex-col-reverse'>
-							{/* Image selector */}
-							{/*<div className="mx-auto mt-6 hidden w-full max-w-2xl sm:block lg:max-w-none">*/}
-							{/*<Tab.List className="grid grid-cols-4 gap-6">*/}
-							{/*    {product.images.map((image) => (*/}
-							{/*        <Tab*/}
-							{/*            key={image.id}*/}
-							{/*            className="relative flex h-24 cursor-pointer items-center justify-center rounded-md bg-white text-sm font-medium uppercase text-gray-900 hover:bg-gray-50 focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-offset-4"*/}
-							{/*        >*/}
-							{/*            {({selected}) => (*/}
-							{/*                <>*/}
-							{/*                    <span className="sr-only">{image.name}</span>*/}
-							{/*                    <span className="absolute inset-0 overflow-hidden rounded-md">*/}
-							{/*                    <img src={image.src} alt="" className="h-full w-full object-cover object-center"/>*/}
-							{/*                  </span>*/}
-							{/*                    <span*/}
-							{/*                        className={classNames(*/}
-							{/*                            selected ? 'ring-indigo-500' : 'ring-transparent',*/}
-							{/*                            'pointer-events-none absolute inset-0 rounded-md ring-2 ring-offset-2'*/}
-							{/*                        )}*/}
-							{/*                        aria-hidden="true"*/}
-							{/*                    />*/}
-							{/*                </>*/}
-							{/*            )}*/}
-							{/*        </Tab>*/}
-							{/*    ))}*/}
-							{/*</Tab.List>*/}
-							{/*</div>*/}
-
 							<Tab.Panels className='aspect-h-1 aspect-w-1 w-full'>
 								<Tab.Panel>
 									<img
@@ -155,7 +127,9 @@ const ItemDetails = () => {
                                         hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-ct-deepPink
                                         focus:ring-offset-2 focus:ring-offset-gray-50 sm:w-full'
 									>
-										Add to package
+										{item.type === 'package'
+											? 'Book now'
+											: 'Add to package'}
 									</button>
 								</div>
 							</form>

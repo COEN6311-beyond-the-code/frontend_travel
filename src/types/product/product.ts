@@ -1,7 +1,7 @@
 export interface Product {
 	id: number;
 	name: string;
-	href: string;
+	href?: string;
 	price: number;
 	description: string;
 	options: string;
@@ -15,4 +15,20 @@ export interface ProductDetails {
 	name: string;
 	items: string[];
 	type: 'package' | 'flight' | 'hotel' | 'activity';
+}
+
+export interface ItemFormType {
+	name: string;
+	description: string;
+	price: number;
+	imageSrc: any;
+	imageAlt: string;
+	type: 'package' | 'flight' | 'hotel' | 'activity';
+	features: string;
+}
+
+export interface PackageFormType extends ItemFormType {
+	flight: any;
+	hotel: any;
+	activity: any;
 }

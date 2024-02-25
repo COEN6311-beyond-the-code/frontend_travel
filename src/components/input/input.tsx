@@ -117,8 +117,7 @@ const Input: FC<InputTypes> = ({
 				defaultValue={defaultValue}
 				key={inputKey}
 				className='block disabled:cursor-not-allowed w-full rounded-lg px-5 py-3
-				border-gray-200 mt-1 !placeholder-gray-400 focus:border-edanra-green
-				focus:ring-edanra-green'
+				border-gray-200 mt-1 !placeholder-gray-400 focus:border-black focus:ring-black focus:outline-0'
 				id={id}
 				{...register?.(id, {
 					onChange,
