@@ -68,8 +68,7 @@ function CheckoutForm() {
 			elements,
 			confirmParams: {
 				// Make sure to change this to your payment completion page
-				return_url:
-					'http://localhost:3000/dashboard/user/order-history',
+				return_url: 'http://localhost:3000/checkout/1/create-order',
 			},
 		});
 
@@ -137,8 +136,6 @@ export default function Pay() {
 	const [currentItem, setCurrentItem] = React.useState<any>(null);
 	const router = useRouter();
 
-	console.log(router.query.item_id);
-
 	useEffect(() => {
 		// Create PaymentIntent as soon as the page loads
 		if (currentItem) {
@@ -160,8 +157,6 @@ export default function Pay() {
 			setCurrentItem(item);
 		}
 	}, [router]);
-
-	console.log(currentItem);
 
 	const appearance = {
 		theme: 'stripe',
