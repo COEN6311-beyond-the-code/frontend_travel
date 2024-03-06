@@ -8,9 +8,18 @@ import { SignInSchema } from '@/schema/sign-in-schema';
 import Input from '@/components/input/input';
 import Button from '@/components/button/button';
 import Spinner from '@/components/loaders/spinner';
-import { useState } from 'react';
+import useAuth from '@/hooks/auth/useAuth';
+import Cookies from 'js-cookie';
+import toCamelCase from '@/utils/camel-case';
+import { useRouter } from 'next/router';
+import { useContext, useEffect } from 'react';
+import { AuthContext } from '@/context/auth/auth-context';
 
 const SignIn = () => {
+	const { login } = useAuth();
+	const router = useRouter();
+	const { setCurrentUser } = useContext(AuthContext);
+
 	const {
 		register,
 		handleSubmit,
@@ -19,11 +28,25 @@ const SignIn = () => {
 		resolver: yupResolver(SignInSchema),
 	});
 
-	const submitForm: SubmitHandler<SignInProps> = data => {
-		console.log(data);
+	const submitForm: SubmitHandler<SignInProps> = async data => {
+		login.mutate(data);
 	};
 
-	const [authLoading, setAuthLoading] = useState(false);
+	if (login.error) {
+		console.error(login.error);
+	}
+
+	useEffect(() => {
+		if (login.data) {
+			const { token, userInfo } = login.data.data.data;
+			Cookies.set('token', token);
+			Cookies.set('userInfo', JSON.stringify(toCamelCase(userInfo)));
+			setCurrentUser({ token, userInfo: toCamelCase(userInfo) });
+			router.push('/search').then();
+		}
+
+		// eslint-disable-next-line
+	}, [login.data]);
 
 	return (
 		<Layout title='Sign In'>
@@ -82,7 +105,7 @@ const SignIn = () => {
 								</div>
 
 								<Button extraClasses='w-full max-w-sm flex justify-center'>
-									{authLoading && <Spinner />}
+									{login.status === 'pending' && <Spinner />}
 									Sign in
 								</Button>
 							</form>

@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useContext, useState } from 'react';
 import { Dialog, Popover, Transition } from '@headlessui/react';
 import {
 	Bars3Icon,
@@ -10,6 +10,8 @@ import { clsx } from 'clsx';
 import { inter } from '@/utils/fonts';
 import Link from 'next/link';
 import PackageCart from '@/components/package-cart/package-cart';
+import { AuthContext } from '@/context/auth/auth-context';
+import Cookies from 'js-cookie';
 
 const navigation = {
 	pages: [
@@ -23,6 +25,9 @@ const navigation = {
 export default function NavBar() {
 	const [open, setOpen] = useState(false);
 	const [openCart, setOpenCart] = useState(false);
+
+	const { currentUser } = useContext(AuthContext);
+	const isTokenSet = Cookies.get('token');
 
 	return (
 		<div className={clsx('bg-white relative z-10', inter.className)}>
@@ -90,22 +95,39 @@ export default function NavBar() {
 								</div>
 
 								<div className='space-y-6 border-t border-gray-200 px-4 py-6'>
-									<div className='flow-root'>
-										<Link
-											href='/sign-in'
-											className='-m-2 block p-2 font-medium text-gray-900 hover:text-ct-deepPink'
-										>
-											Sign in
-										</Link>
-									</div>
-									<div className='flow-root'>
-										<Link
-											href='/sign-up'
-											className='-m-2 block p-2 font-medium text-gray-900'
-										>
-											Create account
-										</Link>
-									</div>
+									{!currentUser || !isTokenSet ? (
+										<>
+											<div className='flow-root'>
+												<Link
+													href='/sign-in'
+													className='-m-2 block p-2 font-medium text-gray-900 hover:text-ct-deepPink'
+												>
+													Sign in
+												</Link>
+											</div>
+											<div className='flow-root'>
+												<Link
+													href='/sign-up'
+													className='-m-2 block p-2 font-medium text-gray-900'
+												>
+													Create account
+												</Link>
+											</div>
+										</>
+									) : (
+										<div className='flow-root'>
+											<Link
+												href={
+													currentUser.userInfo.isAgent
+														? '/dashboard/agent/orders'
+														: '/dashboard/user/order-history'
+												}
+												className='-m-2 block p-2 font-medium text-gray-900'
+											>
+												Dashboard
+											</Link>
+										</div>
+									)}
 								</div>
 							</Dialog.Panel>
 						</Transition.Child>
@@ -164,22 +186,39 @@ export default function NavBar() {
 
 							<div className='ml-auto flex items-center'>
 								<div className='hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6'>
-									<Link
-										href='/sign-in'
-										className='text-sm font-medium text-gray-700 transition ease-in-out duration-200 hover:text-ct-deepPink'
-									>
-										Sign in
-									</Link>
-									<span
-										className='h-6 w-px bg-gray-200'
-										aria-hidden='true'
-									/>
-									<Link
-										href='/sign-up'
-										className='text-sm font-medium text-gray-700 transition ease-in-out duration-200 hover:text-ct-deepPink'
-									>
-										Create account
-									</Link>
+									{!currentUser || !isTokenSet ? (
+										<>
+											<Link
+												href='/sign-in'
+												className='text-sm font-medium text-gray-700 transition ease-in-out duration-200 hover:text-ct-deepPink'
+											>
+												Sign in
+											</Link>
+											<span
+												className='h-6 w-px bg-gray-200'
+												aria-hidden='true'
+											/>
+											<Link
+												href='/sign-up'
+												className='text-sm font-medium text-gray-700 transition ease-in-out duration-200 hover:text-ct-deepPink'
+											>
+												Create account
+											</Link>
+										</>
+									) : (
+										<>
+											<Link
+												href={
+													currentUser.userInfo.isAgent
+														? '/dashboard/agent/orders'
+														: '/dashboard/user/order-history'
+												}
+												className='text-sm font-medium text-gray-700 transition ease-in-out duration-200 hover:text-ct-deepPink'
+											>
+												Dashboard
+											</Link>
+										</>
+									)}
 								</div>
 
 								{/* Search */}
