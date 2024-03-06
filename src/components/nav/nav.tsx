@@ -1,4 +1,4 @@
-import { Fragment, useContext, useState } from 'react';
+import { Fragment, useContext, useEffect, useState } from 'react';
 import { Dialog, Popover, Transition } from '@headlessui/react';
 import {
 	Bars3Icon,
@@ -12,6 +12,9 @@ import Link from 'next/link';
 import PackageCart from '@/components/package-cart/package-cart';
 import { AuthContext } from '@/context/auth/auth-context';
 import Cookies from 'js-cookie';
+import { classNames } from '@/utils/classNames';
+import useAuth from '@/hooks/auth/useAuth';
+import { useRouter } from 'next/router';
 
 const navigation = {
 	pages: [
@@ -26,8 +29,26 @@ export default function NavBar() {
 	const [open, setOpen] = useState(false);
 	const [openCart, setOpenCart] = useState(false);
 
-	const { currentUser } = useContext(AuthContext);
+	const { currentUser, setCurrentUser } = useContext(AuthContext);
 	const isTokenSet = Cookies.get('token');
+
+	const { logout } = useAuth();
+	const router = useRouter();
+
+	const handleLogout = () => {
+		logout.mutate({});
+	};
+
+	useEffect(() => {
+		if (logout.data) {
+			Cookies.remove('token');
+			Cookies.remove('userInfo');
+			setCurrentUser(null);
+			router.push('/').then();
+		}
+
+		// eslint-disable-next-line
+	}, [logout.data]);
 
 	return (
 		<div className={clsx('bg-white relative z-10', inter.className)}>
@@ -35,7 +56,10 @@ export default function NavBar() {
 			<Transition.Root show={open} as={Fragment}>
 				<Dialog
 					as='div'
-					className='relative z-40 lg:hidden'
+					className={classNames(
+						inter.className,
+						'relative z-40 lg:hidden',
+					)}
 					onClose={setOpen}
 				>
 					<Transition.Child
@@ -115,18 +139,29 @@ export default function NavBar() {
 											</div>
 										</>
 									) : (
-										<div className='flow-root'>
-											<Link
-												href={
-													currentUser.userInfo.isAgent
-														? '/dashboard/agent/orders'
-														: '/dashboard/user/order-history'
-												}
-												className='-m-2 block p-2 font-medium text-gray-900'
-											>
-												Dashboard
-											</Link>
-										</div>
+										<>
+											<div className='flow-root'>
+												<Link
+													href={
+														currentUser.userInfo
+															.isAgent
+															? '/dashboard/agent/orders'
+															: '/dashboard/user/order-history'
+													}
+													className='-m-2 block p-2 font-medium text-gray-900'
+												>
+													Dashboard
+												</Link>
+											</div>
+											<div className='flow-root'>
+												<p
+													className='-m-2 block p-2 font-medium text-gray-900 cursor-pointer'
+													onClick={handleLogout}
+												>
+													Sign out
+												</p>
+											</div>
+										</>
 									)}
 								</div>
 							</Dialog.Panel>
@@ -217,6 +252,14 @@ export default function NavBar() {
 											>
 												Dashboard
 											</Link>
+											<div className='flow-root'>
+												<p
+													className='text-sm font-medium text-gray-700 transition ease-in-out duration-200 hover:text-ct-deepPink cursor-pointer'
+													onClick={handleLogout}
+												>
+													Sign out
+												</p>
+											</div>
 										</>
 									)}
 								</div>

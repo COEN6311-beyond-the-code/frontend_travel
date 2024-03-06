@@ -1,6 +1,9 @@
 import axios from 'axios';
 import baseUrl from '@/utils/api-url';
 import { UserType } from '@/types/auth/auth.types';
+import Cookies from 'js-cookie';
+
+const token = Cookies.get('token');
 
 export const loginQuery = (body: any) => {
 	const { email, password } = body;
@@ -24,8 +27,6 @@ export const registerQuery = (body: any) => {
 };
 
 export const logoutQuery = (body: any) => {
-	const { token } = body;
-
 	return axios.post<any>(
 		`${baseUrl}/user/logout`,
 		{},
