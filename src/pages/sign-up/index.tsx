@@ -172,7 +172,7 @@ const SignUp = () => {
 				setShow={setShow}
 			/>
 			<Message
-				title='PSign up error'
+				title='Sign up error'
 				subtitle='An error occurred while signing you up. Please try again.'
 				Icon={ExclamationCircleIcon}
 				iconColor='text-red-500'
