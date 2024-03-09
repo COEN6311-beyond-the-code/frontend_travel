@@ -12,13 +12,16 @@ import useAuth from '@/hooks/auth/useAuth';
 import Cookies from 'js-cookie';
 import toCamelCase from '@/utils/camel-case';
 import { useRouter } from 'next/router';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from '@/context/auth/auth-context';
+import { ExclamationCircleIcon } from '@heroicons/react/16/solid';
+import Message from '@/components/message/message';
 
 const SignIn = () => {
 	const { login } = useAuth();
 	const router = useRouter();
 	const { setCurrentUser } = useContext(AuthContext);
+	const [showError, setShowError] = useState(false);
 
 	const {
 		register,
@@ -32,10 +35,6 @@ const SignIn = () => {
 		login.mutate(data);
 	};
 
-	if (login.error) {
-		console.error(login.error);
-	}
-
 	useEffect(() => {
 		if (login.data) {
 			const { token, userInfo } = login.data.data.data;
@@ -47,6 +46,12 @@ const SignIn = () => {
 
 		// eslint-disable-next-line
 	}, [login.data]);
+
+	useEffect(() => {
+		if (login.error) {
+			setShowError(true);
+		}
+	}, [login.error]);
 
 	return (
 		<Layout title='Sign In'>
@@ -113,6 +118,15 @@ const SignIn = () => {
 					</div>
 				</div>
 			</div>
+
+			<Message
+				title='Sign in error'
+				subtitle={`${login?.error?.message}`}
+				Icon={ExclamationCircleIcon}
+				iconColor='text-red-500'
+				show={showError}
+				setShow={setShowError}
+			/>
 		</Layout>
 	);
 };
