@@ -3,8 +3,6 @@ import baseUrl from '@/utils/api-url';
 import { UserType } from '@/types/auth/auth.types';
 import Cookies from 'js-cookie';
 
-const token = Cookies.get('token');
-
 export const loginQuery = (body: any) => {
 	const { email, password } = body;
 
@@ -27,6 +25,8 @@ export const registerQuery = (body: any) => {
 };
 
 export const logoutQuery = (body: any) => {
+	const token = Cookies.get('token');
+
 	return axios.post<any>(
 		`${baseUrl}/user/logout`,
 		{},
@@ -39,6 +39,8 @@ export const logoutQuery = (body: any) => {
 };
 
 export const getProfileQuery = (body: any) => {
+	const token = Cookies.get('token');
+
 	return axios.get<{ data: UserType }>(`${baseUrl}/user/view_profile`, {
 		headers: {
 			Authorization: token,
@@ -47,6 +49,7 @@ export const getProfileQuery = (body: any) => {
 };
 
 export const updateProfileQuery = (body: any) => {
+	const token = Cookies.get('token');
 	const { firstName, lastName, mobile } = body;
 
 	return axios.post<{ data: UserType }>(
@@ -66,6 +69,7 @@ export const updateProfileQuery = (body: any) => {
 };
 
 export const updateAccountQuery = (body: any) => {
+	const token = Cookies.get('token');
 	const { email, password } = body;
 
 	return axios.post<{ data: UserType }>(
@@ -83,6 +87,7 @@ export const updateAccountQuery = (body: any) => {
 };
 
 export const deactivateAccountQuery = (body: any) => {
+	const token = Cookies.get('token');
 	const { email, password } = body;
 
 	return axios.post<any>(

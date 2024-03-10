@@ -8,9 +8,13 @@ import {
 	updateAccountQuery,
 	updateProfileQuery,
 } from '@/queries/auth/auth-queries';
+import Cookies from 'js-cookie';
+import { useContext } from 'react';
+import { AuthContext } from '@/context/auth/auth-context';
 
 const useAuth = () => {
 	const queryClient = useQueryClient();
+	const { currentUser } = useContext(AuthContext);
 
 	const register = useMutation({
 		mutationFn: registerQuery,
@@ -36,6 +40,7 @@ const useAuth = () => {
 	const getUserProfile = useQuery({
 		queryFn: getProfileQuery,
 		queryKey: ['getUserProfile'],
+		enabled: !!currentUser,
 	});
 
 	const updateProfile = useMutation({

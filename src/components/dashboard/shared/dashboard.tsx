@@ -1,4 +1,4 @@
-import { Fragment, useState, ReactNode } from 'react';
+import { Fragment, useState, ReactNode, useEffect, useContext } from 'react';
 import { Dialog, Menu, Transition } from '@headlessui/react';
 import {
 	Bars3Icon,
@@ -14,8 +14,11 @@ import { inter } from '@/utils/fonts';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { UserType } from '@/types/auth/auth.types';
+import Cookies from 'js-cookie';
+import useAuth from '@/hooks/auth/useAuth';
+import { AuthContext } from '@/context/auth/auth-context';
 
-const userNavigation = [{ name: 'Sign out', href: '#' }];
+const userNavigation = [{ name: 'Sign out', onClick: '#' }];
 
 export default function Dashboard({
 	children,
@@ -29,6 +32,23 @@ export default function Dashboard({
 	const [sidebarOpen, setSidebarOpen] = useState(false);
 	const router = useRouter();
 	const userType = user.userInfo.isAgent ? 'agent' : 'user';
+	const { logout } = useAuth();
+	const { setCurrentUser } = useContext(AuthContext);
+
+	useEffect(() => {
+		if (logout.data) {
+			Cookies.remove('token');
+			Cookies.remove('userInfo');
+			setCurrentUser(null);
+			router.push('/').then();
+		}
+
+		// eslint-disable-next-line
+	}, [logout.data]);
+
+	const handleLogout = () => {
+		logout.mutate({});
+	};
 
 	return (
 		<>
@@ -277,7 +297,12 @@ export default function Dashboard({
 										</span>
 										<span className='inline-flex h-8 w-8 items-center justify-center rounded-full bg-ct-deepPink'>
 											<span className='text-sm font-medium leading-none text-white'>
-												JD
+												{user.userInfo.firstName.charAt(
+													0,
+												) +
+													user.userInfo.lastName.charAt(
+														0,
+													)}
 											</span>
 										</span>
 										<span className='hidden lg:flex lg:items-center'>
@@ -307,17 +332,19 @@ export default function Dashboard({
 											{userNavigation.map(item => (
 												<Menu.Item key={item.name}>
 													{({ active }) => (
-														<a
-															href={item.href}
+														<div
 															className={classNames(
 																active
 																	? 'bg-gray-50'
 																	: '',
-																'block px-3 py-1 text-sm leading-6 text-gray-900',
+																'block px-3 py-1 text-sm leading-6 text-gray-900 cursor-pointer',
 															)}
+															onClick={
+																handleLogout
+															}
 														>
 															{item.name}
-														</a>
+														</div>
 													)}
 												</Menu.Item>
 											))}
