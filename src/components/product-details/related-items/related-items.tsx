@@ -27,7 +27,7 @@ const RelatedItems = () => {
 		return () => {
 			setProducts([]);
 		};
-	}, [getAllProducts.data]);
+	}, [getAllProducts.data, itemId, itemType]);
 
 	return (
 		<div className='mt-8 grid grid-cols-1 gap-y-12 sm:grid-cols-2 sm:gap-x-6 lg:grid-cols-4 xl:gap-x-8'>
