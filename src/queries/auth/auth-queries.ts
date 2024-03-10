@@ -37,3 +37,64 @@ export const logoutQuery = (body: any) => {
 		},
 	);
 };
+
+export const getProfileQuery = (body: any) => {
+	return axios.get<{ data: UserType }>(`${baseUrl}/user/view_profile`, {
+		headers: {
+			Authorization: token,
+		},
+	});
+};
+
+export const updateProfileQuery = (body: any) => {
+	const { firstName, lastName, mobile } = body;
+
+	return axios.post<{ data: UserType }>(
+		`${baseUrl}/user/profile_update`,
+		{
+			first_name: firstName,
+			last_name: lastName,
+			mobile,
+			skip_verify: '1',
+		},
+		{
+			headers: {
+				Authorization: token,
+			},
+		},
+	);
+};
+
+export const updateAccountQuery = (body: any) => {
+	const { email, password } = body;
+
+	return axios.post<{ data: UserType }>(
+		`${baseUrl}/user/profile_update`,
+		{
+			email,
+			password,
+		},
+		{
+			headers: {
+				Authorization: token,
+			},
+		},
+	);
+};
+
+export const deactivateAccountQuery = (body: any) => {
+	const { email, password } = body;
+
+	return axios.post<any>(
+		`${baseUrl}/user/deactive`,
+		{
+			email,
+			password,
+		},
+		{
+			headers: {
+				Authorization: token,
+			},
+		},
+	);
+};

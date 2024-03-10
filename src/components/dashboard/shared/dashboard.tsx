@@ -13,6 +13,7 @@ import { classNames } from '@/utils/classNames';
 import { inter } from '@/utils/fonts';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import { UserType } from '@/types/auth/auth.types';
 
 const userNavigation = [{ name: 'Sign out', href: '#' }];
 
@@ -23,11 +24,11 @@ export default function Dashboard({
 }: {
 	children: ReactNode;
 	navigationItems: DashboardNavItem[];
-	user: any;
+	user: UserType;
 }) {
 	const [sidebarOpen, setSidebarOpen] = useState(false);
 	const router = useRouter();
-	const userType = user.userType;
+	const userType = user.userInfo.isAgent ? 'agent' : 'user';
 
 	return (
 		<>
@@ -284,7 +285,8 @@ export default function Dashboard({
 												className='ml-4 text-sm font-semibold leading-6 text-gray-900'
 												aria-hidden='true'
 											>
-												John Doe
+												{user.userInfo.firstName}{' '}
+												{user.userInfo.lastName}
 											</span>
 											<ChevronDownIcon
 												className='ml-2 h-5 w-5 text-gray-400'
