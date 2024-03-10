@@ -251,3 +251,9 @@ export const products: Product[] = [
 		],
 	},
 ];
+
+export const ProductKeys = {
+	flight: 1,
+	hotel: 2,
+	activity: 3,
+};

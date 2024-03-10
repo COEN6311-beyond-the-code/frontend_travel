@@ -8,7 +8,7 @@ interface IProps {
 
 const ProductCard: FC<IProps> = ({ product }) => {
 	return (
-		<Link href={`/item/${product.id}`}>
+		<Link href={`/item/${product.type}/${product.id}`}>
 			<div className='group relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white'>
 				<div className='aspect-h-4 aspect-w-3 bg-gray-200 sm:aspect-none group-hover:opacity-75 sm:h-96'>
 					<img
@@ -27,7 +27,7 @@ const ProductCard: FC<IProps> = ({ product }) => {
 					</p>
 					<div className='flex flex-1 flex-col justify-end'>
 						<p className='text-sm italic text-gray-500'>
-							Included: {product.options}
+							{product.options}
 						</p>
 						<p className='text-base font-medium text-gray-900'>
 							$ {product.price}

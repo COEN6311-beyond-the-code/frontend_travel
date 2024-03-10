@@ -6,8 +6,6 @@ import {
 } from '@/queries/auth/auth-queries';
 
 const useAuth = () => {
-	const queryClient = useQueryClient();
-
 	const register = useMutation({
 		mutationFn: registerQuery,
 		onSuccess: () => {

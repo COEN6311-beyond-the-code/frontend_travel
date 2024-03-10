@@ -9,70 +9,24 @@ import { products } from '@/data/packages';
 import RelatedItems from '@/components/product-details/related-items/related-items';
 import { useEffect, useState } from 'react';
 import { Product } from '@/types/product/product';
-
-const item = {
-	name: '7 day France trip',
-	price: 1200,
-	imageSrc: '/images/flights/trip 1.jpg',
-	imageAlt: '7 day France trip package.',
-	description: `Explore the beautiful country of France with our 7 day package deal. Enjoy a relaxing flight, a comfy hotel and some fun activities. Come with friends and family to enjoy the experience of a lifetime`,
-	details: [
-		{
-			name: 'Features',
-			items: [
-				'Enjoy one of the best flight',
-				'The hotel is located in the heart of the city',
-				'Enjoy the best meals',
-				'Meet great people at the rock climbing event',
-			],
-		},
-		{
-			name: 'Flight Details',
-			items: [
-				'Flight number: SKW138',
-				'Seat: 17A',
-				'Class: Economy',
-				'Departure: 19:55',
-				'Arrival: 22:15',
-			],
-		},
-		{
-			name: 'Hotel Details',
-			items: [
-				'Hotel name: Grand Hotel Europa',
-				'Room: Standard',
-				'Check-in: 15:00',
-				'Check-out: 10:00',
-			],
-		},
-		{
-			name: 'Activity Details',
-			items: [
-				'Event: Rock climbing',
-				'Location: Summit Climbing Gym',
-				'Address: 123 Johnson Ave.',
-				'Date: Friday, July 28, 2023',
-				'Time: 16:00',
-			],
-		},
-	],
-};
+import useProduct from '@/hooks/product/useProduct';
 
 const ItemDetails = () => {
 	const [item, setItem] = useState<Product | null>(null);
 	const router = useRouter();
-	const { itemId } = router.query;
+	const { itemId, itemType } = router.query;
+	const { getProduct, getPackage } = useProduct(
+		itemId as string,
+		itemType as string,
+	);
 
 	useEffect(() => {
-		if (itemId) {
-			const product = products.find(
-				product => product.id === parseInt(itemId as string),
-			);
-			if (product) {
-				setItem(product);
-			}
+		if (getProduct.data) {
+			setItem(getProduct.data.data.data);
+		} else if (getPackage.data) {
+			setItem(getPackage.data.data.data);
 		}
-	}, [itemId]);
+	}, [getProduct.data, getPackage.data]);
 
 	if (!item) {
 		return <PageLoader />;
@@ -212,7 +166,7 @@ const ItemDetails = () => {
 							Other popular packages
 						</h2>
 
-						<RelatedItems products={products} />
+						<RelatedItems />
 					</section>
 				</div>
 			</main>
