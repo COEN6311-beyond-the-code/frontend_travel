@@ -48,7 +48,7 @@ const UpdateItem = () => {
 				{router.query.type === 'package' ? (
 					<PackageForm mode='edit' />
 				) : (
-					<ItemForm mode='edit' />
+					<ItemForm mode='edit' type={router.query.type as string} />
 				)}
 			</Dashboard>
 		</Layout>

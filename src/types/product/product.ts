@@ -23,12 +23,41 @@ export interface ItemFormType {
 	price: number;
 	imageSrc: any;
 	imageAlt: string;
-	type: 'package' | 'flight' | 'hotel' | 'activity';
-	features: string;
+}
+
+export interface FlightFormType extends ItemFormType {
+	flightNumber: string;
+	seatClass: 'economy' | 'business' | 'first';
+	startDate: string;
+	endDate: string;
+	destination: string;
+	departureTime: string;
+	arrivalTime: string;
+}
+
+export interface HotelFormType extends ItemFormType {
+	hotelName: string;
+	room: 'single' | 'double' | 'suite' | 'penthouse';
+	address: string;
+	startDate: string;
+	endDate: string;
+	checkInTime: string;
+	checkOutTime: string;
+}
+
+export interface ActivityFormType extends ItemFormType {
+	startDate: string;
+	endDate: string;
+	event: string;
+	location: string;
+	address: string;
+	time: string;
 }
 
 export interface PackageFormType extends ItemFormType {
 	flight: any;
 	hotel: any;
 	activity: any;
+	type: 'package' | 'flight' | 'hotel' | 'activity';
+	features: string;
 }
