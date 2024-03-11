@@ -44,9 +44,32 @@ const PackageForm: FC<IProps> = ({ mode }) => {
 			product => product.name.toLowerCase() === data.activity,
 		);
 
-		console.log(flight);
-		console.log(hotel);
-		console.log(activity);
+		// console.log(flight);
+		// console.log(hotel);
+		// console.log(activity);
+		data.flight = flight
+			? {
+					id: flight.id,
+					type: '1',
+					number: 1,
+				}
+			: null;
+
+		data.hotel = hotel
+			? {
+					id: hotel.id,
+					type: '2',
+					number: 1,
+				}
+			: null;
+
+		data.activity = activity
+			? {
+					id: activity.id,
+					type: '3',
+					number: 1,
+				}
+			: null;
 
 		console.log(data);
 		console.log(errors);
