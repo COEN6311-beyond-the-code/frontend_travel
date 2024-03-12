@@ -1,5 +1,5 @@
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { ActivityFormType } from '@/types/product/product';
+import { ActivityFormType, Product } from '@/types/product/product';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ActivitySchema } from '@/schema/item-schema';
 import { FC, useEffect, useState } from 'react';
@@ -10,6 +10,7 @@ import { ExclamationCircleIcon } from '@heroicons/react/16/solid';
 import Message from '@/components/message/message';
 import useProduct from '@/hooks/product/useProduct';
 import { useRouter } from 'next/router';
+import PageLoader from '@/components/loaders/page-loader';
 
 interface IProps {
 	mode: 'create' | 'edit';
@@ -17,43 +18,97 @@ interface IProps {
 
 const ActivityForm: FC<IProps> = ({ mode }) => {
 	const [showError, setShowError] = useState(false);
-	const { createActivity } = useProduct();
 	const router = useRouter();
+	const [productId, setProductId] = useState<string | null>(null);
+	const [productType, setProductType] = useState<string | null>(null);
+	const [product, setProduct] = useState<Product | null>(null);
+	const { createActivity, getProduct, updateActivity } = useProduct(
+		productId!,
+		productType!,
+	);
 
 	const {
 		register: activityRegister,
 		handleSubmit: handleActivitySubmit,
 		setError: activitySetErrors,
 		formState: { errors: activityErrors },
+		reset,
 	} = useForm<ActivityFormType>({
 		resolver: yupResolver(ActivitySchema),
 	});
 
 	const submitActivityForm: SubmitHandler<ActivityFormType> = data => {
-		if (!selectedActivityFile) {
+		if (!selectedActivityFile && !product?.imageSrc) {
 			activitySetErrors('imageSrc', {
 				type: 'manual',
 				message: 'Image is required',
 			});
 			return;
 		}
-		console.log(data);
-		console.log(activityErrors);
 
-		createActivity.mutate(data);
+		if (product && mode === 'edit') {
+			updateActivity.mutate({
+				...data,
+				imageSrc: selectedActivityFile || product.imageSrc,
+				id: product.id,
+			});
+		} else {
+			createActivity.mutate(data);
+		}
 	};
 
 	const [selectedActivityFile, setSelectedActivityFile] = useState<any>(null);
 
 	useEffect(() => {
-		if (createActivity.data) {
+		if (getProduct.data) {
+			setProduct(getProduct.data.data.data);
+		}
+	}, [getProduct.data]);
+
+	useEffect(() => {
+		if (createActivity.data || updateActivity.data) {
 			router.push('/dashboard/agent/manage-packages').then();
-		} else if (createActivity.error) {
+		} else if (createActivity.error || updateActivity.error) {
 			setShowError(true);
 		}
 
 		// eslint-disable-next-line
-	}, [createActivity.data, createActivity.error]);
+	}, [
+		createActivity.data,
+		createActivity.error,
+		updateActivity.data,
+		updateActivity.error,
+	]);
+
+	useEffect(() => {
+		if (router.query) {
+			setProductId(router.query.item_id as string);
+		}
+
+		if (router.query.type) {
+			setProductType(router.query.type as string);
+		}
+	}, [router]);
+
+	useEffect(() => {
+		if (product) {
+			reset({
+				name: product.name,
+				description: product.description,
+				price: +product.price,
+				// startDate: "",
+				// endDate: "",
+				location: product.details[0].items[1].split(':')[1],
+				event: product.details[0].items[0].split(':')[1],
+				address: product.details[0].items[2].split(':')[1],
+				time: product.details[0].items[3].split(' ')[1],
+			});
+		}
+	}, [product, reset]);
+
+	if (mode === 'edit' && !product) {
+		return <PageLoader />;
+	}
 
 	return (
 		<div>
@@ -115,7 +170,9 @@ const ActivityForm: FC<IProps> = ({ mode }) => {
 							<label className='text-sm text-slate-500'>
 								{selectedActivityFile
 									? selectedActivityFile.name
-									: 'No file chosen'}
+									: product
+										? product.imageSrc
+										: 'No file chosen'}
 							</label>
 						</div>
 						{activityErrors.imageSrc && (
@@ -181,14 +238,16 @@ const ActivityForm: FC<IProps> = ({ mode }) => {
 				</div>
 
 				<Button extraClasses='px-12 mt-4 max-w-sm flex justify-center'>
-					{createActivity.isPending && <Spinner />}
+					{(createActivity.isPending || updateActivity.isPending) && (
+						<Spinner />
+					)}
 					{mode === 'create' ? 'Create Activity' : 'Edit Activity'}
 				</Button>
 			</form>
 
 			<Message
 				title='Activity creation error'
-				subtitle={`${createActivity?.error?.message}`}
+				subtitle={`${createActivity?.error?.message || updateActivity?.error?.message}`}
 				Icon={ExclamationCircleIcon}
 				iconColor='text-red-500'
 				show={showError}

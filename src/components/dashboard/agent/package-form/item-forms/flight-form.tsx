@@ -1,5 +1,5 @@
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { FlightFormType } from '@/types/product/product';
+import { FlightFormType, Product } from '@/types/product/product';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { FlightSchema } from '@/schema/item-schema';
 import { FC, useEffect, useState } from 'react';
@@ -10,27 +10,35 @@ import useProduct from '@/hooks/product/useProduct';
 import { ExclamationCircleIcon } from '@heroicons/react/16/solid';
 import Message from '@/components/message/message';
 import { useRouter } from 'next/router';
+import PageLoader from '@/components/loaders/page-loader';
 
 interface IProps {
 	mode: 'create' | 'edit';
 }
 
 const FlightForm: FC<IProps> = ({ mode }) => {
-	const { createFlight } = useProduct();
-	const [showError, setShowError] = useState(false);
 	const router = useRouter();
+	const [productId, setProductId] = useState<string | null>(null);
+	const [productType, setProductType] = useState<string | null>(null);
+	const [product, setProduct] = useState<Product | null>(null);
+	const [showError, setShowError] = useState(false);
+	const { createFlight, getProduct, updateFlight } = useProduct(
+		productId!,
+		productType!,
+	);
 
 	const {
 		register: flightRegister,
 		handleSubmit: handleFlightSubmit,
 		setError: flightSetErrors,
 		formState: { errors: flightErrors },
+		reset,
 	} = useForm<FlightFormType>({
 		resolver: yupResolver(FlightSchema),
 	});
 
 	const submitFlightForm: SubmitHandler<FlightFormType> = data => {
-		if (!selectedFlightFile) {
+		if (!selectedFlightFile && !product?.imageSrc) {
 			flightSetErrors('imageSrc', {
 				type: 'manual',
 				message: 'Image is required',
@@ -38,20 +46,73 @@ const FlightForm: FC<IProps> = ({ mode }) => {
 			return;
 		}
 
-		createFlight.mutate(data);
+		if (product && mode === 'edit') {
+			updateFlight.mutate({
+				...data,
+				imageSrc: selectedFlightFile || product.imageSrc,
+				id: product.id,
+			});
+		} else {
+			createFlight.mutate(data);
+		}
 	};
 
 	const [selectedFlightFile, setSelectedFlightFile] = useState<any>(null);
 
 	useEffect(() => {
-		if (createFlight.data) {
+		if (createFlight.data || updateFlight.data) {
 			router.push('/dashboard/agent/manage-packages').then();
-		} else if (createFlight.error) {
+		} else if (createFlight.error || updateFlight.error) {
 			setShowError(true);
 		}
 
 		// eslint-disable-next-line
-	}, [createFlight.data, createFlight.error]);
+	}, [
+		createFlight.data,
+		createFlight.error,
+		updateFlight.data,
+		updateFlight.error,
+	]);
+
+	useEffect(() => {
+		if (router.query) {
+			setProductId(router.query.item_id as string);
+		}
+
+		if (router.query.type) {
+			setProductType(router.query.type as string);
+		}
+	}, [router]);
+
+	useEffect(() => {
+		if (getProduct.data) {
+			setProduct(getProduct.data.data.data);
+		}
+	}, [getProduct.data]);
+
+	useEffect(() => {
+		if (product) {
+			reset({
+				name: product.name,
+				description: product.description,
+				price: +product.price,
+				// startDate: product.details[0].items[3].split(' ')[1],
+				// endDate: "",
+				flightNumber: product.details[0].items[1].split(' ')[2],
+				seatClass: product.details[0].items[2].split(' ')[1] as
+					| 'economy'
+					| 'business'
+					| 'first',
+				destination: product.details[0].items[0].split(' ')[1],
+				departureTime: product.details[0].items[4].split(' ')[1],
+				arrivalTime: product.details[0].items[3].split(' ')[1],
+			});
+		}
+	}, [product, reset]);
+
+	if (mode === 'edit' && !product) {
+		return <PageLoader />;
+	}
 
 	return (
 		<div>
@@ -110,7 +171,9 @@ const FlightForm: FC<IProps> = ({ mode }) => {
 							<label className='text-sm text-slate-500'>
 								{selectedFlightFile
 									? selectedFlightFile.name
-									: 'No file chosen'}
+									: product
+										? product.imageSrc
+										: 'No file chosen'}
 							</label>
 						</div>
 						{flightErrors.imageSrc && (
@@ -186,14 +249,16 @@ const FlightForm: FC<IProps> = ({ mode }) => {
 				</div>
 
 				<Button extraClasses='px-12 mt-4 max-w-sm flex justify-center'>
-					{createFlight.isPending && <Spinner />}
+					{(createFlight.isPending || updateFlight.isPending) && (
+						<Spinner />
+					)}
 					{mode === 'create' ? 'Create Flight' : 'Edit Flight'}
 				</Button>
 			</form>
 
 			<Message
 				title='Flight creation error'
-				subtitle={`${createFlight?.error?.message}`}
+				subtitle={`${createFlight?.error?.message || updateFlight?.error?.message}`}
 				Icon={ExclamationCircleIcon}
 				iconColor='text-red-500'
 				show={showError}

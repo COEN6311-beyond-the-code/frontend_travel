@@ -6,18 +6,20 @@ export interface Product {
 	description: string;
 	options: string;
 	imageSrc: string;
-	imageAlt: string;
+	imageAlt?: string;
 	type: 'package' | 'flight' | 'hotel' | 'activity';
 	details: ProductDetails[];
 }
 
 export interface ProductDetails {
+	id?: number;
 	name: string;
 	items: string[];
 	type: 'package' | 'flight' | 'hotel' | 'activity';
 }
 
 export interface ItemFormType {
+	id?: number;
 	name: string;
 	description: string;
 	price: number;

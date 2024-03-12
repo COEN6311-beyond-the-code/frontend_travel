@@ -8,6 +8,10 @@ import {
 	getAllProductsQuery,
 	queryPackage,
 	queryProduct,
+	updateActivityQuery,
+	updateFlightQuery,
+	updateHotelQuery,
+	updatePackageQuery,
 } from '@/queries/product/product-queries';
 
 const useProduct = (productId?: string, productType?: string) => {
@@ -44,8 +48,26 @@ const useProduct = (productId?: string, productType?: string) => {
 		},
 	});
 
+	const updatePackage = useMutation({
+		mutationFn: updatePackageQuery,
+		onSuccess: async () => {
+			await queryClient.invalidateQueries({
+				queryKey: ['getAllProducts', 'getAllAgentProducts'],
+			});
+		},
+	});
+
 	const createFlight = useMutation({
 		mutationFn: createFlightQuery,
+		onSuccess: async () => {
+			await queryClient.invalidateQueries({
+				queryKey: ['getAllProducts', 'getAllAgentProducts'],
+			});
+		},
+	});
+
+	const updateFlight = useMutation({
+		mutationFn: updateFlightQuery,
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({
 				queryKey: ['getAllProducts', 'getAllAgentProducts'],
@@ -62,8 +84,26 @@ const useProduct = (productId?: string, productType?: string) => {
 		},
 	});
 
+	const updateHotel = useMutation({
+		mutationFn: updateHotelQuery,
+		onSuccess: async () => {
+			await queryClient.invalidateQueries({
+				queryKey: ['getAllProducts', 'getAllAgentProducts'],
+			});
+		},
+	});
+
 	const createActivity = useMutation({
 		mutationFn: createActivityQuery,
+		onSuccess: async () => {
+			await queryClient.invalidateQueries({
+				queryKey: ['getAllProducts', 'getAllAgentProducts'],
+			});
+		},
+	});
+
+	const updateActivity = useMutation({
+		mutationFn: updateActivityQuery,
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({
 				queryKey: ['getAllProducts', 'getAllAgentProducts'],
@@ -76,9 +116,13 @@ const useProduct = (productId?: string, productType?: string) => {
 		getProduct,
 		getPackage,
 		createFlight,
+		updateFlight,
 		createHotel,
+		updateHotel,
 		createActivity,
+		updateActivity,
 		createPackage,
+		updatePackage,
 		getAllAgentProducts,
 	};
 };

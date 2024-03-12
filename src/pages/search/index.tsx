@@ -148,7 +148,7 @@ const Search = () => {
 						.includes(data.query!.toLowerCase()) ||
 					_.some(product.details, detail =>
 						_.some(detail, value =>
-							value
+							value!
 								.toString()
 								.toLowerCase()
 								.includes(data.query!.toLowerCase()),

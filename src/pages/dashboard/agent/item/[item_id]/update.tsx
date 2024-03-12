@@ -24,10 +24,6 @@ const UpdateItem = () => {
 
 	const router = useRouter();
 
-	useEffect(() => {
-		console.log(router.query.type);
-	}, [router]);
-
 	if (!router.query.type) {
 		return null;
 	}

@@ -65,7 +65,6 @@ export const queryPackage = (body: any) => {
 };
 
 const uploadFile = async (formData: FormData): Promise<string> => {
-	console.log('formData', formData);
 	try {
 		const response = await fetch(`${baseUrl}/uploadapp/upload`, {
 			method: 'POST',
@@ -103,7 +102,40 @@ export const createPackageQuery = async (body: PackageFormType) => {
 			image_alt: body.imageAlt,
 			features: body.features.split(';'),
 			items: [body.flight, body.hotel, body.activity].filter(
-				item => item !== undefined,
+				item => item !== null,
+			),
+		},
+		{
+			headers: {
+				Authorization: token,
+			},
+		},
+	);
+};
+
+export const updatePackageQuery = async (body: PackageFormType) => {
+	const token = Cookies.get('token');
+	let imageUrl = '';
+
+	if (typeof body.imageSrc === 'string') {
+		imageUrl = body.imageSrc;
+	} else {
+		const formData = new FormData();
+		formData.append('image', body.imageSrc);
+		imageUrl = await uploadFile(formData);
+	}
+
+	return axios.post<{ data: Product }>(
+		`${baseUrl}/product/package/update`,
+		{
+			id: body.id,
+			name: body.name,
+			description: body.description,
+			price: body.price,
+			image_src: imageUrl,
+			features: body.features.split(';'),
+			items: [body.flight, body.hotel, body.activity].filter(
+				item => item !== null,
 			),
 		},
 		{
@@ -125,6 +157,43 @@ export const createFlightQuery = async (body: FlightFormType) => {
 	return axios.post<{ data: Product }>(
 		`${baseUrl}/product/item/insert`,
 		{
+			type: '1',
+			name: body.name,
+			description: body.description,
+			price: body.price,
+			start_date: body.startDate,
+			end_date: body.endDate,
+			image_src: imageUrl,
+			flight_number: body.flightNumber,
+			seat_class: body.seatClass,
+			destination: body.destination,
+			departure_time: body.departureTime,
+			arrival_time: body.arrivalTime,
+		},
+		{
+			headers: {
+				Authorization: token,
+			},
+		},
+	);
+};
+
+export const updateFlightQuery = async (body: FlightFormType) => {
+	const token = Cookies.get('token');
+	let imageUrl = '';
+
+	if (typeof body.imageSrc === 'string') {
+		imageUrl = body.imageSrc;
+	} else {
+		const formData = new FormData();
+		formData.append('image', body.imageSrc);
+		imageUrl = await uploadFile(formData);
+	}
+
+	return axios.post<{ data: Product }>(
+		`${baseUrl}/product/item/update`,
+		{
+			id: body.id,
 			type: '1',
 			name: body.name,
 			description: body.description,
@@ -178,6 +247,43 @@ export const createHotelQuery = async (body: HotelFormType) => {
 	);
 };
 
+export const updateHotelQuery = async (body: HotelFormType) => {
+	const token = Cookies.get('token');
+	let imageUrl = '';
+
+	if (typeof body.imageSrc === 'string') {
+		imageUrl = body.imageSrc;
+	} else {
+		const formData = new FormData();
+		formData.append('image', body.imageSrc);
+		imageUrl = await uploadFile(formData);
+	}
+
+	return axios.post<{ data: Product }>(
+		`${baseUrl}/product/item/update`,
+		{
+			id: body.id,
+			type: '2',
+			name: body.name,
+			description: body.description,
+			price: body.price,
+			start_date: body.startDate,
+			end_date: body.endDate,
+			room: body.room,
+			image_src: imageUrl,
+			hotel_name: body.hotelName,
+			address: body.address,
+			check_in_time: body.checkInTime,
+			check_out_time: body.checkOutTime,
+		},
+		{
+			headers: {
+				Authorization: token,
+			},
+		},
+	);
+};
+
 export const createActivityQuery = async (body: ActivityFormType) => {
 	const token = Cookies.get('token');
 
@@ -189,6 +295,42 @@ export const createActivityQuery = async (body: ActivityFormType) => {
 	return axios.post<{ data: Product }>(
 		`${baseUrl}/product/item/insert`,
 		{
+			type: '3',
+			name: body.name,
+			description: body.description,
+			price: body.price,
+			start_date: body.startDate,
+			end_date: body.endDate,
+			image_src: imageUrl,
+			event: body.event,
+			location: body.location,
+			address: body.address,
+			time: body.time,
+		},
+		{
+			headers: {
+				Authorization: token,
+			},
+		},
+	);
+};
+
+export const updateActivityQuery = async (body: ActivityFormType) => {
+	const token = Cookies.get('token');
+	let imageUrl = '';
+
+	if (typeof body.imageSrc === 'string') {
+		imageUrl = body.imageSrc;
+	} else {
+		const formData = new FormData();
+		formData.append('image', body.imageSrc);
+		imageUrl = await uploadFile(formData);
+	}
+
+	return axios.post<{ data: Product }>(
+		`${baseUrl}/product/item/update`,
+		{
+			id: body.id,
 			type: '3',
 			name: body.name,
 			description: body.description,
