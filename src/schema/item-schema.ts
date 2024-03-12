@@ -5,7 +5,6 @@ const shared = {
 	description: yup.string().required('Please enter a description'),
 	price: yup.number().required('Please enter a price'),
 	imageSrc: yup.mixed().required('Please upload an image'),
-	imageAlt: yup.string().required('Please enter an image alt'),
 };
 
 export const ItemSchema = yup.object(shared);

@@ -32,7 +32,7 @@ const CreateItem = () => {
 		<Layout title='Create Item' hideFooter={true} hideNav={true}>
 			<Dashboard navigationItems={agentNavigation} user={user}>
 				<h1 className='text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl'>
-					Create Item
+					Create {currentTab}
 				</h1>
 
 				<PackageTabs

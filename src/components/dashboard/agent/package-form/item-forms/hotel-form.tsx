@@ -5,13 +5,21 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { HotelFormType } from '@/types/product/product';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { HotelSchema } from '@/schema/item-schema';
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
+import { ExclamationCircleIcon } from '@heroicons/react/16/solid';
+import Message from '@/components/message/message';
+import useProduct from '@/hooks/product/useProduct';
+import { useRouter } from 'next/router';
 
 interface IProps {
 	mode: 'create' | 'edit';
 }
 
 const HotelForm: FC<IProps> = ({ mode }) => {
+	const [showError, setShowError] = useState(false);
+	const { createHotel } = useProduct();
+	const router = useRouter();
+
 	const {
 		register: hotelRegister,
 		handleSubmit: handleHotelSubmit,
@@ -29,11 +37,21 @@ const HotelForm: FC<IProps> = ({ mode }) => {
 			});
 			return;
 		}
-		console.log(data);
-		console.log(hotelErrors);
+
+		createHotel.mutate(data);
 	};
 
 	const [selectedHotelFile, setSelectedHotelFile] = useState<any>(null);
+
+	useEffect(() => {
+		if (createHotel.data) {
+			router.push('/dashboard/agent/manage-packages').then();
+		} else if (createHotel.error) {
+			setShowError(true);
+		}
+
+		// eslint-disable-next-line
+	}, [createHotel.data, createHotel.error]);
 
 	return (
 		<div>
@@ -41,8 +59,8 @@ const HotelForm: FC<IProps> = ({ mode }) => {
 				<div className='w-8/12 space-y-1 grid grid-cols-1 gap-6 lg:grid-cols-2 items-start'>
 					<Input
 						type='text'
-						label='Package name'
-						placeholder='Package 1'
+						label='Item name'
+						placeholder='Hotel 1'
 						id='name'
 						register={hotelRegister}
 						errors={hotelErrors}
@@ -102,15 +120,6 @@ const HotelForm: FC<IProps> = ({ mode }) => {
 
 					<Input
 						type='text'
-						label='Image Alt'
-						placeholder='Image alt text'
-						id='imageAlt'
-						register={hotelRegister}
-						errors={hotelErrors}
-					/>
-
-					<Input
-						type='text'
 						label='Hotel Name'
 						placeholder='Hotel Name'
 						id='hotelName'
@@ -161,7 +170,7 @@ const HotelForm: FC<IProps> = ({ mode }) => {
 					/>
 
 					<Input
-						type='date'
+						type='time'
 						label='Check-in Time'
 						placeholder='Check-in Time'
 						id='checkInTime'
@@ -170,7 +179,7 @@ const HotelForm: FC<IProps> = ({ mode }) => {
 					/>
 
 					<Input
-						type='date'
+						type='time'
 						label='Check-out Time'
 						placeholder='Check-out Time'
 						id='checkOutTime'
@@ -180,10 +189,19 @@ const HotelForm: FC<IProps> = ({ mode }) => {
 				</div>
 
 				<Button extraClasses='px-12 mt-4 max-w-sm flex justify-center'>
-					{/*{isLoading && <Spinner/>}*/}
-					{mode === 'create' ? 'Create Item' : 'Edit Item'}
+					{createHotel.isPending && <Spinner />}
+					{mode === 'create' ? 'Create Hotel' : 'Edit Hotel'}
 				</Button>
 			</form>
+
+			<Message
+				title='Hotel creation error'
+				subtitle={`${createHotel?.error?.message}`}
+				Icon={ExclamationCircleIcon}
+				iconColor='text-red-500'
+				show={showError}
+				setShow={setShowError}
+			/>
 		</div>
 	);
 };

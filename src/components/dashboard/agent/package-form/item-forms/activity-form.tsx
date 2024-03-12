@@ -2,16 +2,24 @@ import { SubmitHandler, useForm } from 'react-hook-form';
 import { ActivityFormType } from '@/types/product/product';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { ActivitySchema } from '@/schema/item-schema';
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import Input from '@/components/input/input';
 import Button from '@/components/button/button';
 import Spinner from '@/components/loaders/spinner';
+import { ExclamationCircleIcon } from '@heroicons/react/16/solid';
+import Message from '@/components/message/message';
+import useProduct from '@/hooks/product/useProduct';
+import { useRouter } from 'next/router';
 
 interface IProps {
 	mode: 'create' | 'edit';
 }
 
 const ActivityForm: FC<IProps> = ({ mode }) => {
+	const [showError, setShowError] = useState(false);
+	const { createActivity } = useProduct();
+	const router = useRouter();
+
 	const {
 		register: activityRegister,
 		handleSubmit: handleActivitySubmit,
@@ -31,9 +39,21 @@ const ActivityForm: FC<IProps> = ({ mode }) => {
 		}
 		console.log(data);
 		console.log(activityErrors);
+
+		createActivity.mutate(data);
 	};
 
 	const [selectedActivityFile, setSelectedActivityFile] = useState<any>(null);
+
+	useEffect(() => {
+		if (createActivity.data) {
+			router.push('/dashboard/agent/manage-packages').then();
+		} else if (createActivity.error) {
+			setShowError(true);
+		}
+
+		// eslint-disable-next-line
+	}, [createActivity.data, createActivity.error]);
 
 	return (
 		<div>
@@ -44,8 +64,8 @@ const ActivityForm: FC<IProps> = ({ mode }) => {
 				<div className='w-8/12 space-y-1 grid grid-cols-1 gap-6 lg:grid-cols-2 items-start'>
 					<Input
 						type='text'
-						label='Package name'
-						placeholder='Package 1'
+						label='Item name'
+						placeholder='Activity 1'
 						id='name'
 						register={activityRegister}
 						errors={activityErrors}
@@ -107,15 +127,6 @@ const ActivityForm: FC<IProps> = ({ mode }) => {
 
 					<Input
 						type='text'
-						label='Image Alt'
-						placeholder='Image alt text'
-						id='imageAlt'
-						register={activityRegister}
-						errors={activityErrors}
-					/>
-
-					<Input
-						type='text'
 						label='Event'
 						placeholder='Event'
 						id='event'
@@ -170,10 +181,19 @@ const ActivityForm: FC<IProps> = ({ mode }) => {
 				</div>
 
 				<Button extraClasses='px-12 mt-4 max-w-sm flex justify-center'>
-					{/*{isLoading && <Spinner/>}*/}
-					{mode === 'create' ? 'Create Item' : 'Edit Item'}
+					{createActivity.isPending && <Spinner />}
+					{mode === 'create' ? 'Create Activity' : 'Edit Activity'}
 				</Button>
 			</form>
+
+			<Message
+				title='Activity creation error'
+				subtitle={`${createActivity?.error?.message}`}
+				Icon={ExclamationCircleIcon}
+				iconColor='text-red-500'
+				show={showError}
+				setShow={setShowError}
+			/>
 		</div>
 	);
 };

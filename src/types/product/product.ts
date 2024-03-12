@@ -22,7 +22,7 @@ export interface ItemFormType {
 	description: string;
 	price: number;
 	imageSrc: any;
-	imageAlt: string;
+	imageAlt?: string;
 }
 
 export interface FlightFormType extends ItemFormType {

@@ -65,6 +65,7 @@ export const queryPackage = (body: any) => {
 };
 
 const uploadFile = async (formData: FormData): Promise<string> => {
+	console.log('formData', formData);
 	try {
 		const response = await fetch(`${baseUrl}/uploadapp/upload`, {
 			method: 'POST',
@@ -88,7 +89,7 @@ export const createPackageQuery = async (body: PackageFormType) => {
 	const token = Cookies.get('token');
 
 	const formData = new FormData();
-	formData.append('file', body.imageSrc);
+	formData.append('image', body.imageSrc[0]);
 
 	const imageUrl = await uploadFile(formData);
 
@@ -117,7 +118,7 @@ export const createFlightQuery = async (body: FlightFormType) => {
 	const token = Cookies.get('token');
 
 	const formData = new FormData();
-	formData.append('file', body.imageSrc);
+	formData.append('image', body.imageSrc[0]);
 
 	const imageUrl = await uploadFile(formData);
 
@@ -131,11 +132,10 @@ export const createFlightQuery = async (body: FlightFormType) => {
 			start_date: body.startDate,
 			end_date: body.endDate,
 			image_src: imageUrl,
-			image_alt: body.imageAlt,
 			flight_number: body.flightNumber,
-			seat_class: body.flightNumber,
+			seat_class: body.seatClass,
 			destination: body.destination,
-			departure_time: body.flightNumber,
+			departure_time: body.departureTime,
 			arrival_time: body.arrivalTime,
 		},
 		{
@@ -150,7 +150,7 @@ export const createHotelQuery = async (body: HotelFormType) => {
 	const token = Cookies.get('token');
 
 	const formData = new FormData();
-	formData.append('file', body.imageSrc);
+	formData.append('image', body.imageSrc[0]);
 
 	const imageUrl = await uploadFile(formData);
 
@@ -163,7 +163,6 @@ export const createHotelQuery = async (body: HotelFormType) => {
 			price: body.price,
 			start_date: body.startDate,
 			end_date: body.endDate,
-			image_alt: body.imageAlt,
 			room: body.room,
 			image_src: imageUrl,
 			hotel_name: body.hotelName,
@@ -183,7 +182,7 @@ export const createActivityQuery = async (body: ActivityFormType) => {
 	const token = Cookies.get('token');
 
 	const formData = new FormData();
-	formData.append('file', body.imageSrc);
+	formData.append('image', body.imageSrc[0]);
 
 	const imageUrl = await uploadFile(formData);
 
@@ -196,7 +195,6 @@ export const createActivityQuery = async (body: ActivityFormType) => {
 			price: body.price,
 			start_date: body.startDate,
 			end_date: body.endDate,
-			image_alt: body.imageAlt,
 			image_src: imageUrl,
 			event: body.event,
 			location: body.location,
