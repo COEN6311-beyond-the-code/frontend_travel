@@ -15,6 +15,7 @@ import Cookies from 'js-cookie';
 import { classNames } from '@/utils/classNames';
 import useAuth from '@/hooks/auth/useAuth';
 import { useRouter } from 'next/router';
+import useCart from '@/hooks/cart/useCart';
 
 const navigation = {
 	pages: [
@@ -33,6 +34,7 @@ export default function NavBar() {
 	const isTokenSet = Cookies.get('token');
 
 	const { logout } = useAuth();
+	const { getUserCart } = useCart();
 	const router = useRouter();
 
 	const handleLogout = () => {
@@ -290,7 +292,10 @@ export default function NavBar() {
 										aria-hidden='true'
 									/>
 									<span className='ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-800'>
-										0
+										{getUserCart.data?.data.data.cart.items
+											.length! > 0
+											? `${getUserCart.data?.data.data.cart.items.length}`
+											: 0}
 									</span>
 									<span className='sr-only'>
 										items in cart, view bag

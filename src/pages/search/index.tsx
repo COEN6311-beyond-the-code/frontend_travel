@@ -36,7 +36,7 @@ const Search = () => {
 	const { getAllProducts } = useProduct();
 	const [products, setProducts] = useState<Product[]>([]);
 	const rangeMin = 50;
-	const rangeMax = 5000;
+	const rangeMax = 10000;
 	const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 	const [activeProductTypeFilters, setActiveProductTypeFilters] = useState<
 		string[]
@@ -311,8 +311,8 @@ const Search = () => {
 									<div className='px-4'>
 										<PriceRange
 											defaultMin={100}
-											defaultMax={5000}
-											barMax={5000}
+											defaultMax={10000}
+											barMax={10000}
 											barMin={100}
 											minInterval={300}
 											rangeValues={priceValues}
@@ -417,8 +417,8 @@ const Search = () => {
 									</span>
 									<PriceRange
 										defaultMin={50}
-										defaultMax={5000}
-										barMax={5000}
+										defaultMax={10000}
+										barMax={10000}
 										barMin={50}
 										minInterval={300}
 										rangeValues={priceValues}

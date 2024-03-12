@@ -62,3 +62,12 @@ export interface PackageFormType extends ItemFormType {
 	activity: any;
 	features: string;
 }
+
+interface CartProduct extends Product {
+	cartItemId: number;
+}
+
+export interface CartType {
+	price: number;
+	items: CartProduct[];
+}

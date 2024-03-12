@@ -1,10 +1,20 @@
-import { Dispatch, FC, Fragment, SetStateAction, useState } from 'react';
+import {
+	Dispatch,
+	FC,
+	Fragment,
+	SetStateAction,
+	useEffect,
+	useState,
+} from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { classNames } from '@/utils/classNames';
 import { inter } from '@/utils/fonts';
-import { products } from '@/data/packages';
 import Link from 'next/link';
+import { CartType, Product } from '@/types/product/product';
+import useCart from '@/hooks/cart/useCart';
+import { nanoid } from 'nanoid';
+import Spinner from '@/components/loaders/spinner';
 
 interface IProps {
 	open: boolean;
@@ -12,6 +22,26 @@ interface IProps {
 }
 
 const PackageCart: FC<IProps> = ({ open, setOpen }) => {
+	const [cart, setCart] = useState<CartType | null>(null);
+	const { getUserCart, deleteItemFromCart } = useCart();
+	const [itemToDelete, setItemToDelete] = useState<Product | null>(null);
+
+	useEffect(() => {
+		if (getUserCart.data) {
+			setCart(getUserCart.data.data.data.cart);
+		}
+	}, [getUserCart.data]);
+
+	useEffect(() => {
+		if (deleteItemFromCart.data) {
+			setItemToDelete(null);
+		}
+	}, [deleteItemFromCart.data]);
+
+	if (!cart) {
+		return null;
+	}
+
 	return (
 		<Transition.Root show={open} as={Fragment}>
 			<Dialog as='div' className='relative z-50' onClose={setOpen}>
@@ -73,121 +103,168 @@ const PackageCart: FC<IProps> = ({ open, setOpen }) => {
 
 											<div className='mt-8'>
 												<div className='flow-root'>
-													<ul
-														role='list'
-														className='-my-6 divide-y divide-gray-200'
-													>
-														{products
-															.slice(3, 7)
-															.map(product => (
-																<li
-																	key={
-																		product.id
-																	}
-																	className='flex py-6'
-																>
-																	<div className='h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200'>
-																		<img
-																			src={
-																				product.imageSrc
-																			}
-																			alt={
-																				product.imageAlt
-																			}
-																			className='h-full w-full object-cover object-center'
-																		/>
-																	</div>
+													{cart?.items.length! > 0 ? (
+														<ul
+															role='list'
+															className='-my-6 divide-y divide-gray-200'
+														>
+															{cart?.items.map(
+																product => (
+																	<li
+																		key={nanoid()}
+																		className='flex py-6'
+																	>
+																		<div className='h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200'>
+																			<img
+																				src={
+																					product.imageSrc
+																				}
+																				alt={
+																					product.imageAlt
+																				}
+																				className='h-full w-full object-cover object-center'
+																			/>
+																		</div>
 
-																	<div className='ml-4 flex flex-1 flex-col'>
-																		<div>
-																			<div className='flex justify-between text-base font-medium text-gray-900'>
-																				<h3>
-																					<Link
-																						href={`/item/${product.id}`}
-																						onClick={() =>
-																							setOpen(
-																								false,
-																							)
-																						}
-																					>
+																		<div className='ml-4 flex flex-1 flex-col'>
+																			<div>
+																				<div className='flex justify-between text-base font-medium text-gray-900'>
+																					<h3>
+																						<Link
+																							href={`/item/${product.id}`}
+																							onClick={() =>
+																								setOpen(
+																									false,
+																								)
+																							}
+																						>
+																							{
+																								product.name
+																							}
+																						</Link>
+																					</h3>
+																					<p className='ml-4'>
+																						${' '}
 																						{
-																							product.name
+																							product.price
 																						}
-																					</Link>
-																				</h3>
-																				<p className='ml-4'>
-																					${' '}
+																					</p>
+																				</div>
+																				<p className='mt-1 text-sm text-gray-500'>
 																					{
-																						product.price
+																						product.options
 																					}
 																				</p>
 																			</div>
-																			<p className='mt-1 text-sm text-gray-500'>
-																				{
-																					product.options
-																				}
-																			</p>
-																		</div>
-																		<div className='flex flex-1 items-end justify-between text-sm'>
-																			<p className='text-gray-500 capitalize'>
-																				{
-																					product.type
-																				}
-																			</p>
+																			<div className='flex flex-1 items-end justify-between text-sm'>
+																				<p className='text-gray-500 capitalize'>
+																					{
+																						product.type
+																					}
+																				</p>
 
-																			<div className='flex'>
-																				<button
-																					type='button'
-																					className='font-medium text-ct-deepPink hover:opacity-80'
-																				>
-																					Remove
-																				</button>
+																				<div className='flex'>
+																					<button
+																						type='button'
+																						className='font-medium text-ct-deepPink hover:opacity-80'
+																						onClick={() => {
+																							setItemToDelete(
+																								product,
+																							);
+																							deleteItemFromCart.mutate(
+																								{
+																									cartItemId:
+																										product.cartItemId,
+																								},
+																							);
+																						}}
+																					>
+																						{itemToDelete &&
+																						product.type +
+																							product.id ===
+																							itemToDelete?.type +
+																								itemToDelete?.id &&
+																						deleteItemFromCart.isPending ? (
+																							<Spinner />
+																						) : (
+																							'Remove'
+																						)}
+																					</button>
+																				</div>
 																			</div>
 																		</div>
-																	</div>
-																</li>
-															))}
-													</ul>
+																	</li>
+																),
+															)}
+														</ul>
+													) : (
+														<div className='flex flex-col items-center justify-center mt-[50%]'>
+															<img
+																className='w-20 h-20 opacity-70'
+																src='/images/empty-box.png'
+																alt='Empty package'
+															/>
+															<p className='text-center text-gray-500'>
+																Your package
+																cart is empty
+															</p>
+															<Link
+																href={'/search'}
+																className='text-center text-white bg-ct-deepPink mt-4 px-3 py-3 rounded-md hover:opacity-80'
+																onClick={() =>
+																	setOpen(
+																		false,
+																	)
+																}
+															>
+																Search for
+																packages
+															</Link>
+														</div>
+													)}
 												</div>
 											</div>
 										</div>
 
-										<div className='border-t border-gray-200 px-4 py-6 sm:px-6'>
-											<div className='flex justify-between text-base font-medium text-gray-900'>
-												<p>Subtotal</p>
-												<p>$262.00</p>
-											</div>
-											<p className='mt-0.5 text-sm text-gray-500'>
-												Taxes calculated at checkout.
-											</p>
-											<div className='mt-6'>
-												<Link
-													href='/checkout'
-													className='flex items-center justify-center rounded-md border border-transparent
-                                                    bg-ct-deepPink px-6 py-3 text-base font-medium text-white shadow-sm hover:opacity-80'
-												>
-													Checkout
-												</Link>
-											</div>
-											<div className='mt-6 flex justify-center text-center text-sm text-gray-500'>
-												<p>
-													or{' '}
-													<button
-														type='button'
-														className='font-medium text-ct-deepPink hover:opacity-80'
-														onClick={() =>
-															setOpen(false)
-														}
-													>
-														Continue Shopping
-														<span aria-hidden='true'>
-															{' '}
-															&rarr;
-														</span>
-													</button>
+										{cart?.items.length > 0 && (
+											<div className='border-t border-gray-200 px-4 py-6 sm:px-6'>
+												<div className='flex justify-between text-base font-medium text-gray-900'>
+													<p>Subtotal</p>
+													<p>${cart.price}</p>
+												</div>
+												<p className='mt-0.5 text-sm text-gray-500'>
+													Taxes calculated at
+													checkout.
 												</p>
+												<div className='mt-6'>
+													<Link
+														href='/checkout'
+														className='flex items-center justify-center rounded-md border border-transparent
+                                                    bg-ct-deepPink px-6 py-3 text-base font-medium text-white shadow-sm hover:opacity-80'
+													>
+														Checkout
+													</Link>
+												</div>
+												<div className='mt-6 flex justify-center text-center text-sm text-gray-500'>
+													<p>
+														or{' '}
+														<button
+															type='button'
+															className='font-medium text-ct-deepPink hover:opacity-80'
+															onClick={() =>
+																setOpen(false)
+															}
+														>
+															Continue Shopping
+															<span aria-hidden='true'>
+																{' '}
+																&rarr;
+															</span>
+														</button>
+													</p>
+												</div>
 											</div>
-										</div>
+										)}
 									</div>
 								</Dialog.Panel>
 							</Transition.Child>
