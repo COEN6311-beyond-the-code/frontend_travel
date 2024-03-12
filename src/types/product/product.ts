@@ -58,6 +58,5 @@ export interface PackageFormType extends ItemFormType {
 	flight: any;
 	hotel: any;
 	activity: any;
-	type: 'package' | 'flight' | 'hotel' | 'activity';
 	features: string;
 }

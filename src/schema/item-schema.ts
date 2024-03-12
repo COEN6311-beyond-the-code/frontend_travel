@@ -7,14 +7,8 @@ const shared = {
 	imageSrc: yup.mixed().required('Please upload an image'),
 };
 
-export const ItemSchema = yup.object(shared);
-
 export const PackageSchema = yup.object({
 	...shared,
-	type: yup
-		.string()
-		.oneOf(['package', 'flight', 'hotel', 'activity'])
-		.required('Please select an item type'),
 	flight: yup.string().required('Please select a flight'),
 	hotel: yup.string().required('Please select a hotel'),
 	activity: yup.string().required('Please select an activity'),

@@ -1,12 +1,15 @@
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { PackageFormType } from '@/types/product/product';
+import { PackageFormType, Product } from '@/types/product/product';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { PackageSchema } from '@/schema/item-schema';
 import Spinner from '@/components/loaders/spinner';
 import Button from '@/components/button/button';
 import Input from '@/components/input/input';
-import { products } from '@/data/packages';
+import useProduct from '@/hooks/product/useProduct';
+import { ExclamationCircleIcon } from '@heroicons/react/16/solid';
+import Message from '@/components/message/message';
+import { useRouter } from 'next/router';
 
 interface IProps {
 	mode: 'create' | 'edit';
@@ -14,7 +17,16 @@ interface IProps {
 
 const PackageForm: FC<IProps> = ({ mode }) => {
 	const [selectedFile, setSelectedFile] = useState<any>(null);
-	const [isLoading, setIsLoading] = useState(false);
+	const { getAllAgentProducts, createPackage } = useProduct();
+	const [products, setProducts] = useState<Product[]>([]);
+	const [showError, setShowError] = useState(false);
+	const router = useRouter();
+
+	useEffect(() => {
+		if (getAllAgentProducts.data) {
+			setProducts(getAllAgentProducts.data.data.data);
+		}
+	}, [getAllAgentProducts.data]);
 
 	const {
 		register,
@@ -44,13 +56,10 @@ const PackageForm: FC<IProps> = ({ mode }) => {
 			product => product.name.toLowerCase() === data.activity,
 		);
 
-		// console.log(flight);
-		// console.log(hotel);
-		// console.log(activity);
 		data.flight = flight
 			? {
 					id: flight.id,
-					type: '1',
+					type: 1,
 					number: 1,
 				}
 			: null;
@@ -58,7 +67,7 @@ const PackageForm: FC<IProps> = ({ mode }) => {
 		data.hotel = hotel
 			? {
 					id: hotel.id,
-					type: '2',
+					type: 2,
 					number: 1,
 				}
 			: null;
@@ -66,14 +75,23 @@ const PackageForm: FC<IProps> = ({ mode }) => {
 		data.activity = activity
 			? {
 					id: activity.id,
-					type: '3',
+					type: 3,
 					number: 1,
 				}
 			: null;
 
-		console.log(data);
-		console.log(errors);
+		createPackage.mutate(data);
 	};
+
+	useEffect(() => {
+		if (createPackage.data) {
+			router.push('/dashboard/agent/manage-packages').then();
+		} else if (createPackage.error) {
+			setShowError(true);
+		}
+
+		// eslint-disable-next-line
+	}, [createPackage.data, createPackage.error]);
 
 	return (
 		<div>
@@ -141,25 +159,6 @@ const PackageForm: FC<IProps> = ({ mode }) => {
 					</div>
 
 					<Input
-						type='text'
-						label='Image Alt'
-						placeholder='Image alt text'
-						id='imageAlt'
-						register={register}
-						errors={errors}
-					/>
-
-					<Input
-						type='select'
-						label='Item Type'
-						placeholder='Item Type'
-						id='type'
-						selectOptions={['Package']}
-						register={register}
-						errors={errors}
-					/>
-
-					<Input
 						type='text-area'
 						label='Package Features'
 						placeholder='Please input the features of the package separated by semi-colons'
@@ -216,10 +215,19 @@ const PackageForm: FC<IProps> = ({ mode }) => {
 				</div>
 
 				<Button extraClasses='px-12 mt-4 max-w-sm flex justify-center'>
-					{isLoading && <Spinner />}
+					{createPackage.isPending && <Spinner />}
 					{mode === 'create' ? 'Create Item' : 'Edit Item'}
 				</Button>
 			</form>
+
+			<Message
+				title='Flight creation error'
+				subtitle={`${createPackage?.error?.message}`}
+				Icon={ExclamationCircleIcon}
+				iconColor='text-red-500'
+				show={showError}
+				setShow={setShowError}
+			/>
 		</div>
 	);
 };
