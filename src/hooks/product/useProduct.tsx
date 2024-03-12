@@ -4,6 +4,8 @@ import {
 	createFlightQuery,
 	createHotelQuery,
 	createPackageQuery,
+	deleteItemQuery,
+	deletePackageQuery,
 	getAllAgentProductsQuery,
 	getAllProductsQuery,
 	queryPackage,
@@ -50,6 +52,15 @@ const useProduct = (productId?: string, productType?: string) => {
 
 	const updatePackage = useMutation({
 		mutationFn: updatePackageQuery,
+		onSuccess: async () => {
+			await queryClient.invalidateQueries({
+				queryKey: ['getAllProducts', 'getAllAgentProducts'],
+			});
+		},
+	});
+
+	const deletePackage = useMutation({
+		mutationFn: deletePackageQuery,
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({
 				queryKey: ['getAllProducts', 'getAllAgentProducts'],
@@ -111,6 +122,15 @@ const useProduct = (productId?: string, productType?: string) => {
 		},
 	});
 
+	const deleteItem = useMutation({
+		mutationFn: deleteItemQuery,
+		onSuccess: async () => {
+			await queryClient.invalidateQueries({
+				queryKey: ['getAllProducts', 'getAllAgentProducts'],
+			});
+		},
+	});
+
 	return {
 		getAllProducts,
 		getProduct,
@@ -121,8 +141,10 @@ const useProduct = (productId?: string, productType?: string) => {
 		updateHotel,
 		createActivity,
 		updateActivity,
+		deleteItem,
 		createPackage,
 		updatePackage,
+		deletePackage,
 		getAllAgentProducts,
 	};
 };

@@ -10,19 +10,33 @@ import { useRouter } from 'next/router';
 import { nanoid } from 'nanoid';
 
 const ManagePackagesList = () => {
-	const [itemToCancel, setItemToCancel] = useState<Order | Product | null>(
-		null,
-	);
+	const [itemToCancel, setItemToCancel] = useState<any>(null);
 	const [open, setOpen] = useState(false);
-	const { getAllAgentProducts } = useProduct();
+	const { getAllAgentProducts, deletePackage, deleteItem } = useProduct();
 	const [products, setProducts] = useState<Product[]>([]);
 	const router = useRouter();
 
 	const handleCancel = () => {
 		if (itemToCancel) {
+			if (itemToCancel.type === 'package') {
+				deletePackage.mutate({
+					id: itemToCancel.id,
+				});
+			} else {
+				deleteItem.mutate({
+					id: itemToCancel.id,
+					type: itemToCancel.type,
+				});
+			}
 			setItemToCancel(null);
 		}
 	};
+
+	useEffect(() => {
+		if (deleteItem.data || deletePackage.data) {
+			setOpen(false);
+		}
+	}, [deleteItem.data, deletePackage.data]);
 
 	useEffect(() => {
 		if (getAllAgentProducts.data) {
@@ -220,6 +234,7 @@ const ManagePackagesList = () => {
 				setOpen={setOpen}
 				handleConfirm={handleCancel}
 				setItemToCancel={setItemToCancel}
+				isLoading={deleteItem.isPending || deletePackage.isPending}
 			/>
 		</main>
 	);

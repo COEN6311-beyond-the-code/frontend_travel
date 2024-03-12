@@ -350,3 +350,38 @@ export const updateActivityQuery = async (body: ActivityFormType) => {
 		},
 	);
 };
+
+export const deleteItemQuery = async (body: any) => {
+	const token = Cookies.get('token');
+
+	const productKey = ProductKeys[body.type as keyof typeof ProductKeys];
+
+	return axios.post(
+		`${baseUrl}/product/item/delete`,
+		{
+			id: body.id,
+			type: productKey.toString(),
+		},
+		{
+			headers: {
+				Authorization: token,
+			},
+		},
+	);
+};
+
+export const deletePackageQuery = async (body: any) => {
+	const token = Cookies.get('token');
+
+	return axios.post(
+		`${baseUrl}/product/package/delete`,
+		{
+			id: body.id,
+		},
+		{
+			headers: {
+				Authorization: token,
+			},
+		},
+	);
+};

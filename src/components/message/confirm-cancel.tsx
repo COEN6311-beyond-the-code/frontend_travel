@@ -12,6 +12,7 @@ import { Order } from '@/types/dashboard/orders';
 import { classNames } from '@/utils/classNames';
 import { inter } from '@/utils/fonts';
 import { Product } from '@/types/product/product';
+import Spinner from '@/components/loaders/spinner';
 
 interface IProps {
 	title: string;
@@ -20,6 +21,7 @@ interface IProps {
 	setOpen: Dispatch<SetStateAction<boolean>>;
 	handleConfirm: () => void;
 	setItemToCancel?: Dispatch<SetStateAction<Order | Product | null>>;
+	isLoading?: boolean;
 }
 
 const ConfirmCancel: FC<IProps> = ({
@@ -29,6 +31,7 @@ const ConfirmCancel: FC<IProps> = ({
 	setOpen,
 	handleConfirm,
 	setItemToCancel,
+	isLoading,
 }) => {
 	const cancelButtonRef = useRef(null);
 
@@ -97,6 +100,7 @@ const ConfirmCancel: FC<IProps> = ({
 											setOpen(false);
 										}}
 									>
+										{isLoading && <Spinner />}
 										Confirm
 									</button>
 									<button
