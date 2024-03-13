@@ -16,8 +16,6 @@ export function middleware(request: NextRequest) {
 				new URL('/search', request.nextUrl.origin),
 			);
 		}
-	} else {
-		return NextResponse.next();
 	}
 
 	if (signedIn && userInfo.isAgent) {
@@ -35,6 +33,22 @@ export function middleware(request: NextRequest) {
 				),
 			);
 		}
+	}
+
+	if (!signedIn) {
+		if (request.nextUrl.pathname.startsWith('/dashboard')) {
+			return NextResponse.redirect(
+				new URL('/sign-in', request.nextUrl.origin),
+			);
+		}
+	}
+
+	if (!signedIn) {
+		if (request.nextUrl.pathname.startsWith(`/checkout`)) {
+			return NextResponse.redirect(
+				new URL('/sign-in', request.nextUrl.origin),
+			);
+		}
 	} else {
 		return NextResponse.next();
 	}
@@ -46,5 +60,7 @@ export const config = {
 		'/sign-up',
 		'/dashboard/agent/:path*',
 		'/dashboard/user/:path*',
+		'/checkout',
+		'/checkout/:path*',
 	],
 };

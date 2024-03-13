@@ -5,20 +5,26 @@ import Layout from '@/components/layout/layout';
 import { Disclosure, Tab } from '@headlessui/react';
 import { MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { classNames } from '@/utils/classNames';
-import { products } from '@/data/packages';
 import RelatedItems from '@/components/product-details/related-items/related-items';
 import { useEffect, useState } from 'react';
 import { Product } from '@/types/product/product';
 import useProduct from '@/hooks/product/useProduct';
+import useCart from '@/hooks/cart/useCart';
+import Message from '@/components/message/message';
+import Spinner from '@/components/loaders/spinner';
 
 const ItemDetails = () => {
 	const [item, setItem] = useState<Product | null>(null);
+	const [show, setShow] = useState(false);
+	const [isInCart, setIsInCart] = useState(false);
+	const [setCartId, setSetCartId] = useState<number | null>(null);
 	const router = useRouter();
 	const { itemId, itemType } = router.query;
 	const { getProduct, getPackage } = useProduct(
 		itemId as string,
 		itemType as string,
 	);
+	const { addToCart, getUserCart, deleteItemFromCart } = useCart();
 
 	useEffect(() => {
 		if (getProduct.data) {
@@ -27,6 +33,41 @@ const ItemDetails = () => {
 			setItem(getPackage.data.data.data);
 		}
 	}, [getProduct.data, getPackage.data]);
+
+	useEffect(() => {
+		if (getUserCart.data && itemId && itemType) {
+			const cart = getUserCart.data.data.data.cart;
+			const isItemInCart = cart.items.find(
+				item => item.id + item.type === (itemId as string) + itemType,
+			);
+			if (isItemInCart) {
+				setSetCartId(isItemInCart.cartItemId);
+			}
+			setIsInCart(!!isItemInCart);
+		}
+	}, [getUserCart.data, itemId, itemType]);
+
+	useEffect(() => {
+		if (addToCart.data) {
+			setShow(true);
+		}
+	}, [addToCart.data]);
+
+	const handleAddToCart = () => {
+		if (itemId && itemType) {
+			if (isInCart) {
+				deleteItemFromCart.mutate({
+					cartItemId: itemId,
+				});
+			} else {
+				addToCart.mutate({
+					type: itemType,
+					id: itemId,
+					number: 1,
+				});
+			}
+		}
+	};
 
 	if (!item) {
 		return <PageLoader />;
@@ -72,7 +113,7 @@ const ItemDetails = () => {
 								</div>
 							</div>
 
-							<form className='mt-6'>
+							<div className='mt-6'>
 								<div className='mt-10 flex'>
 									<button
 										type='submit'
@@ -80,13 +121,18 @@ const ItemDetails = () => {
                                         border-transparent bg-ct-deepPink px-8 py-3 text-base font-medium text-white
                                         hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-ct-deepPink
                                         focus:ring-offset-2 focus:ring-offset-gray-50 sm:w-full'
+										onClick={handleAddToCart}
 									>
-										{item.type === 'package'
-											? 'Book now'
+										{(addToCart.isPending ||
+											deleteItemFromCart.isPending) && (
+											<Spinner />
+										)}
+										{isInCart
+											? 'Remove from package'
 											: 'Add to package'}
 									</button>
 								</div>
-							</form>
+							</div>
 
 							<section
 								aria-labelledby='details-heading'
@@ -116,7 +162,7 @@ const ItemDetails = () => {
 															<span className='ml-6 flex items-center'>
 																{open ? (
 																	<MinusIcon
-																		className='block h-6 w-6 text-indigo-400 group-hover:text-indigo-500'
+																		className='block h-6 w-6 text-gray-400 group-hover:text-gray-500'
 																		aria-hidden='true'
 																	/>
 																) : (
@@ -170,6 +216,13 @@ const ItemDetails = () => {
 					</section>
 				</div>
 			</main>
+
+			<Message
+				title='Cart updated'
+				subtitle='This item has been added to your cart'
+				show={show}
+				setShow={setShow}
+			/>
 		</Layout>
 	);
 };

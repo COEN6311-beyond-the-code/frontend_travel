@@ -4,13 +4,17 @@ import {
 	deleteItemFromCartQuery,
 	getUserCartQuery,
 } from '@/queries/cart/cart-queries';
+import { useContext } from 'react';
+import { AuthContext } from '@/context/auth/auth-context';
 
 const useCart = () => {
 	const queryClient = useQueryClient();
+	const { currentUser } = useContext(AuthContext);
 
 	const getUserCart = useQuery({
 		queryFn: getUserCartQuery,
 		queryKey: ['getUserCart'],
+		enabled: !!currentUser,
 	});
 
 	const addToCart = useMutation({

@@ -11,7 +11,7 @@ import { inter } from '@/utils/fonts';
 import Button from '@/components/button/button';
 import Spinner from '@/components/loaders/spinner';
 import { useRouter } from 'next/router';
-import { products } from '@/data/packages';
+import useCart from '@/hooks/cart/useCart';
 
 function CheckoutForm() {
 	const stripe = useStripe();
@@ -68,7 +68,7 @@ function CheckoutForm() {
 			elements,
 			confirmParams: {
 				// Make sure to change this to your payment completion page
-				return_url: 'http://localhost:3000/checkout/1/create-order',
+				return_url: 'http://localhost:3000/checkout/create-order',
 			},
 		});
 
@@ -133,30 +133,29 @@ const stripePromise = loadStripe(
 
 export default function Pay() {
 	const [clientSecret, setClientSecret] = React.useState('');
-	const [currentItem, setCurrentItem] = React.useState<any>(null);
+	const [cart, setCart] = React.useState<any>(null);
 	const router = useRouter();
+	const { getUserCart } = useCart();
 
 	useEffect(() => {
 		// Create PaymentIntent as soon as the page loads
-		if (currentItem) {
+		if (cart) {
 			fetch('/api/create-payment-intent', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ items: [currentItem] }),
+				body: JSON.stringify({ items: [cart] }),
 			})
 				.then(res => res.json())
 				.then(data => setClientSecret(data.clientSecret));
 		}
-	}, [currentItem]);
+	}, [cart]);
 
 	useEffect(() => {
-		if (router.query) {
-			const item = products.find(
-				product => product.id === parseInt(router.query.item_id as any),
-			);
-			setCurrentItem(item);
+		if (getUserCart.data) {
+			const item = getUserCart.data.data.data.cart;
+			setCart(item);
 		}
-	}, [router]);
+	}, [getUserCart.data]);
 
 	const appearance = {
 		theme: 'stripe',

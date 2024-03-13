@@ -2,6 +2,7 @@ import Cookies from 'js-cookie';
 import baseUrl from '@/utils/api-url';
 import { CartType } from '@/types/product/product';
 import axios from 'axios';
+import { ProductKeys } from '@/data/packages';
 
 export const getUserCartQuery = (body: any) => {
 	const token = Cookies.get('token');
@@ -16,12 +17,18 @@ export const getUserCartQuery = (body: any) => {
 export const addToCartQuery = (body: any) => {
 	const token = Cookies.get('token');
 
+	const productKey = ProductKeys[body.type as keyof typeof ProductKeys];
+
 	return axios.post<{ data: { cart: CartType } }>(
 		`${baseUrl}/cart/addItem`,
 		{
-			type: body.type,
-			id: body.id,
-			number: body.number,
+			items: [
+				{
+					type: productKey,
+					id: parseInt(body.id),
+					number: body.number,
+				},
+			],
 		},
 		{
 			headers: {
