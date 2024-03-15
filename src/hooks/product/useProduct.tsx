@@ -63,7 +63,7 @@ const useProduct = (productId?: string, productType?: string) => {
 		mutationFn: deletePackageQuery,
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({
-				queryKey: ['getAllProducts', 'getAllAgentProducts'],
+				queryKey: ['getAllAgentProducts'],
 			});
 		},
 	});
