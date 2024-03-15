@@ -104,7 +104,7 @@ const ManagePackagesList = () => {
 										>
 											<div className='flex items-center sm:items-start'>
 												<Link
-													href={`/item/${product.id}`}
+													href={`/item/${product.type}/${product.id}`}
 												>
 													<div className='h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg bg-gray-200 sm:h-40 sm:w-40 hover:opacity-80'>
 														<img

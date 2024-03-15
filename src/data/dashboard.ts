@@ -1,5 +1,5 @@
 export const userNavigation = [
-	{ name: 'Order History', href: '/dashboard/user/order-history' },
+	{ name: 'Orders', href: '/dashboard/user/orders' },
 	{ name: 'Past Purchases', href: '/dashboard/user/past-purchases' },
 ];
 

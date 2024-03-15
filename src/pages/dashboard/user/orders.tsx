@@ -9,7 +9,7 @@ import { UserType } from '@/types/auth/auth.types';
 import toCamelCase from '@/utils/camel-case';
 import PageLoader from '@/components/loaders/page-loader';
 
-const OrderHistory = () => {
+const Orders = () => {
 	const { getUserProfile } = useAuth();
 	const [user, setUser] = useState<UserType | null>(null);
 
@@ -36,4 +36,4 @@ const OrderHistory = () => {
 	);
 };
 
-export default OrderHistory;
+export default Orders;
