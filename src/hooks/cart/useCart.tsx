@@ -1,6 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
 	addToCartQuery,
+	cartCheckoutQuery,
 	deleteItemFromCartQuery,
 	getUserCartQuery,
 } from '@/queries/cart/cart-queries';
@@ -35,10 +36,20 @@ const useCart = () => {
 		},
 	});
 
+	const cartCheckout = useMutation({
+		mutationFn: cartCheckoutQuery,
+		onSuccess: async () => {
+			await queryClient.invalidateQueries({
+				queryKey: ['getUserCart'],
+			});
+		},
+	});
+
 	return {
 		getUserCart,
 		addToCart,
 		deleteItemFromCart,
+		cartCheckout,
 	};
 };
 

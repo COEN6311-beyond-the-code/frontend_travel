@@ -96,8 +96,8 @@ const FlightForm: FC<IProps> = ({ mode }) => {
 				name: product.name,
 				description: product.description,
 				price: +product.price,
-				// startDate: product.details[0].items[3].split(' ')[1],
-				// endDate: "",
+				startDate: product.start_date,
+				endDate: product.end_date,
 				flightNumber: product.details[0].items[1].split(' ')[2],
 				seatClass: product.details[0].items[2].split(' ')[1] as
 					| 'economy'

@@ -96,8 +96,8 @@ const HotelForm: FC<IProps> = ({ mode }) => {
 				name: product.name,
 				description: product.description,
 				price: +product.price,
-				// startDate: "",
-				// endDate: "",
+				startDate: product.start_date,
+				endDate: product.end_date,
 				room: product.details[0].items[1].split(' ')[1] as
 					| 'single'
 					| 'double'

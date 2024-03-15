@@ -32,8 +32,10 @@ const useAuth = () => {
 
 	const logout = useMutation({
 		mutationFn: logoutQuery,
-		onSuccess: () => {
-			console.log('Logged out successfully');
+		onSuccess: async () => {
+			queryClient.removeQueries({
+				queryKey: ['getUserCart'],
+			});
 		},
 	});
 

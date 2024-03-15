@@ -15,6 +15,7 @@ import { CartType, Product } from '@/types/product/product';
 import useCart from '@/hooks/cart/useCart';
 import { nanoid } from 'nanoid';
 import Spinner from '@/components/loaders/spinner';
+import Cookies from 'js-cookie';
 
 interface IProps {
 	open: boolean;
@@ -79,7 +80,7 @@ const PackageCart: FC<IProps> = ({ open, setOpen }) => {
 										<div className='flex-1 overflow-y-auto px-4 py-6 sm:px-6'>
 											<div className='flex items-start justify-between'>
 												<Dialog.Title className='text-lg font-medium text-gray-900'>
-													Package cart
+													Custom Package
 												</Dialog.Title>
 												<div className='ml-3 flex h-7 items-center'>
 													<button
@@ -205,8 +206,8 @@ const PackageCart: FC<IProps> = ({ open, setOpen }) => {
 																alt='Empty package'
 															/>
 															<p className='text-center text-gray-500'>
-																Your package
-																cart is empty
+																Your custom
+																package is empty
 															</p>
 															<Link
 																href={'/search'}
@@ -217,8 +218,7 @@ const PackageCart: FC<IProps> = ({ open, setOpen }) => {
 																	)
 																}
 															>
-																Search for
-																packages
+																Search for items
 															</Link>
 														</div>
 													)}
@@ -241,6 +241,11 @@ const PackageCart: FC<IProps> = ({ open, setOpen }) => {
 														href='/checkout'
 														className='flex items-center justify-center rounded-md border border-transparent
                                                     bg-ct-deepPink px-6 py-3 text-base font-medium text-white shadow-sm hover:opacity-80'
+														onClick={() => {
+															Cookies.remove(
+																'packageToPurchase',
+															);
+														}}
 													>
 														Checkout
 													</Link>

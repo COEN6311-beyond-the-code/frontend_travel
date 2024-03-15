@@ -3,7 +3,6 @@ import { CalendarDaysIcon, PlusIcon } from '@heroicons/react/20/solid';
 import ConfirmCancel from '@/components/message/confirm-cancel';
 import { Product } from '@/types/product/product';
 import Link from 'next/link';
-import { Order } from '@/types/dashboard/orders';
 import useProduct from '@/hooks/product/useProduct';
 import PageLoader from '@/components/loaders/page-loader';
 import { useRouter } from 'next/router';
@@ -146,7 +145,9 @@ const ManagePackagesList = () => {
 													<p className='ml-2 text-sm font-medium text-gray-500'>
 														Created on{' '}
 														<time dateTime='12th Feb, 2024'>
-															{new Date().toDateString()}
+															{new Date(
+																product.createAt as string,
+															).toDateString()}
 														</time>
 													</p>
 												</div>

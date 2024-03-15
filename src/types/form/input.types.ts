@@ -31,4 +31,6 @@ export interface InputTypes {
 export interface CheckoutFormTypes {
 	email: string;
 	phone: string;
+	departureDate: string;
+	endDate: string;
 }

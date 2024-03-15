@@ -16,6 +16,7 @@ import { useRouter } from 'next/router';
 import { AuthContext } from '@/context/auth/auth-context';
 import useCart from '@/hooks/cart/useCart';
 import { nanoid } from 'nanoid';
+import Cookies from 'js-cookie';
 
 const Checkout = () => {
 	const [cart, setCart] = useState<CartType | null>(null);
@@ -34,6 +35,7 @@ const Checkout = () => {
 	});
 
 	const submitForm: SubmitHandler<CheckoutFormTypes> = async data => {
+		Cookies.set('checkoutData', JSON.stringify(data));
 		await router.push(`/checkout/pay`);
 	};
 
@@ -102,7 +104,7 @@ const Checkout = () => {
 												Category: {product.type}
 											</p>
 											<p className='text-gray-500'>
-												Included: {product.options}
+												{product.options}
 											</p>
 										</div>
 										<p className='flex-none text-base font-medium'>
@@ -236,7 +238,16 @@ const Checkout = () => {
 									type='date'
 									label='Departure date'
 									placeholder='dd/mm/yyyy'
-									id='date'
+									id='departureDate'
+									register={register}
+									errors={errors}
+								/>
+
+								<Input
+									type='date'
+									label='End date'
+									placeholder='dd/mm/yyyy'
+									id='endDate'
 									register={register}
 									errors={errors}
 								/>

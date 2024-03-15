@@ -53,3 +53,17 @@ export const deleteItemFromCartQuery = (body: any) => {
 		},
 	);
 };
+
+export const cartCheckoutQuery = (body: any) => {
+	const token = Cookies.get('token');
+
+	return axios.post<{ data: any }>(
+		`${baseUrl}/cart/cartCheckout`,
+		{},
+		{
+			headers: {
+				Authorization: token,
+			},
+		},
+	);
+};

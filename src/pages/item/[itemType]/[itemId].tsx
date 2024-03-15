@@ -3,22 +3,31 @@ import PageLoader from '@/components/loaders/page-loader';
 import Layout from '@/components/layout/layout';
 
 import { Disclosure, Tab } from '@headlessui/react';
-import { MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
+import {
+	InformationCircleIcon,
+	MinusIcon,
+	PlusIcon,
+} from '@heroicons/react/24/outline';
 import { classNames } from '@/utils/classNames';
 import RelatedItems from '@/components/product-details/related-items/related-items';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Product } from '@/types/product/product';
 import useProduct from '@/hooks/product/useProduct';
 import useCart from '@/hooks/cart/useCart';
 import Message from '@/components/message/message';
 import Spinner from '@/components/loaders/spinner';
+import { nanoid } from 'nanoid';
+import Cookies from 'js-cookie';
+import { AuthContext } from '@/context/auth/auth-context';
 
 const ItemDetails = () => {
 	const [item, setItem] = useState<Product | null>(null);
 	const [show, setShow] = useState(false);
+	const [showSignInMessage, setShowSignInMessage] = useState(false);
 	const [isInCart, setIsInCart] = useState(false);
 	const [setCartId, setSetCartId] = useState<number | null>(null);
 	const router = useRouter();
+	const { currentUser } = useContext(AuthContext);
 	const { itemId, itemType } = router.query;
 	const { getProduct, getPackage } = useProduct(
 		itemId as string,
@@ -54,17 +63,26 @@ const ItemDetails = () => {
 	}, [addToCart.data]);
 
 	const handleAddToCart = () => {
-		if (itemId && itemType) {
-			if (isInCart) {
-				deleteItemFromCart.mutate({
-					cartItemId: itemId,
-				});
-			} else {
-				addToCart.mutate({
-					type: itemType,
-					id: itemId,
-					number: 1,
-				});
+		if (!currentUser) {
+			setShowSignInMessage(true);
+			return;
+		} else {
+			if (itemId && itemType !== 'package') {
+				if (isInCart) {
+					deleteItemFromCart.mutate({
+						cartItemId: itemId,
+					});
+				} else {
+					addToCart.mutate({
+						type: itemType,
+						id: itemId,
+						number: 1,
+					});
+				}
+				Cookies.remove('packageToPurchase');
+			} else if (itemId && itemType === 'package') {
+				Cookies.set('packageToPurchase', itemId as string);
+				router.push(`/checkout`).then();
 			}
 		}
 	};
@@ -127,9 +145,14 @@ const ItemDetails = () => {
 											deleteItemFromCart.isPending) && (
 											<Spinner />
 										)}
-										{isInCart
-											? 'Remove from package'
-											: 'Add to package'}
+
+										{itemType !== 'package' &&
+											(isInCart
+												? 'Remove from custom package'
+												: 'Add to custom package')}
+
+										{itemType === 'package' &&
+											'Purchase Package'}
 									</button>
 								</div>
 							</div>
@@ -144,7 +167,7 @@ const ItemDetails = () => {
 
 								<div className='divide-y divide-gray-200 border-t'>
 									{item.details.map(detail => (
-										<Disclosure as='div' key={detail.name}>
+										<Disclosure as='div' key={nanoid()}>
 											{({ open }) => (
 												<>
 													<h3>
@@ -182,9 +205,7 @@ const ItemDetails = () => {
 															{detail.items.map(
 																item => (
 																	<li
-																		key={
-																			item
-																		}
+																		key={nanoid()}
 																	>
 																		{item}
 																	</li>
@@ -218,10 +239,18 @@ const ItemDetails = () => {
 			</main>
 
 			<Message
-				title='Cart updated'
-				subtitle='This item has been added to your cart'
+				title='Package updated'
+				subtitle='This item has been added to your custom package'
 				show={show}
 				setShow={setShow}
+			/>
+
+			<Message
+				title='Sign in required'
+				subtitle='You need to be signed in to perform this action'
+				show={showSignInMessage}
+				setShow={setShowSignInMessage}
+				Icon={InformationCircleIcon}
 			/>
 		</Layout>
 	);

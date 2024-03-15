@@ -7,6 +7,9 @@ export interface Product {
 	options: string;
 	imageSrc: string;
 	imageAlt?: string;
+	createAt?: string;
+	start_date?: string;
+	end_date?: string;
 	type: 'package' | 'flight' | 'hotel' | 'activity';
 	details: ProductDetails[];
 }

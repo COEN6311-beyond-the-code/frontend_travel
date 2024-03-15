@@ -9,4 +9,6 @@ export const CheckoutSchema = yup.object({
 		.string()
 		.required('Please enter your phone number')
 		.min(10, 'Password must be at least 10 characters'),
+	departureDate: yup.string().required('Please enter your departure date'),
+	endDate: yup.string().required('Please enter your end date'),
 });
