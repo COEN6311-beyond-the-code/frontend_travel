@@ -19,6 +19,8 @@ function CheckoutForm() {
 
 	const [message, setMessage] = React.useState<null | string>(null);
 	const [isLoading, setIsLoading] = React.useState(false);
+	const frontendUrl =
+		process.env.NEXT_PUBLIC_FRONTEND_URL || 'http://localhost:3000';
 
 	React.useEffect(() => {
 		if (!stripe) {
@@ -68,7 +70,7 @@ function CheckoutForm() {
 			elements,
 			confirmParams: {
 				// Make sure to change this to your payment completion page
-				return_url: 'http://localhost:3000/checkout/create-order',
+				return_url: `${frontendUrl}/checkout/create-order`,
 			},
 		});
 

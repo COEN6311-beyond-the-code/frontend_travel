@@ -12,8 +12,7 @@ const CreateOrder = () => {
 	const router = useRouter();
 	const [error, setError] = useState<any>(null);
 	const [show, setShow] = useState(false);
-	const p = '1234';
-	const { placeOrder } = useOrder();
+	const { placeOrder, paymentOrder } = useOrder();
 	const { cartCheckout } = useCart();
 
 	useEffect(() => {
@@ -67,10 +66,21 @@ const CreateOrder = () => {
 
 	useEffect(() => {
 		if (placeOrder.data) {
+			paymentOrder.mutate({
+				orderNumber: placeOrder.data.data.data.order_number,
+				amount: placeOrder.data.data.data.amount,
+			});
+		}
+
+		// eslint-disable-next-line
+	}, [placeOrder.data]);
+
+	useEffect(() => {
+		if (paymentOrder.data) {
 			Cookies.remove('checkoutData');
 			router.push('/dashboard/user/order-history').then();
 		}
-	}, [placeOrder.data, router]);
+	}, [paymentOrder.data, router]);
 
 	return (
 		<Layout title='Verifying User' hideNav={true} hideFooter={true}>

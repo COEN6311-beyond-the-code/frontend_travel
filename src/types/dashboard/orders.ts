@@ -11,3 +11,8 @@ export interface Order {
 	};
 	createdAt: string;
 }
+
+export interface OrderResponse {
+	order_number: string;
+	amount: number;
+}

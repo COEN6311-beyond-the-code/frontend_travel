@@ -72,5 +72,7 @@ interface CartProduct extends Product {
 
 export interface CartType {
 	price: number;
+	taxed: number;
+	total: number;
 	items: CartProduct[];
 }

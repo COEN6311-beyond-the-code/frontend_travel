@@ -122,12 +122,12 @@ const Checkout = () => {
 
 								<div className='flex items-center justify-between'>
 									<dt className='text-gray-600'>Taxes</dt>
-									<dd>$0.00</dd>
+									<dd>$ {cart.taxed}</dd>
 								</div>
 
 								<div className='flex items-center justify-between border-t border-gray-200 pt-6'>
 									<dt className='text-base'>Total</dt>
-									<dd className='text-base'>${cart.price}</dd>
+									<dd className='text-base'>${cart.total}</dd>
 								</div>
 							</dl>
 
@@ -139,7 +139,7 @@ const Checkout = () => {
 												Total
 											</span>
 											<span className='mr-2 text-base'>
-												$ {cart.price}
+												$ {cart.total}
 											</span>
 											<ChevronUpIcon
 												className='h-5 w-5 text-gray-500'
@@ -178,14 +178,14 @@ const Checkout = () => {
 														<dt className='text-gray-600'>
 															Subtotal
 														</dt>
-														<dd>$320.00</dd>
+														<dd>$ {cart.price}</dd>
 													</div>
 
 													<div className='flex items-center justify-between'>
 														<dt className='text-gray-600'>
 															Taxes
 														</dt>
-														<dd>$26.80</dd>
+														<dd>$ {cart.taxed}</dd>
 													</div>
 												</dl>
 											</Popover.Panel>
