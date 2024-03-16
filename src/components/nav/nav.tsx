@@ -148,7 +148,7 @@ export default function NavBar() {
 														currentUser.userInfo
 															.isAgent
 															? '/dashboard/agent/orders'
-															: '/dashboard/user/order-history'
+															: '/dashboard/user/orders'
 													}
 													className='-m-2 block p-2 font-medium text-gray-900'
 												>
@@ -248,7 +248,7 @@ export default function NavBar() {
 												href={
 													currentUser.userInfo.isAgent
 														? '/dashboard/agent/orders'
-														: '/dashboard/user/order-history'
+														: '/dashboard/user/orders'
 												}
 												className='text-sm font-medium text-gray-700 transition ease-in-out duration-200 hover:text-ct-deepPink'
 											>

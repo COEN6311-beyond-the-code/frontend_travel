@@ -67,3 +67,19 @@ export const cartCheckoutQuery = (body: any) => {
 		},
 	);
 };
+
+export const packageCheckoutQuery = (body: any) => {
+	const token = Cookies.get('token');
+
+	return axios.post<{ data: any }>(
+		`${baseUrl}/cart/packageCheckout`,
+		{
+			packageId: body.packageId,
+		},
+		{
+			headers: {
+				Authorization: token,
+			},
+		},
+	);
+};

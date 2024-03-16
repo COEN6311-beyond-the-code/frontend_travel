@@ -4,6 +4,7 @@ import {
 	cartCheckoutQuery,
 	deleteItemFromCartQuery,
 	getUserCartQuery,
+	packageCheckoutQuery,
 } from '@/queries/cart/cart-queries';
 import { useContext } from 'react';
 import { AuthContext } from '@/context/auth/auth-context';
@@ -45,11 +46,16 @@ const useCart = () => {
 		},
 	});
 
+	const packageCheckout = useMutation({
+		mutationFn: packageCheckoutQuery,
+	});
+
 	return {
 		getUserCart,
 		addToCart,
 		deleteItemFromCart,
 		cartCheckout,
+		packageCheckout,
 	};
 };
 

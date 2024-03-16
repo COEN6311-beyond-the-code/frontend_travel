@@ -27,10 +27,7 @@ export function middleware(request: NextRequest) {
 	} else if (signedIn && !userInfo.isAgent) {
 		if (request.nextUrl.pathname.startsWith('/dashboard/agent')) {
 			return NextResponse.redirect(
-				new URL(
-					'/dashboard/user/order-history',
-					request.nextUrl.origin,
-				),
+				new URL('/dashboard/user/orders', request.nextUrl.origin),
 			);
 		}
 	}

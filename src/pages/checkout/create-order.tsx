@@ -1,12 +1,13 @@
 import AwaitingAction from '@/components/awaiting-action/awaiting-action';
 import Layout from '@/components/layout/layout';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Message from '@/components/message/message';
 import { ExclamationCircleIcon } from '@heroicons/react/16/solid';
 import useOrder from '@/hooks/order/useOrder';
 import Cookies from 'js-cookie';
 import useCart from '@/hooks/cart/useCart';
+import { AuthContext } from '@/context/auth/auth-context';
 
 const CreateOrder = () => {
 	const router = useRouter();
@@ -14,6 +15,7 @@ const CreateOrder = () => {
 	const [show, setShow] = useState(false);
 	const { placeOrder, paymentOrder } = useOrder();
 	const { cartCheckout } = useCart();
+	const { currentUser } = useContext(AuthContext);
 
 	useEffect(() => {
 		if (
@@ -37,7 +39,11 @@ const CreateOrder = () => {
 				);
 				setShow(true);
 			} else {
-				cartCheckout.mutate({});
+				const packageToPurchase = Cookies.get('packageToPurchase');
+
+				if (!packageToPurchase) {
+					cartCheckout.mutate({});
+				}
 			}
 		}
 
@@ -45,30 +51,42 @@ const CreateOrder = () => {
 	}, [router]);
 
 	useEffect(() => {
-		if (cartCheckout.data) {
-			const checkoutResponse = cartCheckout.data.data.data.package_items;
-			const checkoutDataCookie = Cookies.get('checkoutData');
+		const packageToPurchase = Cookies.get('packageToPurchase');
+		const checkoutDataCookie = Cookies.get('checkoutData');
+		const placeOrderVariables: any = {};
 
-			if (checkoutDataCookie) {
-				const checkoutData = JSON.parse(checkoutDataCookie);
+		if (checkoutDataCookie) {
+			const checkoutData = JSON.parse(checkoutDataCookie);
+			placeOrderVariables.departureDate = checkoutData.departureDate;
+			placeOrderVariables.endDate = checkoutData.endDate;
+			placeOrderVariables.email = checkoutData.email;
+			placeOrderVariables.phone = checkoutData.phone;
+		}
+
+		if (currentUser) {
+			if (packageToPurchase) {
 				placeOrder.mutate({
-					departureDate: checkoutData.departureDate,
-					endDate: checkoutData.endDate,
-					email: checkoutData.email,
-					phone: checkoutData.phone,
+					...placeOrderVariables,
+					packageId: +packageToPurchase,
+				});
+			} else if (cartCheckout.data) {
+				const checkoutResponse =
+					cartCheckout.data.data.data.package_items;
+				placeOrder.mutate({
+					...placeOrderVariables,
 					packageId: checkoutResponse.id,
 				});
 			}
 		}
 
 		// eslint-disable-next-line
-	}, [cartCheckout.data]);
+	}, [cartCheckout.data, currentUser]);
 
 	useEffect(() => {
 		if (placeOrder.data) {
 			paymentOrder.mutate({
 				orderNumber: placeOrder.data.data.data.order_number,
-				amount: placeOrder.data.data.data.amount,
+				amount: +placeOrder.data.data.data.amount,
 			});
 		}
 
@@ -78,8 +96,15 @@ const CreateOrder = () => {
 	useEffect(() => {
 		if (paymentOrder.data) {
 			Cookies.remove('checkoutData');
-			router.push('/dashboard/user/order-history').then();
+			Cookies.remove('packageToPurchase');
+			router
+				.push(
+					`/dashboard/${currentUser?.userInfo.isAgent ? 'agent' : 'user'}/orders`,
+				)
+				.then();
 		}
+
+		// eslint-disable-next-line
 	}, [paymentOrder.data, router]);
 
 	return (

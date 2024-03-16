@@ -23,7 +23,7 @@ const Checkout = () => {
 	const [isCheckingOut, setIsCheckingOut] = useState(false);
 	const router = useRouter();
 	const { currentUser } = useContext(AuthContext);
-	const { getUserCart } = useCart();
+	const { getUserCart, packageCheckout } = useCart();
 
 	const {
 		register,
@@ -40,10 +40,24 @@ const Checkout = () => {
 	};
 
 	useEffect(() => {
-		if (getUserCart.data) {
+		const packageToPurchase = Cookies.get('packageToPurchase');
+
+		if (packageToPurchase) {
+			packageCheckout.mutate({
+				packageId: +packageToPurchase,
+			});
+		} else if (getUserCart.data) {
 			setCart(getUserCart.data.data.data.cart);
 		}
+
+		// eslint-disable-next-line
 	}, [getUserCart.data]);
+
+	useEffect(() => {
+		if (packageCheckout.data) {
+			setCart(packageCheckout.data.data.data.cart);
+		}
+	}, [packageCheckout.data]);
 
 	useEffect(() => {
 		reset({
@@ -122,7 +136,7 @@ const Checkout = () => {
 
 								<div className='flex items-center justify-between'>
 									<dt className='text-gray-600'>Taxes</dt>
-									<dd>$ {cart.taxed}</dd>
+									<dd>$ {cart.taxed.toFixed(2)}</dd>
 								</div>
 
 								<div className='flex items-center justify-between border-t border-gray-200 pt-6'>
@@ -185,7 +199,12 @@ const Checkout = () => {
 														<dt className='text-gray-600'>
 															Taxes
 														</dt>
-														<dd>$ {cart.taxed}</dd>
+														<dd>
+															${' '}
+															{cart.taxed.toFixed(
+																2,
+															)}
+														</dd>
 													</div>
 												</dl>
 											</Popover.Panel>

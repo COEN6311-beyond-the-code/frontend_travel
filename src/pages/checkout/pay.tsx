@@ -12,6 +12,7 @@ import Button from '@/components/button/button';
 import Spinner from '@/components/loaders/spinner';
 import { useRouter } from 'next/router';
 import useCart from '@/hooks/cart/useCart';
+import Cookies from 'js-cookie';
 
 function CheckoutForm() {
 	const stripe = useStripe();
@@ -137,7 +138,7 @@ export default function Pay() {
 	const [clientSecret, setClientSecret] = React.useState('');
 	const [cart, setCart] = React.useState<any>(null);
 	const router = useRouter();
-	const { getUserCart } = useCart();
+	const { getUserCart, packageCheckout } = useCart();
 
 	useEffect(() => {
 		// Create PaymentIntent as soon as the page loads
@@ -153,11 +154,28 @@ export default function Pay() {
 	}, [cart]);
 
 	useEffect(() => {
-		if (getUserCart.data) {
-			const item = getUserCart.data.data.data.cart;
+		const packageToPurchase = Cookies.get('packageToPurchase');
+
+		if (packageToPurchase) {
+			packageCheckout.mutate({
+				packageId: +packageToPurchase,
+			});
+		} else {
+			if (getUserCart.data) {
+				const item = getUserCart.data.data.data.cart;
+				setCart(item);
+			}
+		}
+
+		// eslint-disable-next-line
+	}, [getUserCart.data]);
+
+	useEffect(() => {
+		if (packageCheckout.data) {
+			const item = packageCheckout.data.data.data.cart;
 			setCart(item);
 		}
-	}, [getUserCart.data]);
+	}, [packageCheckout.data]);
 
 	const appearance = {
 		theme: 'stripe',
