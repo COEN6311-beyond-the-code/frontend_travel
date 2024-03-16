@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useContext, useEffect, useState } from 'react';
 import { Dialog, Popover, Transition } from '@headlessui/react';
 import {
 	Bars3Icon,
@@ -10,6 +10,12 @@ import { clsx } from 'clsx';
 import { inter } from '@/utils/fonts';
 import Link from 'next/link';
 import PackageCart from '@/components/package-cart/package-cart';
+import { AuthContext } from '@/context/auth/auth-context';
+import Cookies from 'js-cookie';
+import { classNames } from '@/utils/classNames';
+import useAuth from '@/hooks/auth/useAuth';
+import { useRouter } from 'next/router';
+import useCart from '@/hooks/cart/useCart';
 
 const navigation = {
 	pages: [
@@ -24,13 +30,38 @@ export default function NavBar() {
 	const [open, setOpen] = useState(false);
 	const [openCart, setOpenCart] = useState(false);
 
+	const { currentUser, setCurrentUser } = useContext(AuthContext);
+	const isTokenSet = Cookies.get('token');
+
+	const { logout } = useAuth();
+	const { getUserCart } = useCart();
+	const router = useRouter();
+
+	const handleLogout = () => {
+		logout.mutate({});
+	};
+
+	useEffect(() => {
+		if (logout.data) {
+			Cookies.remove('token');
+			Cookies.remove('userInfo');
+			setCurrentUser(null);
+			router.push('/').then();
+		}
+
+		// eslint-disable-next-line
+	}, [logout.data]);
+
 	return (
 		<div className={clsx('bg-white relative z-10', inter.className)}>
 			{/* Mobile menu */}
 			<Transition.Root show={open} as={Fragment}>
 				<Dialog
 					as='div'
-					className='relative z-40 lg:hidden'
+					className={classNames(
+						inter.className,
+						'relative z-40 lg:hidden',
+					)}
 					onClose={setOpen}
 				>
 					<Transition.Child
@@ -90,22 +121,50 @@ export default function NavBar() {
 								</div>
 
 								<div className='space-y-6 border-t border-gray-200 px-4 py-6'>
-									<div className='flow-root'>
-										<Link
-											href='/sign-in'
-											className='-m-2 block p-2 font-medium text-gray-900 hover:text-ct-deepPink'
-										>
-											Sign in
-										</Link>
-									</div>
-									<div className='flow-root'>
-										<Link
-											href='/sign-up'
-											className='-m-2 block p-2 font-medium text-gray-900'
-										>
-											Create account
-										</Link>
-									</div>
+									{!currentUser || !isTokenSet ? (
+										<>
+											<div className='flow-root'>
+												<Link
+													href='/sign-in'
+													className='-m-2 block p-2 font-medium text-gray-900 hover:text-ct-deepPink'
+												>
+													Sign in
+												</Link>
+											</div>
+											<div className='flow-root'>
+												<Link
+													href='/sign-up'
+													className='-m-2 block p-2 font-medium text-gray-900'
+												>
+													Create account
+												</Link>
+											</div>
+										</>
+									) : (
+										<>
+											<div className='flow-root'>
+												<Link
+													href={
+														currentUser.userInfo
+															.isAgent
+															? '/dashboard/agent/orders'
+															: '/dashboard/user/orders'
+													}
+													className='-m-2 block p-2 font-medium text-gray-900'
+												>
+													Dashboard
+												</Link>
+											</div>
+											<div className='flow-root'>
+												<p
+													className='-m-2 block p-2 font-medium text-gray-900 cursor-pointer'
+													onClick={handleLogout}
+												>
+													Sign out
+												</p>
+											</div>
+										</>
+									)}
 								</div>
 							</Dialog.Panel>
 						</Transition.Child>
@@ -164,22 +223,47 @@ export default function NavBar() {
 
 							<div className='ml-auto flex items-center'>
 								<div className='hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:space-x-6'>
-									<Link
-										href='/sign-in'
-										className='text-sm font-medium text-gray-700 transition ease-in-out duration-200 hover:text-ct-deepPink'
-									>
-										Sign in
-									</Link>
-									<span
-										className='h-6 w-px bg-gray-200'
-										aria-hidden='true'
-									/>
-									<Link
-										href='/sign-up'
-										className='text-sm font-medium text-gray-700 transition ease-in-out duration-200 hover:text-ct-deepPink'
-									>
-										Create account
-									</Link>
+									{!currentUser || !isTokenSet ? (
+										<>
+											<Link
+												href='/sign-in'
+												className='text-sm font-medium text-gray-700 transition ease-in-out duration-200 hover:text-ct-deepPink'
+											>
+												Sign in
+											</Link>
+											<span
+												className='h-6 w-px bg-gray-200'
+												aria-hidden='true'
+											/>
+											<Link
+												href='/sign-up'
+												className='text-sm font-medium text-gray-700 transition ease-in-out duration-200 hover:text-ct-deepPink'
+											>
+												Create account
+											</Link>
+										</>
+									) : (
+										<>
+											<Link
+												href={
+													currentUser.userInfo.isAgent
+														? '/dashboard/agent/orders'
+														: '/dashboard/user/orders'
+												}
+												className='text-sm font-medium text-gray-700 transition ease-in-out duration-200 hover:text-ct-deepPink'
+											>
+												Dashboard
+											</Link>
+											<div className='flow-root'>
+												<p
+													className='text-sm font-medium text-gray-700 transition ease-in-out duration-200 hover:text-ct-deepPink cursor-pointer'
+													onClick={handleLogout}
+												>
+													Sign out
+												</p>
+											</div>
+										</>
+									)}
 								</div>
 
 								{/* Search */}
@@ -208,7 +292,10 @@ export default function NavBar() {
 										aria-hidden='true'
 									/>
 									<span className='ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-800'>
-										0
+										{getUserCart.data?.data.data.cart.items
+											.length! > 0
+											? `${getUserCart.data?.data.data.cart.items.length}`
+											: 0}
 									</span>
 									<span className='sr-only'>
 										items in cart, view bag

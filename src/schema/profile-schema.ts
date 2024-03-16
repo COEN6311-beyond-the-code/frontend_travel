@@ -13,3 +13,7 @@ export const AccountSchema = yup.object({
 		.required('Please enter your email'),
 	password: yup.string().required('Please enter your password'),
 });
+
+export const DeactivateAccountSchema = yup.object({
+	password: yup.string().required('Please enter your password'),
+});

@@ -5,7 +5,6 @@ import { ChevronDownIcon, PlusIcon } from '@heroicons/react/20/solid';
 import { classNames } from '@/utils/classNames';
 import Layout from '@/components/layout/layout';
 import { inter } from '@/utils/fonts';
-import { products } from '@/data/packages';
 import ProductCard from '@/components/search/product-card/product-card';
 import { useRouter } from 'next/router';
 import { Product } from '@/types/product/product';
@@ -16,6 +15,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { SearchSchema } from '@/schema/search-schema';
 import Button from '@/components/button/button';
 import _ from 'lodash';
+import PageLoader from '@/components/loaders/page-loader';
+import useProduct from '@/hooks/product/useProduct';
 
 const filters = [
 	{
@@ -32,8 +33,10 @@ const filters = [
 ];
 
 const Search = () => {
-	const rangeMin = 100;
-	const rangeMax = 5000;
+	const { getAllProducts } = useProduct();
+	const [products, setProducts] = useState<Product[]>([]);
+	const rangeMin = 50;
+	const rangeMax = 10000;
 	const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 	const [activeProductTypeFilters, setActiveProductTypeFilters] = useState<
 		string[]
@@ -68,6 +71,12 @@ const Search = () => {
 	const router = useRouter();
 
 	useEffect(() => {
+		if (getAllProducts.data) {
+			setProducts(getAllProducts.data.data.data);
+		}
+	}, [getAllProducts.data]);
+
+	useEffect(() => {
 		if (router.query.type) {
 			setActiveProductTypeFilters(
 				Array.isArray(router.query.type)
@@ -87,7 +96,7 @@ const Search = () => {
 				),
 			);
 		}
-	}, [router, activeProductTypeFilters]);
+	}, [router, activeProductTypeFilters, products]);
 
 	useEffect(() => {
 		// Filter products based on price range and current active product type filters
@@ -95,19 +104,23 @@ const Search = () => {
 			const filtered = products.filter(
 				product =>
 					activeProductTypeFilters.includes(product.type) &&
-					product.price >= priceValues.price_min &&
-					product.price <= priceValues.price_max,
+					parseFloat(product.price as string) >=
+						priceValues.price_min &&
+					parseFloat(product.price as string) <=
+						priceValues.price_max,
 			);
 			setFilteredProducts(filtered);
 		} else {
 			const filtered = products.filter(
 				product =>
-					product.price >= priceValues.price_min &&
-					product.price <= priceValues.price_max,
+					parseFloat(product.price as string) >=
+						priceValues.price_min &&
+					parseFloat(product.price as string) <=
+						priceValues.price_max,
 			);
 			setFilteredProducts(filtered);
 		}
-	}, [activeProductTypeFilters, priceValues]);
+	}, [activeProductTypeFilters, priceValues, products]);
 
 	const {
 		register,
@@ -135,7 +148,7 @@ const Search = () => {
 						.includes(data.query!.toLowerCase()) ||
 					_.some(product.details, detail =>
 						_.some(detail, value =>
-							value
+							value!
 								.toString()
 								.toLowerCase()
 								.includes(data.query!.toLowerCase()),
@@ -153,6 +166,10 @@ const Search = () => {
 			setFilteredProducts(products);
 		}
 	};
+
+	if (!getAllProducts.data) {
+		return <PageLoader />;
+	}
 
 	return (
 		<div className={inter.className}>
@@ -294,8 +311,8 @@ const Search = () => {
 									<div className='px-4'>
 										<PriceRange
 											defaultMin={100}
-											defaultMax={5000}
-											barMax={5000}
+											defaultMax={10000}
+											barMax={10000}
 											barMin={100}
 											minInterval={300}
 											rangeValues={priceValues}
@@ -399,10 +416,10 @@ const Search = () => {
 										Price range
 									</span>
 									<PriceRange
-										defaultMin={100}
-										defaultMax={5000}
-										barMax={5000}
-										barMin={100}
+										defaultMin={50}
+										defaultMax={10000}
+										barMax={10000}
+										barMin={50}
 										minInterval={300}
 										rangeValues={priceValues}
 										setRangeValues={setPriceValues}
@@ -444,10 +461,14 @@ const Search = () => {
 								{!router.query ? (
 									<></>
 								) : (
-									filteredProducts.map(product => (
+									filteredProducts.map((product, index) => (
 										<ProductCard
 											product={product}
-											key={product.id}
+											key={
+												product.id +
+												product.name +
+												index
+											}
 										/>
 									))
 								)}

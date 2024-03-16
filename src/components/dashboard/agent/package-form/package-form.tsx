@@ -1,12 +1,16 @@
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { PackageFormType } from '@/types/product/product';
+import { PackageFormType, Product } from '@/types/product/product';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { PackageSchema } from '@/schema/item-schema';
 import Spinner from '@/components/loaders/spinner';
 import Button from '@/components/button/button';
 import Input from '@/components/input/input';
-import { products } from '@/data/packages';
+import useProduct from '@/hooks/product/useProduct';
+import { ExclamationCircleIcon } from '@heroicons/react/16/solid';
+import Message from '@/components/message/message';
+import { useRouter } from 'next/router';
+import PageLoader from '@/components/loaders/page-loader';
 
 interface IProps {
 	mode: 'create' | 'edit';
@@ -14,19 +18,33 @@ interface IProps {
 
 const PackageForm: FC<IProps> = ({ mode }) => {
 	const [selectedFile, setSelectedFile] = useState<any>(null);
-	const [isLoading, setIsLoading] = useState(false);
+	const [products, setProducts] = useState<Product[]>([]);
+	const [showError, setShowError] = useState(false);
+	const [productId, setProductId] = useState<string | null>(null);
+	const [productType, setProductType] = useState<string | null>(null);
+	const [product, setProduct] = useState<Product | null>(null);
+	const router = useRouter();
+	const { getAllAgentProducts, createPackage, getPackage, updatePackage } =
+		useProduct(productId!, productType!);
+
+	useEffect(() => {
+		if (getAllAgentProducts.data) {
+			setProducts(getAllAgentProducts.data.data.data);
+		}
+	}, [getAllAgentProducts.data]);
 
 	const {
 		register,
 		handleSubmit,
 		setError,
+		reset,
 		formState: { errors },
 	} = useForm<PackageFormType>({
 		resolver: yupResolver(PackageSchema),
 	});
 
 	const submitForm: SubmitHandler<PackageFormType> = data => {
-		if (!selectedFile) {
+		if (!selectedFile && !product?.imageSrc) {
 			setError('imageSrc', {
 				type: 'manual',
 				message: 'Image is required',
@@ -44,13 +62,108 @@ const PackageForm: FC<IProps> = ({ mode }) => {
 			product => product.name.toLowerCase() === data.activity,
 		);
 
-		console.log(flight);
-		console.log(hotel);
-		console.log(activity);
+		data.flight = flight
+			? {
+					id: flight.id,
+					type: 1,
+					number: 1,
+				}
+			: null;
 
-		console.log(data);
-		console.log(errors);
+		data.hotel = hotel
+			? {
+					id: hotel.id,
+					type: 2,
+					number: 1,
+				}
+			: null;
+
+		data.activity = activity
+			? {
+					id: activity.id,
+					type: 3,
+					number: 1,
+				}
+			: null;
+
+		if (product && mode === 'edit') {
+			updatePackage.mutate({
+				...data,
+				imageSrc: selectedFile || product.imageSrc,
+				id: product.id,
+			});
+		} else {
+			createPackage.mutate(data);
+		}
 	};
+
+	useEffect(() => {
+		if (createPackage.data || updatePackage.data) {
+			router.push('/dashboard/agent/manage-packages').then();
+		} else if (createPackage.error || updatePackage.error) {
+			setShowError(true);
+		}
+
+		// eslint-disable-next-line
+	}, [
+		createPackage.data,
+		createPackage.error,
+		updatePackage.data,
+		updatePackage.error,
+	]);
+
+	useEffect(() => {
+		if (router.query) {
+			setProductId(router.query.item_id as string);
+		}
+
+		if (router.query.type) {
+			setProductType(router.query.type as string);
+		}
+	}, [router]);
+
+	useEffect(() => {
+		if (getPackage.data) {
+			setProduct(getPackage.data.data.data);
+		}
+	}, [getPackage.data]);
+
+	useEffect(() => {
+		if (product) {
+			reset({
+				name: product.name,
+				description: product.description,
+				flight: products
+					.find(item => {
+						return (
+							item.id === product?.details[1]?.id &&
+							item.type === 'flight'
+						);
+					})
+					?.name.toLowerCase(),
+				hotel: products
+					.find(item => {
+						return (
+							item.id === product?.details[2]?.id &&
+							item.type === 'hotel'
+						);
+					})
+					?.name.toLowerCase(),
+				activity: products
+					.find(item => {
+						return (
+							item.id === product?.details[3]?.id &&
+							item.type === 'activity'
+						);
+					})
+					?.name.toLowerCase(),
+			});
+		}
+	}, [product, products, reset]);
+
+	if (mode === 'edit' && !product && !getAllAgentProducts.data) {
+		return <PageLoader />;
+	}
 
 	return (
 		<div>
@@ -76,12 +189,14 @@ const PackageForm: FC<IProps> = ({ mode }) => {
 					/>
 
 					<Input
-						type='number'
-						label='Price'
-						placeholder='0.00'
-						id='price'
+						type='text-area'
+						label='Package Features'
+						placeholder='Please input the features of the package separated by semi-colons'
+						id='features'
 						register={register}
 						errors={errors}
+						rows={3}
+						defaultValue={product?.details[0].items.join(';')}
 					/>
 
 					<div className='self-center'>
@@ -107,7 +222,9 @@ const PackageForm: FC<IProps> = ({ mode }) => {
 							<label className='text-sm text-slate-500'>
 								{selectedFile
 									? selectedFile.name
-									: 'No file chosen'}
+									: product
+										? product.imageSrc
+										: 'No file chosen'}
 							</label>
 						</div>
 						{errors.imageSrc && (
@@ -116,35 +233,6 @@ const PackageForm: FC<IProps> = ({ mode }) => {
 							</p>
 						)}
 					</div>
-
-					<Input
-						type='text'
-						label='Image Alt'
-						placeholder='Image alt text'
-						id='imageAlt'
-						register={register}
-						errors={errors}
-					/>
-
-					<Input
-						type='select'
-						label='Item Type'
-						placeholder='Item Type'
-						id='type'
-						selectOptions={['Package']}
-						register={register}
-						errors={errors}
-					/>
-
-					<Input
-						type='text-area'
-						label='Package Features'
-						placeholder='Please input the features of the package separated by semi-colons'
-						id='features'
-						register={register}
-						errors={errors}
-						rows={3}
-					/>
 
 					<Input
 						type='select'
@@ -193,10 +281,21 @@ const PackageForm: FC<IProps> = ({ mode }) => {
 				</div>
 
 				<Button extraClasses='px-12 mt-4 max-w-sm flex justify-center'>
-					{isLoading && <Spinner />}
+					{(createPackage.isPending || updatePackage.isPending) && (
+						<Spinner />
+					)}
 					{mode === 'create' ? 'Create Item' : 'Edit Item'}
 				</Button>
 			</form>
+
+			<Message
+				title='Flight creation error'
+				subtitle={`${createPackage?.error?.message || updatePackage?.error?.message}`}
+				Icon={ExclamationCircleIcon}
+				iconColor='text-red-500'
+				show={showError}
+				setShow={setShowError}
+			/>
 		</div>
 	);
 };

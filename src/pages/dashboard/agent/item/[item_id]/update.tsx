@@ -3,24 +3,33 @@ import Layout from '@/components/layout/layout';
 import { agentNavigation } from '@/data/dashboard';
 import Dashboard from '@/components/dashboard/shared/dashboard';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import PackageForm from '@/components/dashboard/agent/package-form/package-form';
+import useAuth from '@/hooks/auth/useAuth';
+import { UserType } from '@/types/auth/auth.types';
+import toCamelCase from '@/utils/camel-case';
+import PageLoader from '@/components/loaders/page-loader';
 
 const UpdateItem = () => {
-	const user = {
-		firstName: 'John',
-		lastName: 'Doe',
-		mobile: '0245556677',
-		userType: 'agent',
-	};
-	const router = useRouter();
+	const { getUserProfile } = useAuth();
+	const [user, setUser] = useState<UserType | null>(null);
+
+	const { data } = getUserProfile;
 
 	useEffect(() => {
-		console.log(router.query.type);
-	}, [router]);
+		if (data) {
+			setUser(toCamelCase(data.data.data) as UserType);
+		}
+	}, [data]);
+
+	const router = useRouter();
 
 	if (!router.query.type) {
 		return null;
+	}
+
+	if (!data || !user) {
+		return <PageLoader />;
 	}
 
 	return (
@@ -35,7 +44,7 @@ const UpdateItem = () => {
 				{router.query.type === 'package' ? (
 					<PackageForm mode='edit' />
 				) : (
-					<ItemForm mode='edit' />
+					<ItemForm mode='edit' type={router.query.type as string} />
 				)}
 			</Dashboard>
 		</Layout>

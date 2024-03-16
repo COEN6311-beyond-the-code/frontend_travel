@@ -1,4 +1,4 @@
-import { Fragment, useState, ReactNode } from 'react';
+import { Fragment, useState, ReactNode, useEffect, useContext } from 'react';
 import { Dialog, Menu, Transition } from '@headlessui/react';
 import {
 	Bars3Icon,
@@ -13,8 +13,12 @@ import { classNames } from '@/utils/classNames';
 import { inter } from '@/utils/fonts';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
+import { UserType } from '@/types/auth/auth.types';
+import Cookies from 'js-cookie';
+import useAuth from '@/hooks/auth/useAuth';
+import { AuthContext } from '@/context/auth/auth-context';
 
-const userNavigation = [{ name: 'Sign out', href: '#' }];
+const userNavigation = [{ name: 'Sign out', onClick: '#' }];
 
 export default function Dashboard({
 	children,
@@ -23,11 +27,28 @@ export default function Dashboard({
 }: {
 	children: ReactNode;
 	navigationItems: DashboardNavItem[];
-	user: any;
+	user: UserType;
 }) {
 	const [sidebarOpen, setSidebarOpen] = useState(false);
 	const router = useRouter();
-	const userType = user.userType;
+	const userType = user.userInfo.isAgent ? 'agent' : 'user';
+	const { logout } = useAuth();
+	const { setCurrentUser } = useContext(AuthContext);
+
+	useEffect(() => {
+		if (logout.data) {
+			Cookies.remove('token');
+			Cookies.remove('userInfo');
+			setCurrentUser(null);
+			router.push('/').then();
+		}
+
+		// eslint-disable-next-line
+	}, [logout.data]);
+
+	const handleLogout = () => {
+		logout.mutate({});
+	};
 
 	return (
 		<>
@@ -94,11 +115,13 @@ export default function Dashboard({
 									{/* Sidebar component, swap this element with another sidebar if you like */}
 									<div className='flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-4'>
 										<div className='flex h-16 shrink-0 items-center'>
-											<img
-												className='h-8 w-auto'
-												src='https://tailwindui.com/img/logos/mark.svg?color=pink&shade=600'
-												alt='Your Company'
-											/>
+											<Link href='/'>
+												<img
+													className='h-8 w-auto'
+													src='https://tailwindui.com/img/logos/mark.svg?color=pink&shade=600'
+													alt='Your Company'
+												/>
+											</Link>
 										</div>
 										<nav className='flex flex-1 flex-col'>
 											<ul
@@ -171,11 +194,13 @@ export default function Dashboard({
 					{/* Sidebar component, swap this element with another sidebar if you like */}
 					<div className='flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 pb-4'>
 						<div className='flex h-16 shrink-0 items-center'>
-							<img
-								className='h-8 w-auto'
-								src='https://tailwindui.com/img/logos/mark.svg?color=pink&shade=600'
-								alt='Your Company'
-							/>
+							<Link href='/'>
+								<img
+									className='h-8 w-auto'
+									src='https://tailwindui.com/img/logos/mark.svg?color=pink&shade=600'
+									alt='Your Company'
+								/>
+							</Link>
 						</div>
 						<nav className='flex flex-1 flex-col'>
 							<ul
@@ -276,7 +301,12 @@ export default function Dashboard({
 										</span>
 										<span className='inline-flex h-8 w-8 items-center justify-center rounded-full bg-ct-deepPink'>
 											<span className='text-sm font-medium leading-none text-white'>
-												JD
+												{user.userInfo.firstName.charAt(
+													0,
+												) +
+													user.userInfo.lastName.charAt(
+														0,
+													)}
 											</span>
 										</span>
 										<span className='hidden lg:flex lg:items-center'>
@@ -284,7 +314,8 @@ export default function Dashboard({
 												className='ml-4 text-sm font-semibold leading-6 text-gray-900'
 												aria-hidden='true'
 											>
-												John Doe
+												{user.userInfo.firstName}{' '}
+												{user.userInfo.lastName}
 											</span>
 											<ChevronDownIcon
 												className='ml-2 h-5 w-5 text-gray-400'
@@ -305,17 +336,19 @@ export default function Dashboard({
 											{userNavigation.map(item => (
 												<Menu.Item key={item.name}>
 													{({ active }) => (
-														<a
-															href={item.href}
+														<div
 															className={classNames(
 																active
 																	? 'bg-gray-50'
 																	: '',
-																'block px-3 py-1 text-sm leading-6 text-gray-900',
+																'block px-3 py-1 text-sm leading-6 text-gray-900 cursor-pointer',
 															)}
+															onClick={
+																handleLogout
+															}
 														>
 															{item.name}
-														</a>
+														</div>
 													)}
 												</Menu.Item>
 											))}

@@ -8,7 +8,7 @@ const calculateOrderAmount = (items: any) => {
 	// Calculate the order total on the server to prevent
 	// people from directly manipulating the amount on the client
 	if (items) {
-		return items[0].price;
+		return items[0].total.toFixed(0);
 	}
 };
 

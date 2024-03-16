@@ -4,7 +4,7 @@ import Link from 'next/link';
 const RelatedItemCard = ({ product }: { product: Product }) => {
 	return (
 		<div>
-			<Link href={`/item/${product.id}`}>
+			<Link href={`/item/${product.type}/${product.id}`}>
 				<div className='relative'>
 					<div className='relative h-72 w-full overflow-hidden rounded-lg'>
 						<img
@@ -33,10 +33,14 @@ const RelatedItemCard = ({ product }: { product: Product }) => {
 				</div>
 			</Link>
 			<div className='mt-6'>
-				<div className='cursor-pointer relative flex items-center justify-center rounded-md border border-transparent bg-gray-100 px-8 py-2 text-sm font-medium text-gray-900 hover:bg-gray-200'>
-					Add to package
+				<Link
+					href={`/item/${product.type}/${product.id}`}
+					className='cursor-pointer relative flex items-center justify-center rounded-md border
+				border-transparent bg-gray-100 px-8 py-2 text-sm font-medium text-gray-900 hover:bg-gray-200 capitalize'
+				>
+					View {product.type}
 					<span className='sr-only'>, {product.name}</span>
-				</div>
+				</Link>
 			</div>
 		</div>
 	);

@@ -1,141 +1,116 @@
-import { SubmitHandler, useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import { ItemSchema } from '@/schema/item-schema';
-import { ItemFormType } from '@/types/product/product';
-import Input from '@/components/input/input';
-import { FC, useState } from 'react';
-import Spinner from '@/components/loaders/spinner';
-import Button from '@/components/button/button';
+import { FC, Fragment, useEffect, useState } from 'react';
+import { Menu, Transition } from '@headlessui/react';
+import { ChevronDownIcon } from '@heroicons/react/20/solid';
+import { classNames } from '@/utils/classNames';
+import FlightForm from '@/components/dashboard/agent/package-form/item-forms/flight-form';
+import HotelForm from '@/components/dashboard/agent/package-form/item-forms/hotel-form';
+import ActivityForm from '@/components/dashboard/agent/package-form/item-forms/activity-form';
 
 interface IProps {
 	mode: 'create' | 'edit';
+	type?: string;
 }
 
-const ItemForm: FC<IProps> = ({ mode }) => {
-	const {
-		register,
-		handleSubmit,
-		setError,
-		formState: { errors },
-	} = useForm<ItemFormType>({
-		resolver: yupResolver(ItemSchema),
-	});
+const ItemForm: FC<IProps> = ({ mode, type }) => {
+	const [currentItemType, setCurrentItemType] = useState('flight');
 
-	const submitForm: SubmitHandler<ItemFormType> = data => {
-		if (!selectedFile) {
-			setError('imageSrc', {
-				type: 'manual',
-				message: 'Image is required',
-			});
-			return;
+	useEffect(() => {
+		if (mode === 'edit' && type) {
+			setCurrentItemType(type);
 		}
-		console.log(data);
-		console.log(errors);
-	};
-
-	const [selectedFile, setSelectedFile] = useState<any>(null);
-	const [isLoading, setIsLoading] = useState(false);
+	}, [type, mode]);
 
 	return (
-		<div>
-			<form onSubmit={handleSubmit(submitForm)} noValidate>
-				<div className='w-8/12 space-y-1 grid grid-cols-1 gap-6 lg:grid-cols-2 items-start'>
-					<Input
-						type='text'
-						label='Package name'
-						placeholder='Package 1'
-						id='name'
-						register={register}
-						errors={errors}
-					/>
-
-					<Input
-						type='text-area'
-						label='Description'
-						placeholder='Clear description of the package'
-						id='description'
-						register={register}
-						errors={errors}
-						rows={3}
-					/>
-
-					<Input
-						type='number'
-						label='Price'
-						placeholder='0.00'
-						id='price'
-						register={register}
-						errors={errors}
-					/>
-
-					<div className='self-center'>
-						<div className='flex flex-row items-center'>
-							<input
-								type='file'
-								id='imageSrc'
-								{...register?.('imageSrc', {
-									onChange: e => {
-										setSelectedFile(e.target.files[0]);
-									},
-								})}
-								hidden
-								accept='image/*'
+		<div className='-mt-5'>
+			{mode === 'create' && (
+				<Menu as='div' className='relative inline-block text-left mb-8'>
+					<div>
+						<Menu.Button className='inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50'>
+							<div className='capitalize'>
+								{currentItemType
+									? currentItemType
+									: 'Item Type'}
+							</div>
+							<ChevronDownIcon
+								className='-mr-1 h-5 w-5 text-gray-400'
+								aria-hidden='true'
 							/>
-							<label
-								htmlFor='imageSrc'
-								className='block mr-4 py-2 px-4 rounded-md border-0 text-sm font-semibold bg-black
-						text-white hover:opacity-80 cursor-pointer'
-							>
-								Choose file
-							</label>
-							<label className='text-sm text-slate-500'>
-								{selectedFile
-									? selectedFile.name
-									: 'No file chosen'}
-							</label>
-						</div>
-						{errors.imageSrc && (
-							<p className='text-red-500'>
-								{errors.imageSrc.message as string}
-							</p>
-						)}
+						</Menu.Button>
 					</div>
 
-					<Input
-						type='text'
-						label='Image Alt'
-						placeholder='Image alt text'
-						id='imageAlt'
-						register={register}
-						errors={errors}
-					/>
+					<Transition
+						as={Fragment}
+						enter='transition ease-out duration-100'
+						enterFrom='transform opacity-0 scale-95'
+						enterTo='transform opacity-100 scale-100'
+						leave='transition ease-in duration-75'
+						leaveFrom='transform opacity-100 scale-100'
+						leaveTo='transform opacity-0 scale-95'
+					>
+						<Menu.Items className='absolute left-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none'>
+							<div className='py-1'>
+								<Menu.Item>
+									{({ active }) => (
+										<div
+											className={classNames(
+												currentItemType === 'flight'
+													? 'bg-gray-100 text-gray-900'
+													: 'text-gray-700',
+												'block px-4 py-2 text-sm cursor-pointer',
+											)}
+											onClick={() =>
+												setCurrentItemType('flight')
+											}
+										>
+											Flight
+										</div>
+									)}
+								</Menu.Item>
+								<Menu.Item>
+									{({ active }) => (
+										<div
+											className={classNames(
+												currentItemType === 'hotel'
+													? 'bg-gray-100 text-gray-900'
+													: 'text-gray-700',
+												'block px-4 py-2 text-sm cursor-pointer',
+											)}
+											onClick={() =>
+												setCurrentItemType('hotel')
+											}
+										>
+											Hotel
+										</div>
+									)}
+								</Menu.Item>
+								<Menu.Item>
+									{({ active }) => (
+										<div
+											className={classNames(
+												currentItemType === 'activity'
+													? 'bg-gray-100 text-gray-900'
+													: 'text-gray-700',
+												'block px-4 py-2 text-sm cursor-pointer',
+											)}
+											onClick={() =>
+												setCurrentItemType('activity')
+											}
+										>
+											Activity
+										</div>
+									)}
+								</Menu.Item>
+							</div>
+						</Menu.Items>
+					</Transition>
+				</Menu>
+			)}
 
-					<Input
-						type='select'
-						label='Item Type'
-						placeholder='Item Type'
-						id='type'
-						selectOptions={['Flight', 'Hotel', 'Activity']}
-						register={register}
-						errors={errors}
-					/>
+			{currentItemType === 'flight' && <FlightForm mode={mode} />}
 
-					<Input
-						type='text-area'
-						label='Features'
-						placeholder='Please input the features of the item separated by semi-colons'
-						id='features'
-						register={register}
-						errors={errors}
-						rows={3}
-					/>
-				</div>
+			{currentItemType === 'hotel' && <HotelForm mode={mode} />}
 
-				<Button extraClasses='px-12 mt-4 max-w-sm flex justify-center'>
-					{isLoading && <Spinner />}
-					{mode === 'create' ? 'Create Item' : 'Edit Item'}
-				</Button>
-			</form>
+			{currentItemType === 'activity' && <ActivityForm mode={mode} />}
 		</div>
 	);
 };

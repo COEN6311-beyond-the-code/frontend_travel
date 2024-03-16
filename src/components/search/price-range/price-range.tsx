@@ -330,7 +330,7 @@ const PriceRange: FC<{
 				<label className='border rounded-lg w-full py-1 px-3 focus-within:border-edanra-green'>
 					<span className='text-xs text-gray-400'>min price</span>
 					<div className='flex items-center justify-center space-x-2'>
-						<span>Ghc</span>
+						<span>$</span>
 						<input
 							type='number'
 							className='w-full text-base h-4 p-0 border-0 focus:ring-0 appearance-textField'
@@ -345,7 +345,7 @@ const PriceRange: FC<{
 				<label className='border rounded-lg w-full py-1 px-3 focus-within:border-edanra-green'>
 					<span className='text-xs text-gray-400'>max price</span>
 					<div className='flex items-center justify-center space-x-2 relative'>
-						<span>Ghc</span>
+						<span>$</span>
 						<input
 							type='number'
 							className='w-full text-base h-4 p-0 border-0 focus:ring-0 appearance-textField'

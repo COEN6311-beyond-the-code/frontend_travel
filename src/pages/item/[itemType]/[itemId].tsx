@@ -3,76 +3,89 @@ import PageLoader from '@/components/loaders/page-loader';
 import Layout from '@/components/layout/layout';
 
 import { Disclosure, Tab } from '@headlessui/react';
-import { MinusIcon, PlusIcon } from '@heroicons/react/24/outline';
+import {
+	InformationCircleIcon,
+	MinusIcon,
+	PlusIcon,
+} from '@heroicons/react/24/outline';
 import { classNames } from '@/utils/classNames';
-import { products } from '@/data/packages';
 import RelatedItems from '@/components/product-details/related-items/related-items';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Product } from '@/types/product/product';
-
-const item = {
-	name: '7 day France trip',
-	price: 1200,
-	imageSrc: '/images/flights/trip 1.jpg',
-	imageAlt: '7 day France trip package.',
-	description: `Explore the beautiful country of France with our 7 day package deal. Enjoy a relaxing flight, a comfy hotel and some fun activities. Come with friends and family to enjoy the experience of a lifetime`,
-	details: [
-		{
-			name: 'Features',
-			items: [
-				'Enjoy one of the best flight',
-				'The hotel is located in the heart of the city',
-				'Enjoy the best meals',
-				'Meet great people at the rock climbing event',
-			],
-		},
-		{
-			name: 'Flight Details',
-			items: [
-				'Flight number: SKW138',
-				'Seat: 17A',
-				'Class: Economy',
-				'Departure: 19:55',
-				'Arrival: 22:15',
-			],
-		},
-		{
-			name: 'Hotel Details',
-			items: [
-				'Hotel name: Grand Hotel Europa',
-				'Room: Standard',
-				'Check-in: 15:00',
-				'Check-out: 10:00',
-			],
-		},
-		{
-			name: 'Activity Details',
-			items: [
-				'Event: Rock climbing',
-				'Location: Summit Climbing Gym',
-				'Address: 123 Johnson Ave.',
-				'Date: Friday, July 28, 2023',
-				'Time: 16:00',
-			],
-		},
-	],
-};
+import useProduct from '@/hooks/product/useProduct';
+import useCart from '@/hooks/cart/useCart';
+import Message from '@/components/message/message';
+import Spinner from '@/components/loaders/spinner';
+import { nanoid } from 'nanoid';
+import Cookies from 'js-cookie';
+import { AuthContext } from '@/context/auth/auth-context';
 
 const ItemDetails = () => {
 	const [item, setItem] = useState<Product | null>(null);
+	const [show, setShow] = useState(false);
+	const [showSignInMessage, setShowSignInMessage] = useState(false);
+	const [isInCart, setIsInCart] = useState(false);
+	const [setCartId, setSetCartId] = useState<number | null>(null);
 	const router = useRouter();
-	const { itemId } = router.query;
+	const { currentUser } = useContext(AuthContext);
+	const { itemId, itemType } = router.query;
+	const { getProduct, getPackage } = useProduct(
+		itemId as string,
+		itemType as string,
+	);
+	const { addToCart, getUserCart, deleteItemFromCart } = useCart();
 
 	useEffect(() => {
-		if (itemId) {
-			const product = products.find(
-				product => product.id === parseInt(itemId as string),
+		if (getProduct.data) {
+			setItem(getProduct.data.data.data);
+		} else if (getPackage.data) {
+			setItem(getPackage.data.data.data);
+		}
+	}, [getProduct.data, getPackage.data]);
+
+	useEffect(() => {
+		if (getUserCart.data && itemId && itemType) {
+			const cart = getUserCart.data.data.data.cart;
+			const isItemInCart = cart.items.find(
+				item => item.id + item.type === (itemId as string) + itemType,
 			);
-			if (product) {
-				setItem(product);
+			if (isItemInCart) {
+				setSetCartId(isItemInCart.cartItemId);
+			}
+			setIsInCart(!!isItemInCart);
+		}
+	}, [getUserCart.data, itemId, itemType]);
+
+	useEffect(() => {
+		if (addToCart.data) {
+			setShow(true);
+		}
+	}, [addToCart.data]);
+
+	const handleAddToCart = () => {
+		if (!currentUser) {
+			setShowSignInMessage(true);
+			return;
+		} else {
+			if (itemId && itemType !== 'package') {
+				if (isInCart) {
+					deleteItemFromCart.mutate({
+						cartItemId: itemId,
+					});
+				} else {
+					addToCart.mutate({
+						type: itemType,
+						id: itemId,
+						number: 1,
+					});
+				}
+				Cookies.remove('packageToPurchase');
+			} else if (itemId && itemType === 'package') {
+				Cookies.set('packageToPurchase', itemId as string);
+				router.push(`/checkout`).then();
 			}
 		}
-	}, [itemId]);
+	};
 
 	if (!item) {
 		return <PageLoader />;
@@ -118,7 +131,7 @@ const ItemDetails = () => {
 								</div>
 							</div>
 
-							<form className='mt-6'>
+							<div className='mt-6'>
 								<div className='mt-10 flex'>
 									<button
 										type='submit'
@@ -126,13 +139,23 @@ const ItemDetails = () => {
                                         border-transparent bg-ct-deepPink px-8 py-3 text-base font-medium text-white
                                         hover:opacity-80 focus:outline-none focus:ring-2 focus:ring-ct-deepPink
                                         focus:ring-offset-2 focus:ring-offset-gray-50 sm:w-full'
+										onClick={handleAddToCart}
 									>
-										{item.type === 'package'
-											? 'Book now'
-											: 'Add to package'}
+										{(addToCart.isPending ||
+											deleteItemFromCart.isPending) && (
+											<Spinner />
+										)}
+
+										{itemType !== 'package' &&
+											(isInCart
+												? 'Remove from custom package'
+												: 'Add to custom package')}
+
+										{itemType === 'package' &&
+											'Purchase Package'}
 									</button>
 								</div>
-							</form>
+							</div>
 
 							<section
 								aria-labelledby='details-heading'
@@ -144,7 +167,7 @@ const ItemDetails = () => {
 
 								<div className='divide-y divide-gray-200 border-t'>
 									{item.details.map(detail => (
-										<Disclosure as='div' key={detail.name}>
+										<Disclosure as='div' key={nanoid()}>
 											{({ open }) => (
 												<>
 													<h3>
@@ -162,7 +185,7 @@ const ItemDetails = () => {
 															<span className='ml-6 flex items-center'>
 																{open ? (
 																	<MinusIcon
-																		className='block h-6 w-6 text-indigo-400 group-hover:text-indigo-500'
+																		className='block h-6 w-6 text-gray-400 group-hover:text-gray-500'
 																		aria-hidden='true'
 																	/>
 																) : (
@@ -182,9 +205,7 @@ const ItemDetails = () => {
 															{detail.items.map(
 																item => (
 																	<li
-																		key={
-																			item
-																		}
+																		key={nanoid()}
 																	>
 																		{item}
 																	</li>
@@ -212,10 +233,25 @@ const ItemDetails = () => {
 							Other popular packages
 						</h2>
 
-						<RelatedItems products={products} />
+						<RelatedItems />
 					</section>
 				</div>
 			</main>
+
+			<Message
+				title='Package updated'
+				subtitle='This item has been added to your custom package'
+				show={show}
+				setShow={setShow}
+			/>
+
+			<Message
+				title='Sign in required'
+				subtitle='You need to be signed in to perform this action'
+				show={showSignInMessage}
+				setShow={setShowSignInMessage}
+				Icon={InformationCircleIcon}
+			/>
 		</Layout>
 	);
 };

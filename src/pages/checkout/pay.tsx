@@ -11,7 +11,8 @@ import { inter } from '@/utils/fonts';
 import Button from '@/components/button/button';
 import Spinner from '@/components/loaders/spinner';
 import { useRouter } from 'next/router';
-import { products } from '@/data/packages';
+import useCart from '@/hooks/cart/useCart';
+import Cookies from 'js-cookie';
 
 function CheckoutForm() {
 	const stripe = useStripe();
@@ -19,6 +20,8 @@ function CheckoutForm() {
 
 	const [message, setMessage] = React.useState<null | string>(null);
 	const [isLoading, setIsLoading] = React.useState(false);
+	const frontendUrl =
+		process.env.NEXT_PUBLIC_FRONTEND_URL || 'http://localhost:3000';
 
 	React.useEffect(() => {
 		if (!stripe) {
@@ -68,7 +71,7 @@ function CheckoutForm() {
 			elements,
 			confirmParams: {
 				// Make sure to change this to your payment completion page
-				return_url: 'http://localhost:3000/checkout/1/create-order',
+				return_url: `${frontendUrl}/checkout/create-order`,
 			},
 		});
 
@@ -133,30 +136,46 @@ const stripePromise = loadStripe(
 
 export default function Pay() {
 	const [clientSecret, setClientSecret] = React.useState('');
-	const [currentItem, setCurrentItem] = React.useState<any>(null);
+	const [cart, setCart] = React.useState<any>(null);
 	const router = useRouter();
+	const { getUserCart, packageCheckout } = useCart();
 
 	useEffect(() => {
 		// Create PaymentIntent as soon as the page loads
-		if (currentItem) {
+		if (cart) {
 			fetch('/api/create-payment-intent', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({ items: [currentItem] }),
+				body: JSON.stringify({ items: [cart] }),
 			})
 				.then(res => res.json())
 				.then(data => setClientSecret(data.clientSecret));
 		}
-	}, [currentItem]);
+	}, [cart]);
 
 	useEffect(() => {
-		if (router.query) {
-			const item = products.find(
-				product => product.id === parseInt(router.query.item_id as any),
-			);
-			setCurrentItem(item);
+		const packageToPurchase = Cookies.get('packageToPurchase');
+
+		if (packageToPurchase) {
+			packageCheckout.mutate({
+				packageId: +packageToPurchase,
+			});
+		} else {
+			if (getUserCart.data) {
+				const item = getUserCart.data.data.data.cart;
+				setCart(item);
+			}
 		}
-	}, [router]);
+
+		// eslint-disable-next-line
+	}, [getUserCart.data]);
+
+	useEffect(() => {
+		if (packageCheckout.data) {
+			const item = packageCheckout.data.data.data.cart;
+			setCart(item);
+		}
+	}, [packageCheckout.data]);
 
 	const appearance = {
 		theme: 'stripe',

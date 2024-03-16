@@ -1,7 +1,6 @@
 import Layout from '@/components/layout/layout';
-import { useState } from 'react';
-import { Product } from '@/types/product/product';
-import { products } from '@/data/packages';
+import { useContext, useEffect, useState } from 'react';
+import { CartType } from '@/types/product/product';
 import PageLoader from '@/components/loaders/page-loader';
 import { Fragment } from 'react';
 import { Popover, Transition } from '@headlessui/react';
@@ -14,26 +13,60 @@ import { CheckoutSchema } from '@/schema/checkout-schema';
 import Spinner from '@/components/loaders/spinner';
 import Button from '@/components/button/button';
 import { useRouter } from 'next/router';
+import { AuthContext } from '@/context/auth/auth-context';
+import useCart from '@/hooks/cart/useCart';
+import { nanoid } from 'nanoid';
+import Cookies from 'js-cookie';
 
 const Checkout = () => {
-	const [cart, setCart] = useState<Product[]>([]);
+	const [cart, setCart] = useState<CartType | null>(null);
 	const [isCheckingOut, setIsCheckingOut] = useState(false);
 	const router = useRouter();
+	const { currentUser } = useContext(AuthContext);
+	const { getUserCart, packageCheckout } = useCart();
 
 	const {
 		register,
 		handleSubmit,
 		formState: { errors },
+		reset,
 	} = useForm<CheckoutFormTypes>({
 		resolver: yupResolver(CheckoutSchema),
 	});
 
 	const submitForm: SubmitHandler<CheckoutFormTypes> = async data => {
-		console.log(data);
-		await router.push('/checkout/1/pay');
+		Cookies.set('checkoutData', JSON.stringify(data));
+		await router.push(`/checkout/pay`);
 	};
 
-	if (cart.length === 1) {
+	useEffect(() => {
+		const packageToPurchase = Cookies.get('packageToPurchase');
+
+		if (packageToPurchase) {
+			packageCheckout.mutate({
+				packageId: +packageToPurchase,
+			});
+		} else if (getUserCart.data) {
+			setCart(getUserCart.data.data.data.cart);
+		}
+
+		// eslint-disable-next-line
+	}, [getUserCart.data]);
+
+	useEffect(() => {
+		if (packageCheckout.data) {
+			setCart(packageCheckout.data.data.data.cart);
+		}
+	}, [packageCheckout.data]);
+
+	useEffect(() => {
+		reset({
+			email: currentUser?.userInfo.email,
+			phone: currentUser?.userInfo.mobile,
+		});
+	}, [reset, currentUser]);
+
+	if (!cart) {
 		return <PageLoader />;
 	}
 
@@ -69,9 +102,9 @@ const Checkout = () => {
 								role='list'
 								className='divide-y divide-gray-200 text-sm font-medium text-gray-900'
 							>
-								{products.slice(0, 3).map(product => (
+								{cart.items.map(product => (
 									<li
-										key={product.id}
+										key={nanoid()}
 										className='flex items-start space-x-4 py-6'
 									>
 										<img
@@ -85,7 +118,7 @@ const Checkout = () => {
 												Category: {product.type}
 											</p>
 											<p className='text-gray-500'>
-												Included: {product.options}
+												{product.options}
 											</p>
 										</div>
 										<p className='flex-none text-base font-medium'>
@@ -98,17 +131,17 @@ const Checkout = () => {
 							<dl className='hidden space-y-6 border-t border-gray-200 pt-6 text-sm font-medium text-gray-900 lg:block'>
 								<div className='flex items-center justify-between'>
 									<dt className='text-gray-600'>Subtotal</dt>
-									<dd>$320.00</dd>
+									<dd>$ {cart.price}</dd>
 								</div>
 
 								<div className='flex items-center justify-between'>
 									<dt className='text-gray-600'>Taxes</dt>
-									<dd>$26.80</dd>
+									<dd>$ {cart.taxed.toFixed(2)}</dd>
 								</div>
 
 								<div className='flex items-center justify-between border-t border-gray-200 pt-6'>
 									<dt className='text-base'>Total</dt>
-									<dd className='text-base'>$361.80</dd>
+									<dd className='text-base'>${cart.total}</dd>
 								</div>
 							</dl>
 
@@ -120,7 +153,7 @@ const Checkout = () => {
 												Total
 											</span>
 											<span className='mr-2 text-base'>
-												$361.80
+												$ {cart.total}
 											</span>
 											<ChevronUpIcon
 												className='h-5 w-5 text-gray-500'
@@ -159,14 +192,19 @@ const Checkout = () => {
 														<dt className='text-gray-600'>
 															Subtotal
 														</dt>
-														<dd>$320.00</dd>
+														<dd>$ {cart.price}</dd>
 													</div>
 
 													<div className='flex items-center justify-between'>
 														<dt className='text-gray-600'>
 															Taxes
 														</dt>
-														<dd>$26.80</dd>
+														<dd>
+															${' '}
+															{cart.taxed.toFixed(
+																2,
+															)}
+														</dd>
 													</div>
 												</dl>
 											</Popover.Panel>
@@ -219,7 +257,16 @@ const Checkout = () => {
 									type='date'
 									label='Departure date'
 									placeholder='dd/mm/yyyy'
-									id='date'
+									id='departureDate'
+									register={register}
+									errors={errors}
+								/>
+
+								<Input
+									type='date'
+									label='End date'
+									placeholder='dd/mm/yyyy'
+									id='endDate'
 									register={register}
 									errors={errors}
 								/>

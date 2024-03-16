@@ -37,7 +37,7 @@ const CategorySection = () => {
 						<div className='flex items-end p-6'>
 							<div>
 								<h3 className='font-semibold text-white'>
-									<Link href='/flights'>
+									<Link href='/search?type=flight'>
 										<span className='absolute inset-0' />
 										Flights
 									</Link>
@@ -64,7 +64,7 @@ const CategorySection = () => {
 						<div className='flex items-end p-6 sm:absolute sm:inset-0'>
 							<div>
 								<h3 className='font-semibold text-white'>
-									<Link href='/hotels'>
+									<Link href='/search?type=hotel'>
 										<span className='absolute inset-0' />
 										Hotels
 									</Link>
@@ -91,7 +91,7 @@ const CategorySection = () => {
 						<div className='flex items-end p-6 sm:absolute sm:inset-0'>
 							<div>
 								<h3 className='font-semibold text-white'>
-									<Link href='/activities'>
+									<Link href='/search?type=activity'>
 										<span className='absolute inset-0' />
 										Activities
 									</Link>
