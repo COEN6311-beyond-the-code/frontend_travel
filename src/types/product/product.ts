@@ -25,7 +25,6 @@ export interface ItemFormType {
 	id?: number;
 	name: string;
 	description: string;
-	price: number;
 	imageSrc: any;
 	imageAlt?: string;
 }
@@ -33,6 +32,7 @@ export interface ItemFormType {
 export interface FlightFormType extends ItemFormType {
 	flightNumber: string;
 	seatClass: 'economy' | 'business' | 'first';
+	price: number;
 	startDate: string;
 	endDate: string;
 	destination: string;
@@ -43,6 +43,7 @@ export interface FlightFormType extends ItemFormType {
 export interface HotelFormType extends ItemFormType {
 	hotelName: string;
 	room: 'single' | 'double' | 'suite' | 'penthouse';
+	price: number;
 	address: string;
 	startDate: string;
 	endDate: string;
@@ -52,6 +53,7 @@ export interface HotelFormType extends ItemFormType {
 
 export interface ActivityFormType extends ItemFormType {
 	startDate: string;
+	price: number;
 	endDate: string;
 	event: string;
 	location: string;

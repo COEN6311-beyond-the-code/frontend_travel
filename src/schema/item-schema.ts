@@ -3,7 +3,6 @@ import * as yup from 'yup';
 const shared = {
 	name: yup.string().required('Please the item name'),
 	description: yup.string().required('Please enter a description'),
-	price: yup.number().required('Please enter a price'),
 	imageSrc: yup.mixed().required('Please upload an image'),
 };
 
@@ -19,6 +18,7 @@ export const PackageSchema = yup.object({
 
 export const FlightSchema = yup.object({
 	...shared,
+	price: yup.number().required('Please enter a price'),
 	flightNumber: yup.string().required('Please enter a flight number'),
 	seatClass: yup
 		.string()
@@ -33,6 +33,7 @@ export const FlightSchema = yup.object({
 
 export const HotelSchema = yup.object({
 	...shared,
+	price: yup.number().required('Please enter a price'),
 	hotelName: yup.string().required('Please enter a hotel name'),
 	room: yup
 		.string()
@@ -47,6 +48,7 @@ export const HotelSchema = yup.object({
 
 export const ActivitySchema = yup.object({
 	...shared,
+	price: yup.number().required('Please enter a price'),
 	startDate: yup.string().required('Please enter a start date'),
 	endDate: yup.string().required('Please enter an end date'),
 	event: yup.string().required('Please enter an event'),

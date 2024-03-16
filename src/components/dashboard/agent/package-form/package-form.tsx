@@ -133,7 +133,6 @@ const PackageForm: FC<IProps> = ({ mode }) => {
 			reset({
 				name: product.name,
 				description: product.description,
-				price: +product.price,
 				flight: products
 					.find(item => {
 						return (
@@ -190,12 +189,14 @@ const PackageForm: FC<IProps> = ({ mode }) => {
 					/>
 
 					<Input
-						type='number'
-						label='Price'
-						placeholder='0.00'
-						id='price'
+						type='text-area'
+						label='Package Features'
+						placeholder='Please input the features of the package separated by semi-colons'
+						id='features'
 						register={register}
 						errors={errors}
+						rows={3}
+						defaultValue={product?.details[0].items.join(';')}
 					/>
 
 					<div className='self-center'>
@@ -232,17 +233,6 @@ const PackageForm: FC<IProps> = ({ mode }) => {
 							</p>
 						)}
 					</div>
-
-					<Input
-						type='text-area'
-						label='Package Features'
-						placeholder='Please input the features of the package separated by semi-colons'
-						id='features'
-						register={register}
-						errors={errors}
-						rows={3}
-						defaultValue={product?.details[0].items.join(';')}
-					/>
 
 					<Input
 						type='select'

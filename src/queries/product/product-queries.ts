@@ -97,7 +97,6 @@ export const createPackageQuery = async (body: PackageFormType) => {
 		{
 			name: body.name,
 			description: body.description,
-			price: body.price,
 			image_src: imageUrl,
 			image_alt: body.imageAlt,
 			features: body.features.split(';'),
@@ -131,7 +130,6 @@ export const updatePackageQuery = async (body: PackageFormType) => {
 			id: body.id,
 			name: body.name,
 			description: body.description,
-			price: body.price,
 			image_src: imageUrl,
 			features: body.features.split(';'),
 			items: [body.flight, body.hotel, body.activity].filter(
