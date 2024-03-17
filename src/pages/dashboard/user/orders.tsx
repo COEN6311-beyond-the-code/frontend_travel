@@ -8,10 +8,14 @@ import { useEffect, useState } from 'react';
 import { UserType } from '@/types/auth/auth.types';
 import toCamelCase from '@/utils/camel-case';
 import PageLoader from '@/components/loaders/page-loader';
+import useOrder from '@/hooks/order/useOrder';
+import { Order } from '@/types/dashboard/orders';
 
 const Orders = () => {
 	const { getUserProfile } = useAuth();
 	const [user, setUser] = useState<UserType | null>(null);
+	const { orderList, cancelOrder } = useOrder();
+	const [orders, setOrders] = useState<Order[]>([]);
 
 	const { data } = getUserProfile;
 
@@ -21,6 +25,11 @@ const Orders = () => {
 		}
 	}, [data]);
 
+	useEffect(() => {
+		if (orderList && orderList.data) {
+			setOrders(toCamelCase(orderList.data.data.data) as Order[]);
+		}
+	}, [orderList.data]);
 	if (!data || !user) {
 		return <PageLoader />;
 	}

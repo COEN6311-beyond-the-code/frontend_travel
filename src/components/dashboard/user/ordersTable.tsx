@@ -3,6 +3,7 @@ import { Order } from '@/types/dashboard/orders';
 import { classNames } from '@/utils/classNames';
 import ConfirmCancel from '@/components/message/confirm-cancel';
 import { Product } from '@/types/product/product';
+import useOrder from '@/hooks/order/useOrder';
 
 interface IProps {
 	orders: Order[];
@@ -13,12 +14,14 @@ const OrdersTable: FC<IProps> = ({ orders }) => {
 		null,
 	);
 	const [open, setOpen] = useState(false);
-
+	const { cancelOrder } = useOrder();
 	const handleCancel = () => {
-		if (itemToCancel) {
-			console.log('Cancel', itemToCancel);
-			setItemToCancel(null);
+		if (itemToCancel && 'orderNumber' in itemToCancel) {
+			cancelOrder.mutate({
+				orderNumber: itemToCancel.orderNumber,
+			});
 		}
+		setItemToCancel(null);
 	};
 
 	return (
@@ -84,7 +87,7 @@ const OrdersTable: FC<IProps> = ({ orders }) => {
 										</td>
 										<td
 											className={classNames(
-												order.status === 'complete'
+												order.status === 'Complete'
 													? 'text-green-600'
 													: 'text-gray-500',
 												'whitespace-nowrap px-3 py-4 text-sm capitalize',
@@ -92,22 +95,25 @@ const OrdersTable: FC<IProps> = ({ orders }) => {
 										>
 											{order.status}
 										</td>
-										{order.status === 'pending' && (
-											<td className='relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6'>
-												<div
-													className='text-red-600 hover:opacity-80 cursor-pointer'
-													onClick={() => {
-														setItemToCancel(order);
-														setOpen(true);
-													}}
-												>
-													Cancel
-													<span className='sr-only'>
-														, {order.name}
-													</span>
-												</div>
-											</td>
-										)}
+										{order.status !== 'Complete' &&
+											order.status !== 'Cancelled' && (
+												<td className='relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6'>
+													<div
+														className='text-red-600 hover:opacity-80 cursor-pointer'
+														onClick={() => {
+															setItemToCancel(
+																order,
+															);
+															setOpen(true);
+														}}
+													>
+														Cancel
+														<span className='sr-only'>
+															, {order.name}
+														</span>
+													</div>
+												</td>
+											)}
 									</tr>
 								))}
 							</tbody>
@@ -120,8 +126,8 @@ const OrdersTable: FC<IProps> = ({ orders }) => {
 				message='Are you sure you want to cancel your order? This action cannot be undone.'
 				open={open}
 				setOpen={setOpen}
-				handleConfirm={handleCancel}
 				setItemToCancel={setItemToCancel}
+				handleConfirm={handleCancel}
 			/>
 		</div>
 	);

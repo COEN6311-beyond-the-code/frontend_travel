@@ -1,7 +1,8 @@
 import Cookies from 'js-cookie';
 import baseUrl from '@/utils/api-url';
 import axios from 'axios';
-import { OrderResponse } from '@/types/dashboard/orders';
+import { Order, OrderResponse } from '@/types/dashboard/orders';
+import { Report } from '@/types/dashboard/report';
 
 export const placeOrderQuery = (body: any) => {
 	const token = Cookies.get('token');
@@ -30,6 +31,42 @@ export const paymentOrderQuery = (body: any) => {
 		`${baseUrl}/order/payment`,
 		{
 			amount: body.amount,
+			order_number: body.orderNumber,
+		},
+		{
+			headers: {
+				Authorization: token,
+			},
+		},
+	);
+};
+
+export const getOrderListQuery = (body: any) => {
+	const token = Cookies.get('token');
+
+	return axios.get<{ data: Order[] }>(`${baseUrl}/order/views`, {
+		headers: {
+			Authorization: token,
+		},
+	});
+};
+
+export const getAgentReportQuery = (body: any) => {
+	const token = Cookies.get('token');
+
+	return axios.get<{ data: Report }>(`${baseUrl}/order/agent/report`, {
+		headers: {
+			Authorization: token,
+		},
+	});
+};
+
+export const cancelOrderQuery = (body: any) => {
+	const token = Cookies.get('token');
+
+	return axios.post<{ data: OrderResponse }>(
+		`${baseUrl}/order/cancel`,
+		{
 			order_number: body.orderNumber,
 		},
 		{
