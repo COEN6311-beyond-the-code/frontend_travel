@@ -9,6 +9,7 @@ export const orders: Order[] = [
 		price: 1000,
 		status: 'pending',
 		createdAt: '2021-07-01',
+		items: [],
 		user: {
 			id: 1,
 			name: 'John Doe',
@@ -23,6 +24,7 @@ export const orders: Order[] = [
 		price: 2000,
 		status: 'pending',
 		createdAt: '2021-07-02',
+		items: [],
 		user: {
 			id: 1,
 			name: 'John Doe',
@@ -37,6 +39,7 @@ export const orders: Order[] = [
 		price: 3000,
 		status: 'pending',
 		createdAt: '2021-07-03',
+		items: [],
 		user: {
 			id: 2,
 			name: 'Jane Doe',
@@ -51,6 +54,7 @@ export const orders: Order[] = [
 		price: 4000,
 		status: 'complete',
 		createdAt: '2021-07-04',
+		items: [],
 		user: {
 			id: 3,
 			name: 'Candace Parker',
@@ -65,6 +69,7 @@ export const orders: Order[] = [
 		price: 5000,
 		status: 'complete',
 		createdAt: '2021-07-05',
+		items: [],
 		user: {
 			id: 3,
 			name: 'Candace Parker',

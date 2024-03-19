@@ -1,20 +1,30 @@
-import { FC, Fragment, useRef } from 'react';
+import { Dispatch, FC, Fragment, SetStateAction, useRef } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { classNames } from '@/utils/classNames';
 import { inter } from '@/utils/fonts';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { ModifyOrder } from '@/types/dashboard/orders';
+import { ModifyOrder, Order } from '@/types/dashboard/orders';
 import { ModifyOrderSchema } from '@/schema/order-schema';
 import Input from '@/components/input/input';
+import { Product } from '@/types/product/product';
+import useOrder from '@/hooks/order/useOrder';
 
 interface IProps {
 	open: boolean;
 	setOpen: (value: boolean) => void;
+	itemToModify: Order | null;
+	setItemToModify: Dispatch<SetStateAction<Order | null>>;
 }
 
-const ModifyOrderModal: FC<IProps> = ({ open, setOpen }) => {
+const ModifyOrderModal: FC<IProps> = ({
+	open,
+	setOpen,
+	itemToModify,
+	setItemToModify,
+}) => {
 	const cancelButtonRef = useRef(null);
+	const { modifyOrder } = useOrder();
 
 	const {
 		register,
@@ -25,11 +35,24 @@ const ModifyOrderModal: FC<IProps> = ({ open, setOpen }) => {
 	});
 
 	const submitForm: SubmitHandler<ModifyOrder> = async data => {
-		// TODO: Add modify logic
 		console.log(data);
+		if (itemToModify && 'orderNumber' in itemToModify) {
+			modifyOrder.mutate(
+				{
+					orderNumber: itemToModify.orderNumber,
+					startDate: data.startDate,
+					endDate: data.endDate,
+				},
+				{
+					// TODO: Close the modal when backend request is successful
+					onSuccess: () => {
+						setOpen(false);
+					},
+				},
+			);
+		}
+		setItemToModify(null);
 	};
-
-	// TODO: Close the modal when backend request is successful
 
 	return (
 		<Transition.Root show={open} as={Fragment}>

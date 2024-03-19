@@ -116,7 +116,7 @@ const OrdersTable: FC<IProps> = ({ orders }) => {
 												className='hover:text-ct-deepPink'
 												onClick={() => {
 													// TODO: Set active order
-
+													setActiveOrder(order.items);
 													setOpenDetails(true);
 												}}
 											>

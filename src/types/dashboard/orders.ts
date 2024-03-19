@@ -1,3 +1,5 @@
+import { Product } from '@/types/product/product';
+
 export interface Order {
 	id: number;
 	orderNumber: string;
@@ -5,6 +7,7 @@ export interface Order {
 	description: string;
 	price: number;
 	status: string;
+	items: Product[];
 	user?: {
 		id: number;
 		name: string;

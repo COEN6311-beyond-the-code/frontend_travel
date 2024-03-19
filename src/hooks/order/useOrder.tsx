@@ -3,6 +3,7 @@ import {
 	cancelOrderQuery,
 	getAgentReportQuery,
 	getOrderListQuery,
+	modifyOrderQuery,
 	paymentOrderQuery,
 	placeOrderQuery,
 } from '@/queries/order/order-queries';
@@ -27,6 +28,15 @@ const useOrder = () => {
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({
 				queryKey: ['orderList', 'agentReport'],
+			});
+		},
+	});
+
+	const modifyOrder = useMutation({
+		mutationFn: modifyOrderQuery,
+		onSuccess: async () => {
+			await queryClient.invalidateQueries({
+				queryKey: ['orderList'],
 			});
 		},
 	});
@@ -56,6 +66,7 @@ const useOrder = () => {
 		placeOrder,
 		paymentOrder,
 		cancelOrder,
+		modifyOrder,
 		orderList,
 		agentReport,
 	};

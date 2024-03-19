@@ -14,7 +14,28 @@ interface IProps {
 	setActiveOrder: Dispatch<SetStateAction<Product[] | null>>;
 }
 
-const OrderDetails: FC<IProps> = ({ open, setOpen, activeOrder }) => {
+const OrderDetails: FC<IProps> = ({
+	open,
+	setOpen,
+	activeOrder,
+	setActiveOrder,
+}) => {
+	if (!activeOrder) {
+		return null;
+	}
+	// Calculate Subtotal
+	const subtotal = activeOrder.reduce(
+		(acc, product) =>
+			acc +
+			(typeof product.price === 'number'
+				? product.price
+				: parseFloat(product.price)),
+		0,
+	);
+
+	// Calculate Taxes
+	const taxes = parseFloat((subtotal * 0.15).toFixed(2));
+	const total = parseFloat((subtotal + taxes).toFixed(2));
 	return (
 		<Transition.Root show={open} as={Fragment}>
 			<Dialog
@@ -49,8 +70,9 @@ const OrderDetails: FC<IProps> = ({ open, setOpen, activeOrder }) => {
 														className='relative rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-ct-deepPink focus:ring-offset-2'
 														onClick={() => {
 															setOpen(false);
-
-															// TODO: Set active order to null
+															setActiveOrder(
+																null,
+															);
 														}}
 													>
 														<span className='absolute -inset-2.5' />
@@ -95,7 +117,7 @@ const OrderDetails: FC<IProps> = ({ open, setOpen, activeOrder }) => {
 																			<div className='flex justify-between text-base font-medium text-gray-900'>
 																				<h3>
 																					<Link
-																						href={`/item/${product.id}`}
+																						href={`/item/${product.type}/${product.id}`}
 																						onClick={() =>
 																							setOpen(
 																								false,
@@ -141,14 +163,14 @@ const OrderDetails: FC<IProps> = ({ open, setOpen, activeOrder }) => {
 														<dt className='text-gray-600'>
 															Subtotal
 														</dt>
-														<dd>$ 5000</dd>
+														<dd>$ {subtotal}</dd>
 													</div>
 
 													<div className='flex items-center justify-between'>
 														<dt className='text-gray-600'>
 															Taxes
 														</dt>
-														<dd>$ 50</dd>
+														<dd>$ {taxes}</dd>
 													</div>
 
 													<div className='flex items-center justify-between border-t border-gray-200 pt-6'>
@@ -156,7 +178,7 @@ const OrderDetails: FC<IProps> = ({ open, setOpen, activeOrder }) => {
 															Total
 														</dt>
 														<dd className='text-base'>
-															$ 5050
+															$ {total}
 														</dd>
 													</div>
 												</dl>

@@ -32,6 +32,20 @@ const AgentOrdersTable: FC<IProps> = ({ orders }) => {
 		products.slice(0, 3),
 	);
 	const [openModify, setOpenModify] = useState(false);
+	const [itemToModify, setItemToModify] = useState<Order | null>(null);
+	const getStatusColor = (status: string): string => {
+		if (
+			status === 'Pending Departure' ||
+			status === 'Traveling' ||
+			status === 'Pending Payment'
+		) {
+			return 'text-orange-500';
+		} else if (status === 'Complete') {
+			return 'text-green-600';
+		} else {
+			return 'text-gray-500';
+		}
+	};
 
 	return (
 		<div className='mt-8 flow-root'>
@@ -120,9 +134,7 @@ const AgentOrdersTable: FC<IProps> = ({ orders }) => {
 
 										<td
 											className={classNames(
-												order.status === 'Complete'
-													? 'text-green-600'
-													: 'text-gray-500',
+												getStatusColor(order.status),
 												'whitespace-nowrap px-3 py-4 text-sm capitalize',
 											)}
 										>
@@ -132,8 +144,7 @@ const AgentOrdersTable: FC<IProps> = ({ orders }) => {
 											<button
 												className='hover:text-ct-deepPink'
 												onClick={() => {
-													// TODO: Set active order
-
+													setActiveOrder(order.items);
 													setOpenDetails(true);
 												}}
 											>
@@ -149,6 +160,9 @@ const AgentOrdersTable: FC<IProps> = ({ orders }) => {
 															onClick={() => {
 																setOpenModify(
 																	true,
+																);
+																setItemToModify(
+																	order,
 																);
 															}}
 														>
@@ -197,7 +211,12 @@ const AgentOrdersTable: FC<IProps> = ({ orders }) => {
 				activeOrder={activeOrder!}
 				setActiveOrder={setActiveOrder}
 			/>
-			<ModifyOrderModal open={openModify} setOpen={setOpenModify} />
+			<ModifyOrderModal
+				open={openModify}
+				setOpen={setOpenModify}
+				setItemToModify={setItemToModify}
+				itemToModify={itemToModify}
+			/>
 		</div>
 	);
 };

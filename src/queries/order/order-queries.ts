@@ -24,6 +24,24 @@ export const placeOrderQuery = (body: any) => {
 	);
 };
 
+export const modifyOrderQuery = (body: any) => {
+	const token = Cookies.get('token');
+
+	return axios.post<{ data: OrderResponse }>(
+		`${baseUrl}/order/modify`,
+		{
+			start_date: body.startDate,
+			end_date: body.endDate,
+			order_number: body.orderNumber,
+		},
+		{
+			headers: {
+				Authorization: token,
+			},
+		},
+	);
+};
+
 export const paymentOrderQuery = (body: any) => {
 	const token = Cookies.get('token');
 
