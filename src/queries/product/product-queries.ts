@@ -383,3 +383,7 @@ export const deletePackageQuery = async (body: any) => {
 		},
 	);
 };
+
+export const getTrendingProductsQuery = (body: any) => {
+	return axios.get<{ data: Product[] }>(`${baseUrl}/product/package/trend`);
+};
