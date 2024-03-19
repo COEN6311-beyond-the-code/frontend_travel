@@ -6,9 +6,13 @@ import {
 	paymentOrderQuery,
 	placeOrderQuery,
 } from '@/queries/order/order-queries';
+import { useContext } from 'react';
+import { AuthContext } from '@/context/auth/auth-context';
 
 const useOrder = () => {
 	const queryClient = useQueryClient();
+	const { currentUser } = useContext(AuthContext);
+
 	const placeOrder = useMutation({
 		mutationFn: placeOrderQuery,
 		onSuccess: async () => {
@@ -39,11 +43,13 @@ const useOrder = () => {
 	const orderList = useQuery({
 		queryFn: getOrderListQuery,
 		queryKey: ['orderList'],
+		enabled: !!currentUser,
 	});
 
 	const agentReport = useQuery({
 		queryFn: getAgentReportQuery,
 		queryKey: ['agentReport'],
+		enabled: !!currentUser?.userInfo.isAgent,
 	});
 
 	return {

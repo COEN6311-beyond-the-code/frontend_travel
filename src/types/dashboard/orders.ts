@@ -17,3 +17,8 @@ export interface OrderResponse {
 	order_number: string;
 	amount: number;
 }
+
+export interface ModifyOrder {
+	startDate: string;
+	endDate: string;
+}

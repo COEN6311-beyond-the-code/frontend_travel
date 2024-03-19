@@ -5,6 +5,9 @@ import ConfirmCancel from '@/components/message/confirm-cancel';
 import Link from 'next/link';
 import { Product } from '@/types/product/product';
 import useOrder from '@/hooks/order/useOrder';
+import OrderDetails from '@/components/dashboard/shared/orders/order-details';
+import { products } from '@/data/packages';
+import ModifyOrderModal from '@/components/dashboard/agent/modify-order-modal';
 
 interface IProps {
 	orders: Order[];
@@ -15,6 +18,7 @@ const AgentOrdersTable: FC<IProps> = ({ orders }) => {
 		null,
 	);
 	const [open, setOpen] = useState(false);
+	const [openDetails, setOpenDetails] = useState(false);
 	const { cancelOrder } = useOrder();
 	const handleCancel = () => {
 		if (itemToCancel && 'orderNumber' in itemToCancel) {
@@ -24,6 +28,10 @@ const AgentOrdersTable: FC<IProps> = ({ orders }) => {
 		}
 		setItemToCancel(null);
 	};
+	const [activeOrder, setActiveOrder] = useState<Product[] | null>(
+		products.slice(0, 3),
+	);
+	const [openModify, setOpenModify] = useState(false);
 
 	return (
 		<div className='mt-8 flow-root'>
@@ -73,6 +81,14 @@ const AgentOrdersTable: FC<IProps> = ({ orders }) => {
 										scope='col'
 										className='relative py-3.5 pl-3 pr-4 sm:pr-6'
 									>
+										<span className='sr-only'>
+											View Details
+										</span>
+									</th>
+									<th
+										scope='col'
+										className='relative py-3.5 pl-3 pr-4 sm:pr-6'
+									>
 										<span className='sr-only'>Modify</span>
 									</th>
 									<th
@@ -112,19 +128,35 @@ const AgentOrdersTable: FC<IProps> = ({ orders }) => {
 										>
 											{order.status}
 										</td>
+										<td className='whitespace-nowrap px-3 py-4 text-sm text-gray-500'>
+											<button
+												className='hover:text-ct-deepPink'
+												onClick={() => {
+													// TODO: Set active order
+
+													setOpenDetails(true);
+												}}
+											>
+												View Details
+											</button>
+										</td>
 										{order.status !== 'Complete' &&
 											order.status !== 'Cancelled' && (
 												<>
 													<td className='relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6'>
-														<Link
-															href='/'
+														<button
 															className='text-ct-darkBackground hover:opacity-80 cursor-pointer'
+															onClick={() => {
+																setOpenModify(
+																	true,
+																);
+															}}
 														>
 															Modify
 															<span className='sr-only'>
 																, {order.name}
 															</span>
-														</Link>
+														</button>
 													</td>
 													<td className='relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6'>
 														<div
@@ -159,6 +191,13 @@ const AgentOrdersTable: FC<IProps> = ({ orders }) => {
 				setItemToCancel={setItemToCancel}
 				handleConfirm={handleCancel}
 			/>
+			<OrderDetails
+				open={openDetails}
+				setOpen={setOpenDetails}
+				activeOrder={activeOrder!}
+				setActiveOrder={setActiveOrder}
+			/>
+			<ModifyOrderModal open={openModify} setOpen={setOpenModify} />
 		</div>
 	);
 };

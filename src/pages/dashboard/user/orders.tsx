@@ -2,7 +2,6 @@ import Layout from '@/components/layout/layout';
 import Dashboard from '@/components/dashboard/shared/dashboard';
 import { userNavigation } from '@/data/dashboard';
 import OrdersTable from '@/components/dashboard/user/ordersTable';
-import { orders } from '@/data/orders';
 import useAuth from '@/hooks/auth/useAuth';
 import { useEffect, useState } from 'react';
 import { UserType } from '@/types/auth/auth.types';
@@ -29,7 +28,10 @@ const Orders = () => {
 		if (orderList && orderList.data) {
 			setOrders(toCamelCase(orderList.data.data.data) as Order[]);
 		}
+
+		// eslint-disable-next-line
 	}, [orderList.data]);
+
 	if (!data || !user) {
 		return <PageLoader />;
 	}
