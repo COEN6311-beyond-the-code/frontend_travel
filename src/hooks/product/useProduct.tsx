@@ -8,6 +8,7 @@ import {
 	deletePackageQuery,
 	getAllAgentProductsQuery,
 	getAllProductsQuery,
+	getTrendingProductsQuery,
 	queryPackage,
 	queryProduct,
 	updateActivityQuery,
@@ -15,18 +16,27 @@ import {
 	updateHotelQuery,
 	updatePackageQuery,
 } from '@/queries/product/product-queries';
+import { useContext } from 'react';
+import { AuthContext } from '@/context/auth/auth-context';
 
 const useProduct = (productId?: string, productType?: string) => {
 	const queryClient = useQueryClient();
+	const { currentUser } = useContext(AuthContext);
 
 	const getAllProducts = useQuery({
 		queryFn: getAllProductsQuery,
 		queryKey: ['getAllProducts'],
 	});
 
+	const getTrendingProducts = useQuery({
+		queryFn: getTrendingProductsQuery,
+		queryKey: ['getTrendingProducts'],
+	});
+
 	const getAllAgentProducts = useQuery({
 		queryFn: getAllAgentProductsQuery,
 		queryKey: ['getAllAgentProducts'],
+		enabled: !!currentUser,
 	});
 
 	const getProduct = useQuery({
@@ -146,6 +156,7 @@ const useProduct = (productId?: string, productType?: string) => {
 		updatePackage,
 		deletePackage,
 		getAllAgentProducts,
+		getTrendingProducts,
 	};
 };
 
