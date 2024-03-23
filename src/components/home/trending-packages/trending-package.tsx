@@ -10,7 +10,7 @@ const TrendingPackage: FC<IProps> = ({ item }) => {
 	return (
 		<Link
 			key={item.id}
-			href={`/item/${item.id}`}
+			href={`/item/${item.type}/${item.id}`}
 			className='group relative'
 		>
 			<div className='h-44 w-full overflow-hidden rounded-lg sm:aspect-h-3 sm:aspect-w-2 group-hover:opacity-75 sm:h-auto'>

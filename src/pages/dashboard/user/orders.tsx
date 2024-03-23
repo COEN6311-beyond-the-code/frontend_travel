@@ -2,16 +2,19 @@ import Layout from '@/components/layout/layout';
 import Dashboard from '@/components/dashboard/shared/dashboard';
 import { userNavigation } from '@/data/dashboard';
 import OrdersTable from '@/components/dashboard/user/ordersTable';
-import { orders } from '@/data/orders';
 import useAuth from '@/hooks/auth/useAuth';
 import { useEffect, useState } from 'react';
 import { UserType } from '@/types/auth/auth.types';
 import toCamelCase from '@/utils/camel-case';
 import PageLoader from '@/components/loaders/page-loader';
+import useOrder from '@/hooks/order/useOrder';
+import { Order } from '@/types/dashboard/orders';
 
 const Orders = () => {
 	const { getUserProfile } = useAuth();
 	const [user, setUser] = useState<UserType | null>(null);
+	const { orderList, cancelOrder } = useOrder();
+	const [orders, setOrders] = useState<Order[]>([]);
 
 	const { data } = getUserProfile;
 
@@ -20,6 +23,14 @@ const Orders = () => {
 			setUser(toCamelCase(data.data.data) as UserType);
 		}
 	}, [data]);
+
+	useEffect(() => {
+		if (orderList && orderList.data) {
+			setOrders(toCamelCase(orderList.data.data.data) as Order[]);
+		}
+
+		// eslint-disable-next-line
+	}, [orderList.data]);
 
 	if (!data || !user) {
 		return <PageLoader />;

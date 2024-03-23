@@ -17,6 +17,7 @@ export interface Product {
 export interface ProductDetails {
 	id?: number;
 	name: string;
+	price?: number;
 	items: string[];
 	type: 'package' | 'flight' | 'hotel' | 'activity';
 }

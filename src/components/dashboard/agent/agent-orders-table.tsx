@@ -4,6 +4,10 @@ import { classNames } from '@/utils/classNames';
 import ConfirmCancel from '@/components/message/confirm-cancel';
 import Link from 'next/link';
 import { Product } from '@/types/product/product';
+import useOrder from '@/hooks/order/useOrder';
+import OrderDetails from '@/components/dashboard/shared/orders/order-details';
+import { products } from '@/data/packages';
+import ModifyOrderModal from '@/components/dashboard/agent/modify-order-modal';
 
 interface IProps {
 	orders: Order[];
@@ -14,11 +18,32 @@ const AgentOrdersTable: FC<IProps> = ({ orders }) => {
 		null,
 	);
 	const [open, setOpen] = useState(false);
-
+	const [openDetails, setOpenDetails] = useState(false);
+	const { cancelOrder } = useOrder();
 	const handleCancel = () => {
-		if (itemToCancel) {
-			console.log('Cancel', itemToCancel);
-			setItemToCancel(null);
+		if (itemToCancel && 'orderNumber' in itemToCancel) {
+			cancelOrder.mutate({
+				orderNumber: itemToCancel.orderNumber,
+			});
+		}
+		setItemToCancel(null);
+	};
+	const [activeOrder, setActiveOrder] = useState<Product[] | null>(
+		products.slice(0, 3),
+	);
+	const [openModify, setOpenModify] = useState(false);
+	const [itemToModify, setItemToModify] = useState<Order | null>(null);
+	const getStatusColor = (status: string): string => {
+		if (
+			status === 'Pending Departure' ||
+			status === 'Traveling' ||
+			status === 'Pending Payment'
+		) {
+			return 'text-orange-500';
+		} else if (status === 'Complete') {
+			return 'text-green-600';
+		} else {
+			return 'text-gray-500';
 		}
 	};
 
@@ -70,6 +95,14 @@ const AgentOrdersTable: FC<IProps> = ({ orders }) => {
 										scope='col'
 										className='relative py-3.5 pl-3 pr-4 sm:pr-6'
 									>
+										<span className='sr-only'>
+											View Details
+										</span>
+									</th>
+									<th
+										scope='col'
+										className='relative py-3.5 pl-3 pr-4 sm:pr-6'
+									>
 										<span className='sr-only'>Modify</span>
 									</th>
 									<th
@@ -101,45 +134,62 @@ const AgentOrdersTable: FC<IProps> = ({ orders }) => {
 
 										<td
 											className={classNames(
-												order.status === 'complete'
-													? 'text-green-600'
-													: 'text-gray-500',
+												getStatusColor(order.status),
 												'whitespace-nowrap px-3 py-4 text-sm capitalize',
 											)}
 										>
 											{order.status}
 										</td>
-										{order.status === 'pending' && (
-											<>
-												<td className='relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6'>
-													<Link
-														href='/'
-														className='text-ct-darkBackground hover:opacity-80 cursor-pointer'
-													>
-														Modify
-														<span className='sr-only'>
-															, {order.name}
-														</span>
-													</Link>
-												</td>
-												<td className='relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6'>
-													<div
-														className='text-red-600 hover:opacity-80 cursor-pointer'
-														onClick={() => {
-															setItemToCancel(
-																order,
-															);
-															setOpen(true);
-														}}
-													>
-														Cancel
-														<span className='sr-only'>
-															, {order.name}
-														</span>
-													</div>
-												</td>
-											</>
-										)}
+										<td className='whitespace-nowrap px-3 py-4 text-sm text-gray-500'>
+											<button
+												className='hover:text-ct-deepPink'
+												onClick={() => {
+													setActiveOrder(order.items);
+													setOpenDetails(true);
+												}}
+											>
+												View Details
+											</button>
+										</td>
+										{order.status !== 'Complete' &&
+											order.status !== 'Cancelled' && (
+												<>
+													<td className='relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6'>
+														<button
+															className='text-ct-darkBackground hover:opacity-80 cursor-pointer'
+															onClick={() => {
+																setOpenModify(
+																	true,
+																);
+																setItemToModify(
+																	order,
+																);
+															}}
+														>
+															Modify
+															<span className='sr-only'>
+																, {order.name}
+															</span>
+														</button>
+													</td>
+													<td className='relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6'>
+														<div
+															className='text-red-600 hover:opacity-80 cursor-pointer'
+															onClick={() => {
+																setItemToCancel(
+																	order,
+																);
+																setOpen(true);
+															}}
+														>
+															Cancel
+															<span className='sr-only'>
+																, {order.name}
+															</span>
+														</div>
+													</td>
+												</>
+											)}
 									</tr>
 								))}
 							</tbody>
@@ -152,8 +202,20 @@ const AgentOrdersTable: FC<IProps> = ({ orders }) => {
 				message='Are you sure you want to cancel this order? This action cannot be undone.'
 				open={open}
 				setOpen={setOpen}
-				handleConfirm={handleCancel}
 				setItemToCancel={setItemToCancel}
+				handleConfirm={handleCancel}
+			/>
+			<OrderDetails
+				open={openDetails}
+				setOpen={setOpenDetails}
+				activeOrder={activeOrder!}
+				setActiveOrder={setActiveOrder}
+			/>
+			<ModifyOrderModal
+				open={openModify}
+				setOpen={setOpenModify}
+				setItemToModify={setItemToModify}
+				itemToModify={itemToModify}
 			/>
 		</div>
 	);

@@ -4,10 +4,12 @@ export const orders: Order[] = [
 	{
 		id: 1,
 		name: 'Order 1',
+		orderNumber: '1234',
 		description: 'Order 1 description',
 		price: 1000,
 		status: 'pending',
 		createdAt: '2021-07-01',
+		items: [],
 		user: {
 			id: 1,
 			name: 'John Doe',
@@ -17,10 +19,12 @@ export const orders: Order[] = [
 	{
 		id: 2,
 		name: 'Order 2',
+		orderNumber: '1234',
 		description: 'Order 2 description',
 		price: 2000,
 		status: 'pending',
 		createdAt: '2021-07-02',
+		items: [],
 		user: {
 			id: 1,
 			name: 'John Doe',
@@ -30,10 +34,12 @@ export const orders: Order[] = [
 	{
 		id: 3,
 		name: 'Order 3',
+		orderNumber: '1234',
 		description: 'Order 3 description',
 		price: 3000,
 		status: 'pending',
 		createdAt: '2021-07-03',
+		items: [],
 		user: {
 			id: 2,
 			name: 'Jane Doe',
@@ -43,10 +49,12 @@ export const orders: Order[] = [
 	{
 		id: 4,
 		name: 'Order 4',
+		orderNumber: '1234',
 		description: 'Order 4 description',
 		price: 4000,
 		status: 'complete',
 		createdAt: '2021-07-04',
+		items: [],
 		user: {
 			id: 3,
 			name: 'Candace Parker',
@@ -56,10 +64,12 @@ export const orders: Order[] = [
 	{
 		id: 5,
 		name: 'Order 5',
+		orderNumber: '1234',
 		description: 'Order 5 description',
 		price: 5000,
 		status: 'complete',
 		createdAt: '2021-07-05',
+		items: [],
 		user: {
 			id: 3,
 			name: 'Candace Parker',

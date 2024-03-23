@@ -1,8 +1,10 @@
 import Link from 'next/link';
-import { products } from '@/data/packages';
 import TrendingPackage from '@/components/home/trending-packages/trending-package';
+import useProduct from '@/hooks/product/useProduct';
 
 const TrendingPackages = () => {
+	const { getTrendingProducts } = useProduct();
+
 	return (
 		<section aria-labelledby='favorites-heading'>
 			<div className='mx-auto max-w-7xl px-4 py-24 sm:px-6 sm:py-32 lg:px-8'>
@@ -23,7 +25,7 @@ const TrendingPackages = () => {
 				</div>
 
 				<div className='mt-6 grid grid-cols-1 gap-y-10 sm:grid-cols-3 sm:gap-x-6 sm:gap-y-0 lg:gap-x-8'>
-					{products.slice(0, 3).map(item => (
+					{getTrendingProducts.data?.data.data.map(item => (
 						<TrendingPackage item={item} key={item.id} />
 					))}
 				</div>
