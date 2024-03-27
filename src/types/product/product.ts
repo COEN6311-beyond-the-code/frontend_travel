@@ -11,6 +11,8 @@ export interface Product {
 	start_date?: string;
 	end_date?: string;
 	type: 'package' | 'flight' | 'hotel' | 'activity';
+	rating?: number;
+	rating_count?: number;
 	details: ProductDetails[];
 }
 

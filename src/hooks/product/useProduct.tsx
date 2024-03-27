@@ -11,6 +11,7 @@ import {
 	getTrendingProductsQuery,
 	queryPackage,
 	queryProduct,
+	remarkItemQuery,
 	updateActivityQuery,
 	updateFlightQuery,
 	updateHotelQuery,
@@ -141,6 +142,10 @@ const useProduct = (productId?: string, productType?: string) => {
 		},
 	});
 
+	const remarkItem = useMutation({
+		mutationFn: remarkItemQuery,
+	});
+
 	return {
 		getAllProducts,
 		getProduct,
@@ -157,6 +162,7 @@ const useProduct = (productId?: string, productType?: string) => {
 		deletePackage,
 		getAllAgentProducts,
 		getTrendingProducts,
+		remarkItem,
 	};
 };
 

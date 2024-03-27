@@ -387,3 +387,22 @@ export const deletePackageQuery = async (body: any) => {
 export const getTrendingProductsQuery = (body: any) => {
 	return axios.get<{ data: Product[] }>(`${baseUrl}/product/package/trend`);
 };
+
+export const remarkItemQuery = async (body: any) => {
+	const token = Cookies.get('token');
+
+	return axios.post(
+		`${baseUrl}/remark/add`,
+		{
+			order_number: body.orderNumber,
+			item_type: body.itemType,
+			item_id: body.itemID,
+			rating: body.rating,
+		},
+		{
+			headers: {
+				Authorization: token,
+			},
+		},
+	);
+};

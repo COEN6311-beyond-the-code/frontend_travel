@@ -7,11 +7,13 @@ import useProduct from '@/hooks/product/useProduct';
 import PageLoader from '@/components/loaders/page-loader';
 import { useRouter } from 'next/router';
 import { nanoid } from 'nanoid';
+import StarRating from '@/components/product-details/rating/nonedit-rating';
 
 const ManagePackagesList = () => {
 	const [itemToCancel, setItemToCancel] = useState<any>(null);
 	const [open, setOpen] = useState(false);
-	const { getAllAgentProducts, deletePackage, deleteItem } = useProduct();
+	const { getAllAgentProducts, deletePackage, deleteItem, remarkItem } =
+		useProduct();
 	const [products, setProducts] = useState<Product[]>([]);
 	const router = useRouter();
 
@@ -128,6 +130,23 @@ const ManagePackagesList = () => {
 													<p className='hidden text-gray-500 sm:mt-2 sm:block'>
 														{product.description}
 													</p>
+													{product.rating !==
+														undefined &&
+														product.rating_count !==
+															undefined && (
+															<StarRating
+																rating={
+																	product.rating
+																}
+																rating_count={
+																	product.rating_count
+																}
+																isEdit={true}
+																remarkItem={
+																	remarkItem
+																}
+															/>
+														)}
 													<div className='mt-8'>
 														<span className='capitalize bg-gray-700 text-white px-4 py-1 rounded-full'>
 															{product.type}
