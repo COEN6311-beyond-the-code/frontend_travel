@@ -1,0 +1,66 @@
+name: Deploy to production
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build_and_deploy:
+    environment: production
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout latest codebase
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: "0"
+
+      - name: Get Git commit hash
+        run: echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
+      - name: Create image env
+        run: |
+          echo "IMAGE=${{ format('494948823384.dkr.ecr.us-east-1.amazonaws.com/concordia_travel:{0}', env.SHORT_SHA) }}" >> $GITHUB_ENV
+
+      - name: Create .env
+        run: |
+          echo "NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}" > .env
+          echo "STRIPE_SECRET_KEY=${{ secrets.STRIPE_SECRET_KEY }}" >> .env
+          echo "NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}" >> .env
+          echo "NEXT_PUBLIC_FRONTEND_URL=${{ secrets.NEXT_PUBLIC_FRONTEND_URL }}" >> .env
+
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build and push Docker images
+        run: |
+          docker build -t 494948823384.dkr.ecr.us-east-1.amazonaws.com/concordia_travel:${{env.SHORT_SHA}} .
+          docker push 494948823384.dkr.ecr.us-east-1.amazonaws.com/concordia_travel:${{env.SHORT_SHA}}
+
+      - name: Copy deploy script, docker-compose to vm
+        uses: appleboy/scp-action@v0.1.4
+        with:
+          host: ${{ secrets.VM_IP }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.VM_KEY }}
+          source: "docker-compose.yaml,deploy.sh"
+          target: "/home/ubuntu/concordia-travel"
+
+      - name: SSH into VM and deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.VM_IP }}
+          username: ${{ secrets.VM_USER }}
+          key: ${{ secrets.VM_KEY }}
+          script: |
+            cd /home/ubuntu/concordia-travel
+            bash ./deploy.sh ${{env.IMAGE}}
