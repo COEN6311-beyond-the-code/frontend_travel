@@ -10,7 +10,7 @@ import {
 } from '@heroicons/react/24/outline';
 import { classNames } from '@/utils/classNames';
 import RelatedItems from '@/components/product-details/related-items/related-items';
-import { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Product } from '@/types/product/product';
 import useProduct from '@/hooks/product/useProduct';
 import useCart from '@/hooks/cart/useCart';
@@ -19,6 +19,7 @@ import Spinner from '@/components/loaders/spinner';
 import { nanoid } from 'nanoid';
 import Cookies from 'js-cookie';
 import { AuthContext } from '@/context/auth/auth-context';
+import StarRating from '@/components/product-details/rating/nonedit-rating';
 
 const ItemDetails = () => {
 	const [item, setItem] = useState<Product | null>(null);
@@ -129,6 +130,15 @@ const ItemDetails = () => {
 								<div className='space-y-6 text-base text-gray-700'>
 									{item.description}
 								</div>
+
+								{item.rating !== undefined &&
+									item.rating_count !== undefined && (
+										<StarRating
+											rating={item.rating}
+											rating_count={item.rating_count}
+											isEdit={false}
+										/>
+									)}
 							</div>
 
 							<div className='mt-6'>

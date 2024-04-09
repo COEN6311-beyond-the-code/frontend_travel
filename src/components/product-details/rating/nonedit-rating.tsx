@@ -1,17 +1,16 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, Dispatch, SetStateAction } from 'react';
 import StarRatings from 'react-star-ratings';
-import useProduct from '@/hooks/product/useProduct';
 import { UseMutationResult } from '@tanstack/react-query';
-import Message from '@/components/message/message';
-import { ExclamationCircleIcon } from '@heroicons/react/16/solid';
-import FaceFrownIcon from '@heroicons/react/16/solid/FaceFrownIcon';
-import CodeBracketIcon from '@heroicons/react/16/solid/CodeBracketIcon';
 
 interface StarRatingProps {
-	rating: number;
-	rating_count: number;
+	rating?: number;
+	rating_count?: number;
 	isEdit: boolean;
 	remarkItem?: UseMutationResult<any, Error, any, unknown>;
+	setShow?: Dispatch<SetStateAction<boolean>>;
+	type?: string;
+	id?: number;
+	orderNumber?: string;
 }
 
 const StarRating: React.FC<StarRatingProps> = ({
@@ -19,21 +18,26 @@ const StarRating: React.FC<StarRatingProps> = ({
 	rating_count,
 	isEdit,
 	remarkItem,
+	setShow,
+	type,
+	id,
+	orderNumber,
 }) => {
 	const [currentRating, setCurrentRating] = useState(isEdit ? 0 : rating);
-	const [show, setShow] = useState(false);
 
 	const handleRatingChange = (newRating: number) => {
 		setCurrentRating(newRating);
 		if (remarkItem !== undefined) {
 			remarkItem.mutate({
-				orderNumber: '123',
-				itemType: 'activity',
-				itemID: 10,
+				orderNumber: orderNumber,
+				itemType: type,
+				itemID: id,
 				rating: newRating,
 			});
+			if (setShow) {
+				setShow(true);
+			}
 		}
-		setShow(true);
 	};
 
 	return (
@@ -48,18 +52,16 @@ const StarRating: React.FC<StarRatingProps> = ({
 				name='rating'
 				changeRating={isEdit ? handleRatingChange : undefined} // Enable or disable rating change based on isEdit
 			/>
-			{!isEdit && (
+			{isEdit ? (
 				<span style={{ fontSize: '12px' }}>
-					({rating_count} ratings)
+					{' '}
+					(Please rate the item){' '}
+				</span>
+			) : (
+				<span style={{ fontSize: '12px' }}>
+					({rating_count} {rating_count === 1 ? 'rating' : 'ratings'})
 				</span>
 			)}
-			<Message
-				title='Submission completed.'
-				subtitle='You have submitted a rating for this product.'
-				iconColor='text-red-500'
-				show={show}
-				setShow={setShow}
-			/>
 		</div>
 	);
 };

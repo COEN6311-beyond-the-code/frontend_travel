@@ -31,6 +31,7 @@ const AgentOrdersTable: FC<IProps> = ({ orders }) => {
 	const [activeOrder, setActiveOrder] = useState<Product[] | null>(
 		products.slice(0, 3),
 	);
+	const [orderNumber, setOrderNumber] = useState('');
 	const [openModify, setOpenModify] = useState(false);
 	const [itemToModify, setItemToModify] = useState<Order | null>(null);
 	const getStatusColor = (status: string): string => {
@@ -146,6 +147,9 @@ const AgentOrdersTable: FC<IProps> = ({ orders }) => {
 												onClick={() => {
 													setActiveOrder(order.items);
 													setOpenDetails(true);
+													setOrderNumber(
+														order.orderNumber,
+													);
 												}}
 											>
 												View Details
@@ -210,6 +214,9 @@ const AgentOrdersTable: FC<IProps> = ({ orders }) => {
 				setOpen={setOpenDetails}
 				activeOrder={activeOrder!}
 				setActiveOrder={setActiveOrder}
+				orderNumber={orderNumber}
+				setOrderNumber={setOrderNumber}
+				isAgentPage={true}
 			/>
 			<ModifyOrderModal
 				open={openModify}

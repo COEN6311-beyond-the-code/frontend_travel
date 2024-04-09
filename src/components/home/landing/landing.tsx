@@ -83,7 +83,7 @@ const Landing = () => {
 								</div>
 							</div>
 
-							<Button link='/packages'>Browse packages</Button>
+							<Button link='/search'>Browse packages</Button>
 						</div>
 					</div>
 				</div>

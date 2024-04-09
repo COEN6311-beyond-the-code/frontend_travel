@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { CalendarDaysIcon, PlusIcon } from '@heroicons/react/20/solid';
 import ConfirmCancel from '@/components/message/confirm-cancel';
 import { Product } from '@/types/product/product';
@@ -8,10 +8,14 @@ import PageLoader from '@/components/loaders/page-loader';
 import { useRouter } from 'next/router';
 import { nanoid } from 'nanoid';
 import StarRating from '@/components/product-details/rating/nonedit-rating';
+import Message from '@/components/message/message';
 
 const ManagePackagesList = () => {
 	const [itemToCancel, setItemToCancel] = useState<any>(null);
 	const [open, setOpen] = useState(false);
+	const [itemToPromotion, setItemToPromotion] = useState<any>(null);
+	const [openPromotion, setOpenPromotion] = useState(false);
+	const [show, setShow] = useState(false);
 	const { getAllAgentProducts, deletePackage, deleteItem, remarkItem } =
 		useProduct();
 	const [products, setProducts] = useState<Product[]>([]);
@@ -141,10 +145,7 @@ const ManagePackagesList = () => {
 																rating_count={
 																	product.rating_count
 																}
-																isEdit={true}
-																remarkItem={
-																	remarkItem
-																}
+																isEdit={false}
 															/>
 														)}
 													<div className='mt-8'>
@@ -172,7 +173,19 @@ const ManagePackagesList = () => {
 												</div>
 
 												<div className='mt-6 flex items-center space-x-4 divide-x divide-gray-200 border-t border-gray-200 pt-4 text-sm font-medium sm:ml-4 sm:mt-0 sm:border-none sm:pt-0'>
-													<div className='flex flex-1 justify-center'>
+													<div className='flex flex-1 justify-center pl-4'>
+														{product.type !==
+															'package' && (
+															<Link
+																href={`/dashboard/agent/item/${product.id}/promotion?type=${product.type}`}
+																className='whitespace-nowrap text-black hover:opacity-80'
+															>
+																Promotional
+																Setting
+															</Link>
+														)}
+													</div>
+													<div className='flex flex-1 justify-center pl-4'>
 														<Link
 															href={`/dashboard/agent/item/${product.id}/update?type=${product.type}`}
 															className='whitespace-nowrap text-black hover:opacity-80'
@@ -255,6 +268,13 @@ const ManagePackagesList = () => {
 				handleConfirm={handleCancel}
 				setItemToCancel={setItemToCancel}
 				isLoading={deleteItem.isPending || deletePackage.isPending}
+			/>
+			<Message
+				title='Submission completed.'
+				subtitle='You have submitted a rating for this product.'
+				iconColor='text-red-500'
+				show={show}
+				setShow={setShow}
 			/>
 		</main>
 	);

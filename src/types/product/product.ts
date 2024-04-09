@@ -64,6 +64,12 @@ export interface ActivityFormType extends ItemFormType {
 	time: string;
 }
 
+export interface PromotionFormType {
+	browseTimes: number;
+	windowsTime: number;
+	waitTime: number;
+}
+
 export interface PackageFormType extends ItemFormType {
 	flight: any;
 	hotel: any;
