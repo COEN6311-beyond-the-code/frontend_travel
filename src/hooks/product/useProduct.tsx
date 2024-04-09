@@ -4,6 +4,7 @@ import {
 	createFlightQuery,
 	createHotelQuery,
 	createPackageQuery,
+	createPromotionQuery,
 	deleteItemQuery,
 	deletePackageQuery,
 	getAllAgentProductsQuery,
@@ -11,11 +12,13 @@ import {
 	getTrendingProductsQuery,
 	queryPackage,
 	queryProduct,
+	queryPromotion,
 	remarkItemQuery,
 	updateActivityQuery,
 	updateFlightQuery,
 	updateHotelQuery,
 	updatePackageQuery,
+	updatePromotionQuery,
 } from '@/queries/product/product-queries';
 import { useContext } from 'react';
 import { AuthContext } from '@/context/auth/auth-context';
@@ -137,13 +140,37 @@ const useProduct = (productId?: string, productType?: string) => {
 		mutationFn: deleteItemQuery,
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({
-				queryKey: ['getAllProducts', 'getAllAgentProducts'],
+				queryKey: ['getAllAgentProducts'],
 			});
 		},
 	});
 
 	const remarkItem = useMutation({
 		mutationFn: remarkItemQuery,
+	});
+
+	const getPromotion = useQuery({
+		queryFn: queryPromotion,
+		queryKey: ['queryPromotion', { id: productId, type: productType }],
+		enabled: !!productId && !!productType && productType !== 'package',
+	});
+
+	const createPromotion = useMutation({
+		mutationFn: createPromotionQuery,
+		onSuccess: async () => {
+			await queryClient.invalidateQueries({
+				queryKey: ['queryPromotion'],
+			});
+		},
+	});
+
+	const updatePromotion = useMutation({
+		mutationFn: updatePromotionQuery,
+		onSuccess: async () => {
+			await queryClient.invalidateQueries({
+				queryKey: ['queryPromotion'],
+			});
+		},
 	});
 
 	return {
@@ -163,6 +190,9 @@ const useProduct = (productId?: string, productType?: string) => {
 		getAllAgentProducts,
 		getTrendingProducts,
 		remarkItem,
+		getPromotion,
+		createPromotion,
+		updatePromotion,
 	};
 };
 
