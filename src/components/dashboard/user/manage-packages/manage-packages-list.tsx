@@ -7,13 +7,15 @@ import useProduct from '@/hooks/product/useProduct';
 import PageLoader from '@/components/loaders/page-loader';
 import { useRouter } from 'next/router';
 import { nanoid } from 'nanoid';
-import StarRating from '@/components/product-details/rating/nonedit-rating';
+import { Disclosure } from '@headlessui/react';
+import { classNames } from '@/utils/classNames';
+import { MinusIcon } from '@heroicons/react/24/outline';
+import Cookies from 'js-cookie';
 
 const ManagePackagesList = () => {
 	const [itemToCancel, setItemToCancel] = useState<any>(null);
 	const [open, setOpen] = useState(false);
-	const { getAllAgentProducts, deletePackage, deleteItem, remarkItem } =
-		useProduct();
+	const { getAllAgentProducts, deletePackage, deleteItem } = useProduct();
 	const [products, setProducts] = useState<Product[]>([]);
 	const router = useRouter();
 
@@ -49,6 +51,11 @@ const ManagePackagesList = () => {
 		return <PageLoader />;
 	}
 
+	const handleAddToCart = (itemId: number) => {
+		Cookies.set('packageToPurchase', String(itemId));
+		router.push(`/checkout`).then();
+	};
+
 	return (
 		<main>
 			<div className='mx-auto max-w-7xl sm:px-2 lg:px-8'>
@@ -57,8 +64,7 @@ const ManagePackagesList = () => {
 						Manage packages
 					</h1>
 					<p className='mt-2 text-sm text-gray-500'>
-						Manage all packages, flights, hotels and activities
-						here.
+						View the package you created and purchase it again.
 					</p>
 				</div>
 			</div>
@@ -75,22 +81,13 @@ const ManagePackagesList = () => {
 									<dl className='grid flex-1 grid-cols-2 gap-x-6 text-sm sm:col-span-3 sm:grid-cols-3 lg:col-span-2'>
 										<div>
 											<dt className='font-medium text-gray-900'>
-												Total items
+												Total packages
 											</dt>
 											<dd className='mt-1 text-gray-500'>
 												{products.length}
 											</dd>
 										</div>
 									</dl>
-
-									<div className='hidden lg:col-span-2 lg:flex lg:items-center lg:justify-end lg:space-x-4'>
-										<Link
-											href='/dashboard/agent/create-item'
-											className='flex items-center justify-center rounded-md border border-gray-300 bg-white px-2.5 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-ct-deepPink focus:ring-offset-2'
-										>
-											<span>Create Item</span>
-										</Link>
-									</div>
 								</div>
 
 								{/* Products */}
@@ -105,48 +102,94 @@ const ManagePackagesList = () => {
 											className='p-4 sm:p-6'
 										>
 											<div className='flex items-center sm:items-start'>
-												<Link
-													href={`/item/${product.type}/${product.id}`}
-												>
-													<div className='h-20 w-20 flex-shrink-0 overflow-hidden rounded-lg bg-gray-200 sm:h-40 sm:w-40 hover:opacity-80'>
-														<img
-															src={
-																product.imageSrc
-															}
-															alt={
-																product.imageAlt
-															}
-															className='h-full w-full object-cover object-center'
-														/>
-													</div>
-												</Link>
 												<div className='ml-6 flex-1 text-sm'>
-													<div className='font-medium text-gray-900 sm:flex sm:justify-between'>
+													<div className='font-medium text-gray-900 sm:flex sm:justify-between mb-6'>
 														<h5>{product.name}</h5>
 														<p className='mt-2 sm:mt-0'>
 															$ {product.price}
 														</p>
 													</div>
-													<p className='hidden text-gray-500 sm:mt-2 sm:block'>
-														{product.description}
-													</p>
-													{product.rating !==
-														undefined &&
-														product.rating_count !==
-															undefined && (
-															<StarRating
-																rating={
-																	product.rating
-																}
-																rating_count={
-																	product.rating_count
-																}
-																isEdit={true}
-																remarkItem={
-																	remarkItem
-																}
-															/>
+													<div className='flex flex-wrap gap-6'>
+														{product.details.map(
+															detail =>
+																detail.name !==
+																	'Features' && (
+																	<div
+																		key={nanoid()}
+																		className='w-full sm:w-1/3'
+																		style={{
+																			flexBasis:
+																				'calc(33.33% - 16px)',
+																		}}
+																	>
+																		<Disclosure
+																			as='div'
+																			defaultOpen={
+																				false
+																			}
+																		>
+																			{({
+																				open,
+																			}) => (
+																				<div className='border rounded-md'>
+																					<div className='flex justify-between items-center p-4 bg-gray-100'>
+																						<Link
+																							href={`/item/${detail.type}/${detail.id}`}
+																						>
+																							<h3 className='text-sm font-medium text-gray-900'>
+																								{
+																									detail.name
+																								}
+																							</h3>
+																						</Link>
+																						<Disclosure.Button className='focus:outline-none'>
+																							{open ? (
+																								<MinusIcon
+																									className='block h-6 w-6 text-gray-400 group-hover:text-gray-500'
+																									aria-hidden='true'
+																								/>
+																							) : (
+																								<PlusIcon
+																									className='block h-6 w-6 text-gray-400 group-hover:text-gray-500'
+																									aria-hidden='true'
+																								/>
+																							)}
+																						</Disclosure.Button>
+																					</div>
+																					<Disclosure.Panel className='p-4'>
+																						<ul>
+																							<li
+																								style={{
+																									fontWeight:
+																										'bold',
+																								}}
+																							>
+																								Price:
+																								$
+																								{
+																									detail.price
+																								}
+																							</li>
+																							{detail.items.map(
+																								item => (
+																									<li
+																										key={nanoid()}
+																									>
+																										{
+																											item
+																										}
+																									</li>
+																								),
+																							)}
+																						</ul>
+																					</Disclosure.Panel>
+																				</div>
+																			)}
+																		</Disclosure>
+																	</div>
+																),
 														)}
+													</div>
 													<div className='mt-8'>
 														<span className='capitalize bg-gray-700 text-white px-4 py-1 rounded-full'>
 															{product.type}
@@ -173,12 +216,16 @@ const ManagePackagesList = () => {
 
 												<div className='mt-6 flex items-center space-x-4 divide-x divide-gray-200 border-t border-gray-200 pt-4 text-sm font-medium sm:ml-4 sm:mt-0 sm:border-none sm:pt-0'>
 													<div className='flex flex-1 justify-center'>
-														<Link
-															href={`/dashboard/agent/item/${product.id}/update?type=${product.type}`}
+														<button
+															onClick={() =>
+																handleAddToCart(
+																	product.id,
+																)
+															}
 															className='whitespace-nowrap text-black hover:opacity-80'
 														>
-															Update item
-														</Link>
+															Buy again
+														</button>
 													</div>
 													<div className='flex flex-1 justify-center pl-4'>
 														<div
@@ -217,28 +264,19 @@ const ManagePackagesList = () => {
 									/>
 								</svg>
 								<h3 className='mt-2 text-sm font-semibold text-gray-900'>
-									No packages or items
+									No packages
 								</h3>
-								<p className='mt-1 text-sm text-gray-500'>
-									Get started by creating a new package or
-									item.
-								</p>
 								<div className='mt-6'>
 									<button
 										type='button'
 										className='inline-flex items-center rounded-md bg-ct-deepPink px-3 py-2
 											text-sm font-semibold text-white shadow-sm hover:opacity-80'
 										onClick={async () => {
-											await router.push(
-												'/dashboard/agent/create-item',
-											);
+											await router.push('/search');
 										}}
 									>
-										<PlusIcon
-											className='-ml-0.5 mr-1.5 h-5 w-5'
-											aria-hidden='true'
-										/>
-										New Project
+										Shop for items, create your custom
+										package!
 									</button>
 								</div>
 							</div>

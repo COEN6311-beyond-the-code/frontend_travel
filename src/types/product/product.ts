@@ -11,12 +11,15 @@ export interface Product {
 	start_date?: string;
 	end_date?: string;
 	type: 'package' | 'flight' | 'hotel' | 'activity';
+	rating?: number;
+	rating_count?: number;
 	details: ProductDetails[];
 }
 
 export interface ProductDetails {
 	id?: number;
 	name: string;
+	price?: number;
 	items: string[];
 	type: 'package' | 'flight' | 'hotel' | 'activity';
 }

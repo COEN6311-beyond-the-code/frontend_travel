@@ -3,6 +3,9 @@ import { Order } from '@/types/dashboard/orders';
 import { classNames } from '@/utils/classNames';
 import ConfirmCancel from '@/components/message/confirm-cancel';
 import { Product } from '@/types/product/product';
+import useOrder from '@/hooks/order/useOrder';
+import OrderDetails from '@/components/dashboard/shared/orders/order-details';
+import { products } from '@/data/packages';
 
 interface IProps {
 	orders: Order[];
@@ -13,13 +16,19 @@ const OrdersTable: FC<IProps> = ({ orders }) => {
 		null,
 	);
 	const [open, setOpen] = useState(false);
-
+	const { cancelOrder } = useOrder();
 	const handleCancel = () => {
-		if (itemToCancel) {
-			console.log('Cancel', itemToCancel);
-			setItemToCancel(null);
+		if (itemToCancel && 'orderNumber' in itemToCancel) {
+			cancelOrder.mutate({
+				orderNumber: itemToCancel.orderNumber,
+			});
 		}
+		setItemToCancel(null);
 	};
+	const [openDetails, setOpenDetails] = useState(false);
+	const [activeOrder, setActiveOrder] = useState<Product[] | null>(
+		products.slice(0, 3),
+	);
 
 	return (
 		<div className='mt-8 flow-root'>
@@ -63,6 +72,14 @@ const OrdersTable: FC<IProps> = ({ orders }) => {
 										scope='col'
 										className='relative py-3.5 pl-3 pr-4 sm:pr-6'
 									>
+										<span className='sr-only'>
+											View Details
+										</span>
+									</th>
+									<th
+										scope='col'
+										className='relative py-3.5 pl-3 pr-4 sm:pr-6'
+									>
 										<span className='sr-only'>Cancel</span>
 									</th>
 								</tr>
@@ -73,8 +90,10 @@ const OrdersTable: FC<IProps> = ({ orders }) => {
 										<td className='whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6'>
 											{order.name}
 										</td>
-										<td className='whitespace-nowrap px-3 py-4 text-sm text-gray-500'>
-											{order.description}
+										<td className='px-3 py-4 text-sm text-gray-500 w-[30%]'>
+											<p className='line-clamp-1'>
+												{order.description}
+											</p>
 										</td>
 										<td className='whitespace-nowrap px-3 py-4 text-sm text-gray-500'>
 											$ {order.price}
@@ -84,7 +103,7 @@ const OrdersTable: FC<IProps> = ({ orders }) => {
 										</td>
 										<td
 											className={classNames(
-												order.status === 'complete'
+												order.status === 'Complete'
 													? 'text-green-600'
 													: 'text-gray-500',
 												'whitespace-nowrap px-3 py-4 text-sm capitalize',
@@ -92,22 +111,37 @@ const OrdersTable: FC<IProps> = ({ orders }) => {
 										>
 											{order.status}
 										</td>
-										{order.status === 'pending' && (
-											<td className='relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6'>
-												<div
-													className='text-red-600 hover:opacity-80 cursor-pointer'
-													onClick={() => {
-														setItemToCancel(order);
-														setOpen(true);
-													}}
-												>
-													Cancel
-													<span className='sr-only'>
-														, {order.name}
-													</span>
-												</div>
-											</td>
-										)}
+										<td className='whitespace-nowrap px-3 py-4 text-sm text-gray-500'>
+											<button
+												className='hover:text-ct-deepPink'
+												onClick={() => {
+													// TODO: Set active order
+													setActiveOrder(order.items);
+													setOpenDetails(true);
+												}}
+											>
+												View Details
+											</button>
+										</td>
+										{order.status !== 'Complete' &&
+											order.status !== 'Cancelled' && (
+												<td className='relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6'>
+													<div
+														className='text-red-600 hover:opacity-80 cursor-pointer'
+														onClick={() => {
+															setItemToCancel(
+																order,
+															);
+															setOpen(true);
+														}}
+													>
+														Cancel
+														<span className='sr-only'>
+															, {order.name}
+														</span>
+													</div>
+												</td>
+											)}
 									</tr>
 								))}
 							</tbody>
@@ -120,8 +154,14 @@ const OrdersTable: FC<IProps> = ({ orders }) => {
 				message='Are you sure you want to cancel your order? This action cannot be undone.'
 				open={open}
 				setOpen={setOpen}
-				handleConfirm={handleCancel}
 				setItemToCancel={setItemToCancel}
+				handleConfirm={handleCancel}
+			/>
+			<OrderDetails
+				open={openDetails}
+				setOpen={setOpenDetails}
+				activeOrder={activeOrder!}
+				setActiveOrder={setActiveOrder}
 			/>
 		</div>
 	);
