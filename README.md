@@ -11,7 +11,6 @@ npm install
 
 Then, clone the repository to your local machine:
 
-
 First, run the development server:
 
 ```bash
