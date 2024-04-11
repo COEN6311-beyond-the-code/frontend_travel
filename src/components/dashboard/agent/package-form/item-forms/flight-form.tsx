@@ -103,9 +103,9 @@ const FlightForm: FC<IProps> = ({ mode }) => {
 					| 'economy'
 					| 'business'
 					| 'first',
-				destination: product.details[0].items[0].split(' ')[1],
-				departureTime: product.details[0].items[4].split(' ')[1],
-				arrivalTime: product.details[0].items[3].split(' ')[1],
+				destination: product.details[0].items[0].split(': ')[1],
+				departureTime: product.details[0].items[3].split(' ')[1],
+				arrivalTime: product.details[0].items[4].split(' ')[1],
 			});
 		}
 	}, [product, reset]);

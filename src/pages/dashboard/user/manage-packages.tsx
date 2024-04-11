@@ -1,6 +1,6 @@
 import Layout from '@/components/layout/layout';
 import Dashboard from '@/components/dashboard/shared/dashboard';
-import { agentNavigation } from '@/data/dashboard';
+import { agentNavigation, userNavigation } from '@/data/dashboard';
 import ManagePackagesList from '@/components/dashboard/user/manage-packages/manage-packages-list';
 import useAuth from '@/hooks/auth/useAuth';
 import { useEffect, useState } from 'react';
@@ -26,7 +26,7 @@ const ManagePackages = () => {
 
 	return (
 		<Layout title='Manage Packages' hideFooter={true} hideNav={true}>
-			<Dashboard navigationItems={agentNavigation} user={user}>
+			<Dashboard navigationItems={userNavigation} user={user}>
 				<ManagePackagesList />
 			</Dashboard>
 		</Layout>
