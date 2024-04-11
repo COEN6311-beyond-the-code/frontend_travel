@@ -9,6 +9,7 @@ import {
 	Product,
 } from '@/types/product/product';
 import { ProductKeys } from '@/data/packages';
+import { Promotion } from '@/types/dashboard/promotion';
 
 export const getAllProductsQuery = (body: any) => {
 	const token = Cookies.get('token');
@@ -43,6 +44,24 @@ export const queryProduct = (body: any) => {
 
 	return axios.get<{ data: Product }>(
 		`${baseUrl}/product/item?type=${productKey}&id=${id}`,
+		{
+			headers: {
+				Authorization: token,
+			},
+		},
+	);
+};
+
+export const queryPromotion = (body: any) => {
+	const token = Cookies.get('token');
+	const { queryKey } = body;
+
+	const { type, id } = queryKey[1];
+
+	const productKey = ProductKeys[type as keyof typeof ProductKeys];
+
+	return axios.get<{ data: Promotion }>(
+		`${baseUrl}/product/promote/query?type=${productKey}&id=${id}`,
 		{
 			headers: {
 				Authorization: token,
@@ -398,6 +417,46 @@ export const remarkItemQuery = async (body: any) => {
 			item_type: body.itemType,
 			item_id: body.itemID,
 			rating: body.rating,
+		},
+		{
+			headers: {
+				Authorization: token,
+			},
+		},
+	);
+};
+
+export const createPromotionQuery = async (body: Promotion) => {
+	const token = Cookies.get('token');
+	const productKey = ProductKeys[body.category as keyof typeof ProductKeys];
+
+	return axios.post<{ data: Product }>(
+		`${baseUrl}/product/promote/setting`,
+		{
+			category: productKey,
+			item_id: body.itemId,
+			browse_times: body.browseTimes,
+			windows_time: body.windowsTime,
+			wait_time: body.waitTime,
+		},
+		{
+			headers: {
+				Authorization: token,
+			},
+		},
+	);
+};
+
+export const updatePromotionQuery = async (body: Promotion) => {
+	const token = Cookies.get('token');
+
+	return axios.post<{ data: Product }>(
+		`${baseUrl}/product/promote/update`,
+		{
+			id: body.id,
+			browse_times: body.browseTimes,
+			windows_time: body.windowsTime,
+			wait_time: body.waitTime,
 		},
 		{
 			headers: {

@@ -29,7 +29,21 @@ const OrdersTable: FC<IProps> = ({ orders }) => {
 	const [activeOrder, setActiveOrder] = useState<Product[] | null>(
 		products.slice(0, 3),
 	);
+	const [orderNumber, setOrderNumber] = useState('');
 
+	const getStatusColor = (status: string): string => {
+		if (
+			status === 'Pending Departure' ||
+			status === 'Traveling' ||
+			status === 'Pending Payment'
+		) {
+			return 'text-orange-500';
+		} else if (status === 'Complete') {
+			return 'text-green-600';
+		} else {
+			return 'text-gray-500';
+		}
+	};
 	return (
 		<div className='mt-8 flow-root'>
 			<div className='-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8'>
@@ -103,9 +117,7 @@ const OrdersTable: FC<IProps> = ({ orders }) => {
 										</td>
 										<td
 											className={classNames(
-												order.status === 'Complete'
-													? 'text-green-600'
-													: 'text-gray-500',
+												getStatusColor(order.status),
 												'whitespace-nowrap px-3 py-4 text-sm capitalize',
 											)}
 										>
@@ -118,6 +130,9 @@ const OrdersTable: FC<IProps> = ({ orders }) => {
 													// TODO: Set active order
 													setActiveOrder(order.items);
 													setOpenDetails(true);
+													setOrderNumber(
+														order.orderNumber,
+													);
 												}}
 											>
 												View Details
@@ -162,6 +177,9 @@ const OrdersTable: FC<IProps> = ({ orders }) => {
 				setOpen={setOpenDetails}
 				activeOrder={activeOrder!}
 				setActiveOrder={setActiveOrder}
+				orderNumber={orderNumber}
+				setOrderNumber={setOrderNumber}
+				isAgentPage={false}
 			/>
 		</div>
 	);

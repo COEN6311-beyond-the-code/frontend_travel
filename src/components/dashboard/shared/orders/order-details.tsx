@@ -1,4 +1,4 @@
-import { Dispatch, FC, Fragment, SetStateAction } from 'react';
+import React, { Dispatch, FC, Fragment, SetStateAction, useState } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { classNames } from '@/utils/classNames';
@@ -6,12 +6,18 @@ import { inter } from '@/utils/fonts';
 import { nanoid } from 'nanoid';
 import Link from 'next/link';
 import { Product } from '@/types/product/product';
+import Message from '@/components/message/message';
+import useProduct from '@/hooks/product/useProduct';
+import StarRating from '@/components/product-details/rating/nonedit-rating';
 
 interface IProps {
 	open: boolean;
 	setOpen: Dispatch<SetStateAction<boolean>>;
 	activeOrder: Product[];
 	setActiveOrder: Dispatch<SetStateAction<Product[] | null>>;
+	orderNumber: string;
+	setOrderNumber: Dispatch<SetStateAction<string>>;
+	isAgentPage: boolean;
 }
 
 const OrderDetails: FC<IProps> = ({
@@ -19,10 +25,16 @@ const OrderDetails: FC<IProps> = ({
 	setOpen,
 	activeOrder,
 	setActiveOrder,
+	orderNumber,
+	setOrderNumber,
+	isAgentPage,
 }) => {
+	const [show, setShow] = useState(false);
+	const { remarkItem } = useProduct();
 	if (!activeOrder) {
 		return null;
 	}
+
 	// Calculate Subtotal
 	const subtotal = activeOrder.reduce(
 		(acc, product) =>
@@ -36,6 +48,7 @@ const OrderDetails: FC<IProps> = ({
 	// Calculate Taxes
 	const taxes = parseFloat((subtotal * 0.15).toFixed(2));
 	const total = parseFloat((subtotal + taxes).toFixed(2));
+
 	return (
 		<Transition.Root show={open} as={Fragment}>
 			<Dialog
@@ -73,6 +86,7 @@ const OrderDetails: FC<IProps> = ({
 															setActiveOrder(
 																null,
 															);
+															setOrderNumber('');
 														}}
 													>
 														<span className='absolute -inset-2.5' />
@@ -141,6 +155,34 @@ const OrderDetails: FC<IProps> = ({
 																					product.options
 																				}
 																			</p>
+																			{!isAgentPage && (
+																				<StarRating
+																					rating={
+																						product.rating
+																					}
+																					rating_count={
+																						product.rating_count
+																					}
+																					isEdit={
+																						true
+																					}
+																					remarkItem={
+																						remarkItem
+																					}
+																					setShow={
+																						setShow
+																					}
+																					type={
+																						product.type
+																					}
+																					id={
+																						product.id
+																					}
+																					orderNumber={
+																						orderNumber
+																					}
+																				/>
+																			)}
 																		</div>
 																		<div className='flex flex-1 items-end justify-between text-sm'>
 																			<p className='text-gray-500 capitalize'>
@@ -190,6 +232,13 @@ const OrderDetails: FC<IProps> = ({
 						</div>
 					</div>
 				</div>
+				<Message
+					title='Submission completed.'
+					subtitle='You have submitted a rating for this product.'
+					iconColor='text-red-500'
+					show={show}
+					setShow={setShow}
+				/>
 			</Dialog>
 		</Transition.Root>
 	);
