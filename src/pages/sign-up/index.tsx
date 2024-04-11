@@ -69,7 +69,7 @@ const SignUp = () => {
 							alt='Your Company'
 						/>
 						<h2 className='mt-6 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900'>
-							Sign in to your account
+							Sign up to your account
 						</h2>
 						<p>
 							Sign up to your account and access our exclusive
