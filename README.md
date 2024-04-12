@@ -35,7 +35,6 @@ To run the production server, run the following command:
 npm run start
 ```
 
-
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
